@@ -4,6 +4,7 @@ $Project "client"
 	"game\client\client_hl2.vpc"				[$HL2]
 	"game\client\client_hl2r.vpc"				[$HL2R]
 	"game\client\client_hl2mp.vpc"				[$HL2MP]
+	"game\client\client_sdk.vpc"				[$SDK]
 }
 
 $Project "server"
@@ -12,6 +13,7 @@ $Project "server"
 	"game\server\server_hl2.vpc"				[$HL2]
 	"game\server\server_hl2r.vpc"				[$HL2R]
 	"game\server\server_hl2mp.vpc"				[$HL2MP]
+	"game\server\server_sdk.vpc"				[$SDK]
 }
 
 $Project "missionchooser"

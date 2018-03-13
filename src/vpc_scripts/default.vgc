@@ -4,6 +4,7 @@ $Games
 	"HL2MP"
 	"EPISODIC"
 	"HL2"
+	"SDK"
 }
 
 $Conditional	"SOURCESDK" "1"
