@@ -1,10 +1,26 @@
+//-----------------------------------------------------------------------------
+//	DEFAULT.VGC
+//
+//	Configurations for all Source(TM) Projects
+//-----------------------------------------------------------------------------
+
+////////////////
+// Game Names //
+////////////////
+
 $Games
 {
-	"HL2R"
-	"HL2MP"
+	"CSTRIKE"
+	"DOD"
 	"EPISODIC"
+	"HL1"
 	"HL2"
+	"HL2MP"
+	"LOSTCOAST"
+	"PORTAL"
 	"SDK"
+	"TF"
+	"HL2R"
 }
 
 $Conditional	"SOURCESDK" "1"

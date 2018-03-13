@@ -5,6 +5,12 @@ $Project "client"
 	"game\client\client_hl2r.vpc"				[$HL2R]
 	"game\client\client_hl2mp.vpc"				[$HL2MP]
 	"game\client\client_sdk.vpc"				[$SDK]
+	"game\client\client_dod.vpc"				[$DOD]
+	"game\client\client_lostcoast.vpc"			[$LOSTCOAST]
+	"game\client\client_tf.vpc"					[$TF]
+	"game\client\client_cstrike.vpc"			[$CSTRIKE]
+	"game\client\client_portal.vpc"				[$PORTAL]
+	"game\client\client_hl1.vpc"				[$HL1]
 }
 
 $Project "server"
@@ -14,6 +20,12 @@ $Project "server"
 	"game\server\server_hl2r.vpc"				[$HL2R]
 	"game\server\server_hl2mp.vpc"				[$HL2MP]
 	"game\server\server_sdk.vpc"				[$SDK]
+	"game\server\server_dod.vpc"				[$DOD]
+	"game\server\server_lostcoast.vpc"			[$LOSTCOAST]
+	"game\server\server_tf.vpc"					[$TF]
+	"game\server\server_cstrike.vpc"			[$CSTRIKE]
+	"game\server\server_portal.vpc"				[$PORTAL]
+	"game\server\server_hl1.vpc"				[$HL1]
 }
 
 $Project "missionchooser"
