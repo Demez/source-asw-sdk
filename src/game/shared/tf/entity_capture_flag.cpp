@@ -1080,17 +1080,18 @@ int CCaptureFlag::UpdateTransmitState()
 
 float CCaptureFlag::GetReturnProgress()
 {
-	float flEventTime = max( m_flResetTime.m_Value, m_flNeutralTime.m_Value );
+	float flEventTime = MAX( m_flResetTime.m_Value, m_flNeutralTime.m_Value );
 
 	return ( 1.0 - ( ( flEventTime - gpGlobals->curtime ) / m_flMaxResetTime ) );
 }
 
 
-void CCaptureFlag::Simulate( void )
+bool CCaptureFlag::Simulate( void )
 {
 	BaseClass::Simulate();
 
 	ManageTrailEffects();
+	return true;
 }
 
 void CCaptureFlag::ManageTrailEffects( void )

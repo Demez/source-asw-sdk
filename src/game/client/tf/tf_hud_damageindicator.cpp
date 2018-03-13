@@ -249,7 +249,7 @@ void CHudDamageIndicator::Paint()
 		float xpos, ypos;
 		float flRotation;
 		float flTimeSinceStart = ( gpGlobals->curtime - m_vecDamages[i].flStartTime );
-		float flRadius = RemapVal( min( flTimeSinceStart, m_flTravelTime ), 0, m_flTravelTime, m_flStartRadius, m_flEndRadius );
+		float flRadius = RemapVal( MIN( flTimeSinceStart, m_flTravelTime ), 0, m_flTravelTime, m_flStartRadius, m_flEndRadius );
 		GetDamagePosition( m_vecDamages[i].vecDelta, flRadius, &xpos, &ypos, &flRotation );
 
 		// Calculate life left

@@ -184,7 +184,7 @@ public:
 	CNewParticleEffect	*m_pPaperTrailEffect;
 
 	void			ManageTrailEffects( void );
-	virtual void	Simulate( void );
+	virtual bool	Simulate( void );
 
 	float			GetMaxResetTime() { return m_flMaxResetTime; }
 	float			GetReturnProgress( void );
