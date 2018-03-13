@@ -242,14 +242,14 @@ $Project "Server (TF)"
 			}
 		}
 		
-		$Folder	"IFM"
-		{
-			$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
-			$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
-			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.cpp"
-			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
-			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
-			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.h"
-		}
+		//$Folder	"IFM"
+		//{
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.cpp"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.h"
+		//}
 	}
 }
