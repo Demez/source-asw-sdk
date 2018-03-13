@@ -1,0 +1,33 @@
+"GameInfo"
+{
+	"game"		"Half-Life 2: Revamped"			// Game title in Steam
+	"title"		"Half-Life 2: Revamped"			// Change me!
+	"type"		"singleplayer_only"
+	"icon"		"icon"					// Icon in Steam
+
+	"developer"	"Demez, For HL2-Port: Strider[RUS] with help of AndreaZzZ, Aluminum Ken, Levan, Hopeless CatE and many others..."
+	"developer_url"	""
+
+	//GameData	"halflife2.fgd"
+	SupportsDX8     0
+	
+	"FileSystem"
+	{
+		"SteamAppId"		"630"			// Alien Swarm
+		"SearchPaths"
+		{
+			"Game"	"|gameinfo_path|."
+			
+			"Game"	"..\Half-Life 2/hl2"			// This is temporary workaround for ep2 maps mounting
+
+			// if i use reactive drop for the few engine fixes
+			"Game"	"reactivedrop"						// Reactive Drop Folder
+			
+			// or if i use regular swarm
+			"Game"	"swarm"						// Alien Swarm Folder
+			"Game"	"swarm_base"						// Alien Swarm Folder
+			
+			"Game"	"platform"
+		}
+	}
+}

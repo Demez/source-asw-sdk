@@ -1,0 +1,32 @@
+$Project "client"
+{
+	"game\client\client_episodic.vpc"			[$EPISODIC]
+	"game\client\client_hl2.vpc"				[$HL2]
+	"game\client\client_hl2r.vpc"				[$HL2R]
+	"game\client\client_hl2mp.vpc"				[$HL2MP]
+}
+
+$Project "server"
+{	
+	"game\server\server_episodic.vpc"			[$EPISODIC]
+	"game\server\server_hl2.vpc"				[$HL2]
+	"game\server\server_hl2r.vpc"				[$HL2R]
+	"game\server\server_hl2mp.vpc"				[$HL2MP]
+}
+
+$Project "missionchooser"
+{
+	"game\missionchooser\missionchooser_swarm.vpc"	[$SWARM]
+}
+
+$Project "shaderlib"
+{
+	"materialsystem\shaderlib\shaderlib.vpc"
+}
+
+$Project "game_shader_dx9"
+{
+	//"materialsystem\stdshaders\game_shader_dx9_base.vpc"
+	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc" 				[$HL2]
+	"materialsystem\stdshaders\game_shader_dx9_hl2r.vpc" 				[$HL2R]
+}
