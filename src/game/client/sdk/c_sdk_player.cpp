@@ -199,7 +199,7 @@ void C_SDKRagdoll::CreateRagdoll()
 			Interp_Copy( pPlayer );
 
 			SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetRotationInterpolator().Reset();
+			GetRotationInterpolator().Reset(gpGlobals->curtime);
 
 			m_flAnimTime = pPlayer->m_flAnimTime;
 			SetSequence( pPlayer->GetSequence() );
@@ -244,11 +244,11 @@ void C_SDKRagdoll::CreateRagdoll()
 	SetModelIndex( m_nModelIndex );
 
 	// Make us a ragdoll..
-	m_nRenderFX = kRenderFxRagdoll;
+	SetRenderFX( kRenderFxRagdoll );
 
-	matrix3x4_t boneDelta0[MAXSTUDIOBONES];
-	matrix3x4_t boneDelta1[MAXSTUDIOBONES];
-	matrix3x4_t currentBones[MAXSTUDIOBONES];
+	matrix3x4a_t boneDelta0[MAXSTUDIOBONES];
+	matrix3x4a_t boneDelta1[MAXSTUDIOBONES];
+	matrix3x4a_t currentBones[MAXSTUDIOBONES];
 	const float boneDt = 0.05f;
 
 	if ( pPlayer && !pPlayer->IsDormant() )

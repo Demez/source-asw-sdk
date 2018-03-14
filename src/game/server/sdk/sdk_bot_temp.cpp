@@ -116,7 +116,7 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 }
 
 // Handler for the "bot" command.
-CON_COMMAND_F( "bot_add", "Add a bot.", FCVAR_CHEAT )
+void Bot_Add_f(const CCommand &args)
 {
 	// Look at -count.
 	int count = args.FindArgInt( "-count", 1 );
@@ -132,6 +132,7 @@ CON_COMMAND_F( "bot_add", "Add a bot.", FCVAR_CHEAT )
 	}
 }
 
+ConCommand bot_add("bot_add", Bot_Add_f, "Add a bot.", FCVAR_CHEAT);
 
 //-----------------------------------------------------------------------------
 // Purpose: Run through all the Bots in the game and let them think.
@@ -340,7 +341,7 @@ void Bot_HandleSendCmd( CSDKBot *pBot )
 	if ( strlen( bot_sendcmd.GetString() ) > 0 )
 	{
 		//send the cmd from this bot
-		pBot->ClientCommand( bot_sendcmd.GetString() );
+		engine->ClientCommand( pBot->edict(), bot_sendcmd.GetString() );
 
 		bot_sendcmd.SetValue("");
 	}

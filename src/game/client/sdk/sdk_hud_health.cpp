@@ -117,7 +117,7 @@ void CHudHealth::OnThink()
 	if ( local )
 	{
 		// Never below zero
-		newHealth = max( local->GetHealth(), 0 );
+		newHealth = MAX( local->GetHealth(), 0 );
 	}
 
 	// Only update the fade if we've changed health
@@ -130,12 +130,12 @@ void CHudHealth::OnThink()
 
 	if ( m_iHealth >= 20 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedAbove20");
+		GetClientMode()->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedAbove20");
 	}
 	else if ( m_iHealth > 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedBelow20");
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
+		GetClientMode()->GetViewportAnimationController()->StartAnimationSequence("HealthIncreasedBelow20");
+		GetClientMode()->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
 	}
 
 	SetDisplayValue(m_iHealth);
@@ -164,7 +164,7 @@ void CHudHealth::MsgFunc_Damage( bf_read &msg )
 		if ( damageTaken > 0 )
 		{
 			// start the animation
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthDamageTaken");
+			GetClientMode()->GetViewportAnimationController()->StartAnimationSequence("HealthDamageTaken");
 		}
 	}
 }

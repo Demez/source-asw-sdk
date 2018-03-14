@@ -10,6 +10,10 @@
 #include "asw_gamerules.h"
 #elif TF_CLIENT_DLL
 #include "tf_gamerules.h"
+#elif SDK_DLL
+#include "sdk_gamerules.h"
+#else
+#error "GameRules not included!"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -130,11 +134,15 @@ int CASW_Background_Movie::SetTextureMaterial()
 
 void CASW_Background_Movie::Update()
 {
-	if ( engine->IsConnected() && 
+	if (engine->IsConnected() &&
 #ifdef SWARM_DLL
 		ASWGameRules()
-#else
+#elif TF_DLL
 		TFGameRules()
+#elif SDK_DLL
+		SDKGameRules()
+#else
+#error "GameRules"
 #endif
 		)
 	{

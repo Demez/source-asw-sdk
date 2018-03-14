@@ -280,12 +280,12 @@ int CSDKPlayerAnimState::CalcReloadLayerSequence()
 		// Now dump the state into its animation layer.
 		C_AnimationLayer *pLayer = m_pOuter->GetAnimOverlay( iLayer );
 
-		pLayer->m_flCycle = flCurCycle;
-		pLayer->m_nSequence = iSequence;
+		pLayer->SetCycle( flCurCycle );
+		pLayer->SetSequence( iSequence );
 
-		pLayer->m_flPlaybackRate = 1.0;
-		pLayer->m_flWeight = 1.0f;
-		pLayer->m_nOrder = iLayer;
+		pLayer->SetPlaybackRate( 1.0 );
+		pLayer->SetWeight( 1.0f );
+		pLayer->SetOrder( iLayer);
 	}
 #endif
 

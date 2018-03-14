@@ -28,7 +28,7 @@ public:
 	CHudGameMessage( const char *pElementName ) : CHudElement( pElementName ), vgui::Panel( NULL, "HudGameMessage" ) 
 	{
 		// Set our parent window
-		SetParent( g_pClientMode->GetViewport() );
+		SetParent( GetClientMode()->GetViewport() );
 		
 		m_pIcon = NULL;
 
@@ -57,8 +57,8 @@ DECLARE_HUD_MESSAGE( CHudGameMessage, GameMessage );
 void CHudGameMessage::VidInit( void )
 {
 	// Store off a reference to our icon
-	m_pIcon = gHUD.GetIcon( "message_icon" );
-
+	m_pIcon = HudIcons().GetIcon( "message_icon" );
+	
 	m_pText[0] = '\0';
 }
 

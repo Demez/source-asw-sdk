@@ -41,7 +41,7 @@ void SDKViewport::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
 	BaseClass::ApplySchemeSettings( pScheme );
 
-	gHUD.InitColors( pScheme );
+	GetHud().InitColors( pScheme );
 
 	SetPaintBackgroundEnabled( false );
 }
@@ -72,7 +72,7 @@ int SDKViewport::GetDeathMessageStartHeight( void )
 {
 	int x = YRES(2);
 
-	IViewPortPanel *spectator = gViewPortInterface->FindPanelByName( PANEL_SPECGUI );
+	IViewPortPanel *spectator = GetViewPortInterface()->FindPanelByName( PANEL_SPECGUI );
 
 	//TODO: Link to actual height of spectator bar
 	if ( spectator && spectator->IsVisible() )

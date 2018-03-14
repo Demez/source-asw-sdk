@@ -66,7 +66,7 @@ END_NETWORK_TABLE()
 		}
 	}
 
-	int CBaseGrenadeProjectile::DrawModel( int flags )
+	int CBaseGrenadeProjectile::DrawModel( int flags, const RenderableInstance_t &instance)
 	{
 		// During the first half-second of our life, don't draw ourselves if he's
 		// still playing his throw animation.
@@ -83,7 +83,7 @@ END_NETWORK_TABLE()
 			}
 		}
 
-		return BaseClass::DrawModel( flags );
+		return BaseClass::DrawModel( flags, instance );
 	}
 
 	void CBaseGrenadeProjectile::Spawn()
