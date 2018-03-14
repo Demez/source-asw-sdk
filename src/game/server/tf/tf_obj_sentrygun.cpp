@@ -274,7 +274,7 @@ void CObjectSentrygun::OnGoActive( void )
 	EmitSound( "Building_Sentrygun.Built" );
 
 	// if our eye pos is underwater, we're waterlevel 3, else 0
-	bool bUnderwater = ( UTIL_PointContents( EyePosition() ) & MASK_WATER ) ? true : false;
+	bool bUnderwater = ( UTIL_PointContents( EyePosition(), MASK_WATER) ) ? true : false;
 	SetWaterLevel( ( bUnderwater ) ? 3 : 0 );	
 
 	m_iAmmoShells = m_iMaxAmmoShells;
@@ -1026,7 +1026,7 @@ bool CObjectSentrygun::Fire()
 		info.m_vecSpread = vec3_origin;
 		info.m_flDistance = flDistToTarget + 100;
 		info.m_iAmmoType = m_iAmmoType;
-		info.m_iDamage = tf_sentrygun_damage.GetInt();
+		info.m_flDamage = tf_sentrygun_damage.GetInt();
 
 		FireBullets( info );
 

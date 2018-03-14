@@ -33,7 +33,7 @@ class C_FuncRespawnRoomVisualizer : public C_BaseEntity
 public:
 	DECLARE_CLIENTCLASS();
 
-	virtual int DrawModel( int flags );
+	virtual int DrawModel(int flags, const RenderableInstance_t& instance);
 
 	virtual bool ShouldCollide( int collisionGroup, int contentsMask ) const;
 };
@@ -45,7 +45,7 @@ END_RECV_TABLE()
 //-----------------------------------------------------------------------------
 // Purpose: Don't draw for friendly players
 //-----------------------------------------------------------------------------
-int C_FuncRespawnRoomVisualizer::DrawModel( int flags )
+int C_FuncRespawnRoomVisualizer::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// Don't draw for anyone in endround
 	if ( TFGameRules()->State_Get() == GR_STATE_TEAM_WIN )
@@ -59,8 +59,8 @@ int C_FuncRespawnRoomVisualizer::DrawModel( int flags )
 	{
 		return 1;
 	}
-
-	return BaseClass::DrawModel( flags );
+	
+	return BaseClass::DrawModel( flags, instance );
 }
 
 //-----------------------------------------------------------------------------

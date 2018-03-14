@@ -98,9 +98,9 @@ public:
 	bool IsOwnedByLocalPlayer() const;
 	C_TFPlayer *GetOwner();
 
-	virtual void	Simulate();
+	virtual bool	Simulate();
 
-	virtual int		DrawModel( int flags );
+	virtual int		DrawModel( int flags, const RenderableInstance_t& instance );
 
 	float			GetPercentageConstructed( void ) { return m_flPercentageConstructed; }
 

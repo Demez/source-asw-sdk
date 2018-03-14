@@ -1247,9 +1247,9 @@ void CCaptureFlagReturnIcon::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CCaptureFlagReturnIcon::DrawModel( int flags )
+int CCaptureFlagReturnIcon::DrawModel( int flags, const RenderableInstance_t& instance )
 {
-	int nRetVal = BaseClass::DrawModel( flags );
+	int nRetVal = BaseClass::DrawModel( flags, instance );
 	
 	DrawReturnProgressBar();
 

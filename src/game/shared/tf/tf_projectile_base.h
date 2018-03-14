@@ -84,7 +84,7 @@ protected:
 
 public:
 
-	virtual int		DrawModel( int flags );
+	virtual int		DrawModel( int flags, const RenderableInstance_t& instance );
 	virtual void	PostDataUpdate( DataUpdateType_t type );
 
 private:

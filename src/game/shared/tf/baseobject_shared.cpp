@@ -143,7 +143,7 @@ void CBaseObject::AddValidObjectToBuildPoint( int iPoint, int iObjectType )
 //-----------------------------------------------------------------------------
 int CBaseObject::GetNumBuildPoints( void ) const
 {
-	return m_BuildPoints.Size();
+	return m_BuildPoints.Count();
 }
 
 //-----------------------------------------------------------------------------

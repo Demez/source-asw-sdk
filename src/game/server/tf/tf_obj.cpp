@@ -1153,8 +1153,8 @@ bool CBaseObject::StartBuilding( CBaseEntity *pBuilder )
 
 	m_vecBuildOrigin = GetAbsOrigin();
 
-	int contents = UTIL_PointContents( m_vecBuildOrigin );
-	if ( contents & MASK_WATER )
+	int contents = UTIL_PointContents( m_vecBuildOrigin, MASK_WATER);
+	if ( contents )
 	{
 		SetWaterLevel( 3 );
 	}

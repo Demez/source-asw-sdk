@@ -814,7 +814,7 @@ void CSniperDot::Update( CBaseEntity *pTarget, const Vector &vecOrigin, const Ve
 // Purpose: 
 // TFTODO: Make the sniper dot get brighter the more damage it will do.
 //-----------------------------------------------------------------------------
-int CSniperDot::DrawModel( int flags )
+int CSniperDot::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// Get the owning player.
 	C_TFPlayer *pPlayer = ToTFPlayer( GetOwnerEntity() );

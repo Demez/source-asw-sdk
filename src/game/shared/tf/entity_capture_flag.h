@@ -97,7 +97,7 @@ public:
 
 #ifdef CLIENT_DLL
 
-	virtual int		DrawModel( int flags );
+	virtual int		DrawModel( int flags, const RenderableInstance_t& instance );
 	void			DrawReturnProgressBar( void );
 
 	virtual RenderGroup_t GetRenderGroup( void );

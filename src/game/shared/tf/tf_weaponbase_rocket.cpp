@@ -183,13 +183,13 @@ void CTFBaseRocket::PostDataUpdate( DataUpdateType_t type )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CTFBaseRocket::DrawModel( int flags )
+int CTFBaseRocket::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// During the first 0.2 seconds of our life, don't draw ourselves.
 	if ( gpGlobals->curtime - m_flSpawnTime < 0.2f )
 		return 0;
 
-	return BaseClass::DrawModel( flags );
+	return BaseClass::DrawModel( flags, instance );
 }
 
 //=============================================================================

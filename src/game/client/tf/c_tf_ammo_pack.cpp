@@ -23,7 +23,7 @@ public:
 
 	~C_TFAmmoPack();
 
-	virtual int		DrawModel( int flags );
+	virtual int		DrawModel( int flags, const RenderableInstance_t& instance );
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
 	virtual bool	Interpolate( float currentTime );
 
@@ -63,7 +63,7 @@ C_TFAmmoPack::~C_TFAmmoPack()
 // Input  : flags - 
 // Output : int
 //-----------------------------------------------------------------------------
-int C_TFAmmoPack::DrawModel( int flags )
+int C_TFAmmoPack::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// Debug!
 	if ( tf_debug_weapontrail.GetBool() )
@@ -72,7 +72,7 @@ int C_TFAmmoPack::DrawModel( int flags )
 		debugoverlay->AddBoxOverlay( GetAbsOrigin(), Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), QAngle( 0, 0, 0 ), 255, 255, 0, 32, 5.0 );
 	}
 
-	return BaseClass::DrawModel( flags );
+	return BaseClass::DrawModel( flags, instance );
 }
 
 //-----------------------------------------------------------------------------
