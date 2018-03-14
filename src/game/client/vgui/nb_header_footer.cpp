@@ -8,8 +8,12 @@
 #ifdef SWARM_DLL
 #include "asw_video.h"
 #include "asw_gamerules.h"
+#elif HL2_CLIENT_DLL
+#include "hl2_gamerules.h"
 #elif TF_CLIENT_DLL
 #include "tf_gamerules.h"
+#elif CSTRIKE_DLL
+#include "cstrike_gamerules.h"
 #elif SDK_DLL
 #include "sdk_gamerules.h"
 #else
@@ -137,8 +141,12 @@ void CASW_Background_Movie::Update()
 	if (engine->IsConnected() &&
 #ifdef SWARM_DLL
 		ASWGameRules()
+#elif HL2_CLIENT_DLL
+		HL2GameRules()
 #elif TF_DLL
 		TFGameRules()
+//#elif CSTRIKE_DLL
+//		CSGameRules()
 #elif SDK_DLL
 		SDKGameRules()
 #else

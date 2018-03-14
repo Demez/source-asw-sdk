@@ -335,10 +335,12 @@ void InGameMainMenu::OnCommand( const char *command )
 
 		confirmation->SetUsageData(data);
 	}
+#ifdef SWARM_DLL
 	else if( !Q_strcmp( command, "Addons" ) )
 	{
 		CBaseModPanel::GetSingleton().OpenWindow( WT_ADDONS, this, true );
 	}
+#endif
 	else
 	{
 		const char *pchCommand = command;
@@ -362,7 +364,9 @@ void InGameMainMenu::OnCommand( const char *command )
 			}
 			else
 			{
+#ifdef SWARM_DLL
 				ShowPlayerList();
+#endif
 			}
 			engine->ClientCmd("gameui_hide");
 			return;

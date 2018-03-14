@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"lostcoast"
+$Macro GAMENAME 	"mod_lostcoast"
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
@@ -14,7 +14,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories		"$BASE;hl2,.\hl2\elements,$SRCDIR\game\shared\hl2"
-		$PreprocessorDefinitions			"$BASE;HL2_CLIENT_DLL;HL2_LOSTCOAST;HL2_EPISODIC"
+		$PreprocessorDefinitions			"$BASE;HL2_CLIENT_DLL;HL2_LOSTCOAST;HL2_EPISODIC;GAMEUI_EMBEDDED;GAMEUI_EXPORTS"
 	}
 }
 
@@ -25,6 +25,8 @@ $Project "Client (LostCoast)"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
 		$File	"hud_chat.cpp"
+		$File	"ClientEffectPrecacheSystem.cpp"
+		$File	"ClientEffectPrecacheSystem.h"
 
 		$Folder	"HL2 DLL"
 		{

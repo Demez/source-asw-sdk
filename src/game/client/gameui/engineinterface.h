@@ -25,10 +25,10 @@
 #include "tier2/tier2.h"
 #include "matchmaking/imatchframework.h"
 
-#ifdef SWARM_DLL
+//#ifdef SWARM_DLL
 #include "matchmaking/swarm/imatchext_swarm.h"
 extern class IMatchExtSwarm *g_pMatchExtSwarm;
-#endif
+//#endif
 
 
 

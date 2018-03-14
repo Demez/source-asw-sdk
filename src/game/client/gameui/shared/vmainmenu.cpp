@@ -672,10 +672,12 @@ void MainMenu::OnCommand( const char *command )
 		// Pass it straight to the engine as a command
 		engine->ClientCmd( command+1 );
 	}
+#ifdef SWARM_DLL
 	else if( !Q_strcmp( command, "Addons" ) )
 	{
 		CBaseModPanel::GetSingleton().OpenWindow( WT_ADDONS, this, true );
 	}
+#endif
 	else if( !Q_strcmp( command, "CreateGame" ) )
 	{
 		KeyValues *pSettings = KeyValues::FromString(

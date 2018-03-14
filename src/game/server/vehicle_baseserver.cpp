@@ -476,7 +476,7 @@ void CBaseServerVehicle::SetPassenger( int nRole, CBaseCombatCharacter *pPasseng
 
 				if ( pHL2Player->FlashlightIsOn() )
 				{
-#ifdef JALOPY
+#ifdef REVAMPED_DLL
 					pHL2Player->FlashlightTurnOff( false );
 #else
 					pHL2Player->FlashlightTurnOff();

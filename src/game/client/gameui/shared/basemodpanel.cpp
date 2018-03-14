@@ -28,7 +28,7 @@
 #include "VTransitionScreen.h"
 #include "VAchievements.h"
 #include "vaddonassociation.h"
-#include "VAddons.h"
+
 #include "VAttractScreen.h"
 #include "VAudio.h"
 #include "VAudioVideo.h"
@@ -58,7 +58,7 @@
 #include "VSteamCloudConfirmation.h"
 #include "vcustomcampaigns.h"
 #include "vdownloadcampaign.h"
-#include "vjukebox.h"
+
 #include "vleaderboard.h"
 #include "gameconsole.h"
 #include "vgui/ISystem.h"
@@ -86,6 +86,11 @@
 #include "VFoundGroupGames.h"
 #include "vfoundpublicgames.h"
 #include "VGameLobby.h"
+
+#ifdef SWARM_DLL
+#include "..\swarm\gameui\VAddons.h"
+#include "..\swarm\gameui\vjukebox.h"
+#endif
 
 // UI defines. Include if you want to implement some of them [str]
 #include "..\specific\ui_defines_swarm.h"
@@ -523,6 +528,7 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[ wt ] = new Leaderboard( this );
 			break;
 
+#ifdef SWARM_DLL
 		case WT_ADDONS:
 #if defined( _X360 )
 			// not for xbox
@@ -542,7 +548,7 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[wt] = new VJukebox( this, "Jukebox" );
 #endif
 			break;
-
+#endif
 		case WT_ADDONASSOCIATION:
 #if defined( _X360 )
 			// not for xbox

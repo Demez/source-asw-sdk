@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"cstrike"
+$Macro GAMENAME 	"mod_cstrike"
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
@@ -14,7 +14,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories		"$BASE;$SRCDIR\game\shared\cstrike\control,.\cstrike,.\cstrike\control,.\cstrike\vgui,$SRCDIR\game\shared\cstrike"
-		$PreprocessorDefinitions			"$BASE;CSTRIKE_DLL"
+		$PreprocessorDefinitions			"$BASE;CSTRIKE_DLL;GAMEUI_EMBEDDED;GAMEUI_EXPORTS"
 	}
 }
 

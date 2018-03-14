@@ -188,7 +188,6 @@ $Project
 						"gameui\shared\uigamedata.h" \
 						"gameui\shared\vachievements.h" \
 						"gameui\shared\vaddonassociation.h" \
-						"gameui\shared\vaddons.h" \
 						"gameui\shared\vattractscreen.h" \
 						"gameui\shared\vaudio.h" \
 						"gameui\shared\vaudiovideo.h" \
@@ -219,7 +218,6 @@ $Project
 						"gameui\shared\vingamedifficultyselect.h" \
 						"gameui\shared\vingamekickplayerlist.h" \
 						"gameui\shared\vingamemainmenu.h" \
-						"gameui\shared\vjukebox.h" \
 						"gameui\shared\vkeyboard.h" \
 						"gameui\shared\vkeyboardmouse.h" \
 						"gameui\shared\vleaderboard.h" \
@@ -246,13 +244,11 @@ $Project
 				{
 					$File	"gameui\shared\uiavatarimage.cpp" \
 							"gameui\shared\vaddonassociation.cpp" \
-							"gameui\shared\vaddons.cpp" \
 							"gameui\shared\vcloud.cpp" \
 							"gameui\shared\vcustomcampaigns.cpp" \
 							"gameui\shared\vdownloadcampaign.cpp" \
 							"gameui\shared\vdownloads.cpp" \
 							"gameui\shared\vgetlegacydata.cpp" \
-							"gameui\shared\vjukebox.cpp" \
 							"gameui\shared\vkeyboard.cpp" \
 							"gameui\shared\vkeyboardmouse.cpp" \
 							"gameui\shared\vsteamcloudconfirmation.cpp"

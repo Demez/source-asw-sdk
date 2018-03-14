@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"hl1"
+$Macro GAMENAME 	"mod_hl1"
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
@@ -14,7 +14,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories		"$BASE;.\hl1,.\hl2,.\hl2\elements,$SRCDIR\game\shared\hl1,$SRCDIR\game\shared\hl2"
-		$PreprocessorDefinitions			"$BASE;HL1_CLIENT_DLL"
+		$PreprocessorDefinitions			"$BASE;HL1_CLIENT_DLL;GAMEUI_EMBEDDED;GAMEUI_EXPORTS"
 	}
 }
 

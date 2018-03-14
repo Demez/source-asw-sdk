@@ -832,6 +832,7 @@ void Audio::OnCommand(const char *command)
 			}
 		}
 	}
+#ifdef SWARM_DLL
 	else if( !Q_strcmp( command, "Jukebox" ) )
 	{
 		if ( m_pVoiceTweak && m_pMicMeter2 )
@@ -844,6 +845,7 @@ void Audio::OnCommand(const char *command)
 
 		CBaseModPanel::GetSingleton().OpenWindow( WT_JUKEBOX, this, true );
 	}
+#endif
 	else if( Q_stricmp( "Back", command ) == 0 )
 	{
 		OnKeyCodePressed( ButtonCodeToJoystickButtonCode( KEY_XBUTTON_B, CBaseModPanel::GetSingleton().GetLastActiveUserId() ) );
