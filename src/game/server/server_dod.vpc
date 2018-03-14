@@ -170,7 +170,7 @@ $Project "Server (DoD)"
 			$File	"$SRCDIR\game\shared\dod\weapon_thompson.cpp"
 		}
 
-		$Folder	"IFM"
+		/*$Folder	"IFM"
 		{
 			$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
 			$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
@@ -178,6 +178,6 @@ $Project "Server (DoD)"
 			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
 			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
 			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.h"
-		}
+		}*/
 	}
 }

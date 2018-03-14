@@ -109,7 +109,7 @@ $Project "Client (DOD)"
 			$File	"$SRCDIR\game\shared\dod\dod_shareddefs.cpp"
 			$File	"$SRCDIR\game\shared\dod\dod_shareddefs.h"
 			$File	"$SRCDIR\game\shared\dod\dod_usermessages.cpp"
-			$File	"$SRCDIR\game\shared\dod\dod_util_shared.h"
+			//$File	"$SRCDIR\game\shared\dod\dod_util_shared.h"
 			$File	"dod\dod_view_scene.cpp"
 			$File	"dod\dod_view_scene.h"
 			$File	"$SRCDIR\game\shared\dod\dod_viewmodel.cpp"
@@ -218,14 +218,14 @@ $Project "Client (DOD)"
 			$File	"game_controls\classmenu.cpp"
 		}
 
-		$Folder	"IFM"
+		/*$Folder	"IFM"
 		{
 			$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
 			$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
 			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.cpp"
 			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
 			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
-		}
+		}*/
 	}
 
 	$Folder	"Header Files"
