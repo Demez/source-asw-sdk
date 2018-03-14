@@ -143,7 +143,7 @@ void CBaseObject::AddValidObjectToBuildPoint( int iPoint, int iObjectType )
 //-----------------------------------------------------------------------------
 int CBaseObject::GetNumBuildPoints( void ) const
 {
-	return m_BuildPoints.Size();
+	return m_BuildPoints.Count();
 }
 
 //-----------------------------------------------------------------------------
@@ -516,14 +516,14 @@ bool CBaseObject::CalculatePlacementPos( void )
 
 	// Adjust build distance based upon object size
 	Vector2D vecObjectRadius;
-	vecObjectRadius.x = max( fabs( m_vecBuildMins.m_Value.x ), fabs( m_vecBuildMaxs.m_Value.x ) );
-	vecObjectRadius.y = max( fabs( m_vecBuildMins.m_Value.y ), fabs( m_vecBuildMaxs.m_Value.y ) );
+	vecObjectRadius.x = MAX( fabs( m_vecBuildMins.m_Value.x ), fabs( m_vecBuildMaxs.m_Value.x ) );
+	vecObjectRadius.y = MAX( fabs( m_vecBuildMins.m_Value.y ), fabs( m_vecBuildMaxs.m_Value.y ) );
 
 	Vector2D vecPlayerRadius;
 	Vector vecPlayerMins = pPlayer->WorldAlignMins();
 	Vector vecPlayerMaxs = pPlayer->WorldAlignMaxs();
-	vecPlayerRadius.x = max( fabs( vecPlayerMins.x ), fabs( vecPlayerMaxs.x ) );
-	vecPlayerRadius.y = max( fabs( vecPlayerMins.y ), fabs( vecPlayerMaxs.y ) );
+	vecPlayerRadius.x = MAX( fabs( vecPlayerMins.x ), fabs( vecPlayerMaxs.x ) );
+	vecPlayerRadius.y = MAX( fabs( vecPlayerMins.y ), fabs( vecPlayerMaxs.y ) );
 
 	float flDistance = vecObjectRadius.Length() + vecPlayerRadius.Length() + 4; // small safety buffer
 	Vector vecBuildOrigin = pPlayer->WorldSpaceCenter() + forward * flDistance;

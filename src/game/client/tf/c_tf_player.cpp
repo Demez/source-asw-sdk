@@ -422,11 +422,11 @@ void C_TFRagdoll::CreateTFRagdoll()
 	if ( cl_ragdoll_physics_enable.GetBool() )
 	{
 		// Make us a ragdoll..
-		m_nRenderFX = kRenderFxRagdoll;
-
-		matrix3x4_t boneDelta0[MAXSTUDIOBONES];
-		matrix3x4_t boneDelta1[MAXSTUDIOBONES];
-		matrix3x4_t currentBones[MAXSTUDIOBONES];
+		SetRenderFX( kRenderFxRagdoll );
+		
+		matrix3x4a_t boneDelta0[MAXSTUDIOBONES];
+		matrix3x4a_t boneDelta1[MAXSTUDIOBONES];
+		matrix3x4a_t currentBones[MAXSTUDIOBONES];
 		const float boneDt = 0.05f;
 
 		// We have to make sure that we're initting this client ragdoll off of the same model.
@@ -561,7 +561,7 @@ void C_TFRagdoll::OnDataChanged( DataUpdateType_t type )
 		if ( !cl_ragdoll_physics_enable.GetBool() )
 		{
 			// Don't let it set us back to a ragdoll with data from the server.
-			m_nRenderFX = kRenderFxNone;
+			SetRenderFX( kRenderFxNone );
 		}
 	}
 }
@@ -606,13 +606,13 @@ void C_TFRagdoll::ClientThink( void )
 
 	if ( m_bFadingOut == true )
 	{
-		int iAlpha = GetRenderColor().a;
+		int iAlpha = GetRenderAlpha();
 		int iFadeSpeed = 600.0f;
 
-		iAlpha = max( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
+		iAlpha = MAX( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
 
 		SetRenderMode( kRenderTransAlpha );
-		SetRenderColorA( iAlpha );
+		SetRenderAlpha( iAlpha );
 
 		if ( iAlpha == 0 )
 		{
@@ -819,6 +819,7 @@ public:
 
 		if ( ToolsEnabled() )
 		{
+			
 			ToolFramework_RecordMaterialParams( GetMaterial() );
 		}
 	}
@@ -1264,7 +1265,7 @@ void C_TFPlayer::OnDataChanged( DataUpdateType_t updateType )
 	
 	if ( m_bDisguised != m_Shared.InCond( TF_COND_DISGUISED ) )
 	{
-		m_flDisguiseEndEffectStartTime = max( m_flDisguiseEndEffectStartTime, gpGlobals->curtime );
+		m_flDisguiseEndEffectStartTime = MAX( m_flDisguiseEndEffectStartTime, gpGlobals->curtime );
 	}
 
 	int nNewWaterLevel = GetWaterLevel();
@@ -1546,7 +1547,7 @@ void C_TFPlayer::ResetFlexWeights( CStudioHdr *pStudioHdr )
 	}
 
 	// Reset the prediction interpolation values.
-	m_iv_flexWeight.Reset();
+	m_iv_flexWeight.Reset( gpGlobals->curtime );
 }
 
 //-----------------------------------------------------------------------------
@@ -2218,7 +2219,7 @@ void C_TFPlayer::AvoidPlayers( CUserCmd *pCmd )
 		flSideScale = fabs( cl_sidespeed.GetFloat() ) / fabs( pCmd->sidemove );
 	}
 
-	float flScale = min( flForwardScale, flSideScale );
+	float flScale = MIN( flForwardScale, flSideScale );
 	pCmd->forwardmove *= flScale;
 	pCmd->sidemove *= flScale;
 
@@ -2349,10 +2350,10 @@ float C_TFPlayer::GetEffectiveInvisibilityLevel( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int C_TFPlayer::DrawModel( int flags )
+int C_TFPlayer::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// If we're a dead player with a fresh ragdoll, don't draw
-	if ( m_nRenderFX == kRenderFxRagdoll )
+	if ( GetRenderFX() == kRenderFxRagdoll )
 		return 0;
 
 	// Don't draw the model at all if we're fully invisible
@@ -2405,7 +2406,7 @@ int C_TFPlayer::DrawModel( int flags )
 		pRenderContext->PushDeformation( &mybox );
 	}
 
-	int ret = BaseClass::DrawModel( flags );
+	int ret = BaseClass::DrawModel( flags, instance );
 
 	if ( bDoEffect )
 		pRenderContext->PopDeformation();
@@ -3174,7 +3175,7 @@ void C_TFPlayer::ValidateModelIndex( void )
 //-----------------------------------------------------------------------------
 // Purpose: Simulate the player for this frame
 //-----------------------------------------------------------------------------
-void C_TFPlayer::Simulate( void )
+bool C_TFPlayer::Simulate( void )
 {
 	//Frame updates
 	if ( this == C_BasePlayer::GetLocalPlayer() )
@@ -3186,6 +3187,8 @@ void C_TFPlayer::Simulate( void )
 	// TF doesn't do step sounds based on velocity, instead using anim events
 	// So we deliberately skip over the base player simulate, which calls them.
 	BaseClass::BaseClass::Simulate();
+	
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -3242,9 +3245,9 @@ ShadowType_t C_TFPlayer::ShadowCastType( void )
 
 	if ( IsEffectActive(EF_NODRAW | EF_NOSHADOW) )
 		return SHADOWS_NONE;
-
+	
 	// If in ragdoll mode.
-	if ( m_nRenderFX == kRenderFxRagdoll )
+	if ( GetRenderFX() == kRenderFxRagdoll )
 		return SHADOWS_NONE;
 
 	C_TFPlayer *pLocalPlayer = C_TFPlayer::GetLocalTFPlayer();

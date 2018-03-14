@@ -915,7 +915,7 @@ void CTFGameRules::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecS
 			float flToWorldSpaceCenter = ( vecSrc - pEntity->WorldSpaceCenter() ).Length();
 			float flToOrigin = ( vecSrc - pEntity->GetAbsOrigin() ).Length();
 
-			flDistanceToEntity = min( flToWorldSpaceCenter, flToOrigin );
+			flDistanceToEntity = MIN( flToWorldSpaceCenter, flToOrigin );
 		}
 		else
 		{
@@ -2145,7 +2145,7 @@ void CTFGameRules::SendWinPanelInfo( void )
 		vecPlayerScore.Sort( PlayerRoundScoreSortFunc );
 
 		// set the top (up to) 3 players by round score in the event data
-		int numPlayers = min( 3, vecPlayerScore.Count() );
+		int numPlayers = MIN( 3, vecPlayerScore.Count() );
 		for ( int i = 0; i < numPlayers; i++ )
 		{
 			// only include players who have non-zero points this round; if we get to a player with 0 round points, stop
@@ -2784,7 +2784,7 @@ int CTFGameRules::CalcPlayerScore( RoundStats_t *pRoundStats )
 					( pRoundStats->m_iStat[TFSTAT_TELEPORTS] / TF_SCORE_TELEPORTS_PER_POINT ) +
 					( pRoundStats->m_iStat[TFSTAT_INVULNS] / TF_SCORE_INVULN ) +
 					( pRoundStats->m_iStat[TFSTAT_REVENGE] / TF_SCORE_REVENGE );
-	return max( iScore, 0 );
+	return MAX( iScore, 0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -2828,7 +2828,8 @@ bool CTFGameRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 	if ( collisionGroup0 > collisionGroup1 )
 	{
 		// swap so that lowest is always first
-		swap( collisionGroup0, collisionGroup1 );
+		V_swap( collisionGroup0, collisionGroup1 );
+		
 	}
 	
 	//Don't stand on COLLISION_GROUP_WEAPONs
@@ -3232,7 +3233,7 @@ bool CTFGameRules::ShouldShowTeamGoal( void )
 void CTFGameRules::ShutdownCustomResponseRulesDicts()
 {
 	DestroyCustomResponseSystems();
-
+	
 	if ( m_ResponseRules.Count() != 0 )
 	{
 		int nRuleCount = m_ResponseRules.Count();

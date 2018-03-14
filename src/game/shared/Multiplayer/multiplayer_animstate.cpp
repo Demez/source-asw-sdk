@@ -370,7 +370,7 @@ void CMultiPlayerAnimState::ResetGestureSlot( int iGestureSlot )
 	{
 #ifdef CLIENT_DLL
 		// briefly set to 1.0 so we catch the events, before we reset the slot
-		pGestureSlot->m_pAnimLayer->m_flCycle = 1.0;
+		pGestureSlot->m_pAnimLayer->SetCycle( 1.0 );
 
 		RunGestureSlotAnimEventsToCompletion( pGestureSlot );
 #endif
@@ -406,9 +406,10 @@ void CMultiPlayerAnimState::RunGestureSlotAnimEventsToCompletion( GestureSlot_t 
 		return;
 
 	// Do all the anim events between previous cycle and 1.0, inclusive
-	mstudioseqdesc_t &seqdesc = pStudioHdr->pSeqdesc( pGesture->m_pAnimLayer->m_nSequence );
+	mstudioseqdesc_t &seqdesc = pStudioHdr->pSeqdesc( pGesture->m_pAnimLayer->GetSequence() );
 	if ( seqdesc.numevents > 0 )
 	{
+		
 		mstudioevent_t *pevent = seqdesc.pEvent( 0 );
 
 		for (int i = 0; i < (int)seqdesc.numevents; i++)
@@ -418,13 +419,13 @@ void CMultiPlayerAnimState::RunGestureSlotAnimEventsToCompletion( GestureSlot_t 
 				if ( !( pevent[i].type & AE_TYPE_CLIENT ) )
 					continue;
 			}
-			else if ( pevent[i].event < 5000 ) //Adrian - Support the old event system
+			else if ( pevent[i].Event() < 5000 ) //Adrian - Support the old event system
 				continue;
 
-			if ( pevent[i].cycle > pGesture->m_pAnimLayer->m_flPrevCycle &&
-				pevent[i].cycle <= pGesture->m_pAnimLayer->m_flCycle )
+			if ( pevent[i].cycle > pGesture->m_pAnimLayer->GetPrevCycle() &&
+				pevent[i].cycle <= pGesture->m_pAnimLayer->GetCycle() )
 			{
-				pPlayer->FireEvent( pPlayer->GetAbsOrigin(), pPlayer->GetAbsAngles(), pevent[ i ].event, pevent[ i ].pszOptions() );
+				pPlayer->FireEvent( pPlayer->GetAbsOrigin(), pPlayer->GetAbsAngles(), pevent[ i ].Event(), pevent[ i ].pszOptions() );
 			}
 		}
 	}
@@ -473,7 +474,7 @@ void CMultiPlayerAnimState::RestartGesture( int iGestureSlot, Activity iGestureA
 			GestureSlot_t *pGesture = &m_aGestureSlots[iGestureSlot];
 			if ( pGesture && pGesture->m_pAnimLayer )
 			{
-				pGesture->m_pAnimLayer->m_flCycle = 1.0; // run until the end
+				pGesture->m_pAnimLayer->SetCycle(1.0); // run until the end
 				RunGestureSlotAnimEventsToCompletion( &m_aGestureSlots[iGestureSlot] );
 			}
 		}
@@ -485,8 +486,8 @@ void CMultiPlayerAnimState::RestartGesture( int iGestureSlot, Activity iGestureA
 	}
 
 	// Reset the cycle = restart the gesture.
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flCycle = 0.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flPrevCycle = 0.0f;
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetCycle( 0.0f );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetPrevCycle( 0.0f );
 }
 
 //-----------------------------------------------------------------------------
@@ -517,17 +518,16 @@ void CMultiPlayerAnimState::AddToGestureSlot( int iGestureSlot, Activity iGestur
 	m_aGestureSlots[iGestureSlot].m_iActivity = iGestureActivity;
 	m_aGestureSlots[iGestureSlot].m_bAutoKill = bAutoKill;
 	m_aGestureSlots[iGestureSlot].m_bActive = true;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_nSequence = iGestureSequence;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_nOrder = iGestureSlot;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flWeight = 1.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flPlaybackRate = 1.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flCycle = 0.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flPrevCycle = 0.0f;
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetSequence( iGestureSequence );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetOrder( iGestureSlot );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetWeight( 1.0f );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetPlaybackRate( 1.0f );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetCycle( 0.0f );
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetPrevCycle( 0.0f );
 	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flLayerAnimtime = 0.0f;
 	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flLayerFadeOuttime = 0.0f;
 
-	pPlayer->m_flOverlayPrevEventCycle[iGestureSlot] = -1.0;
-
+	pPlayer->SetOverlayPrevEventCycle(iGestureSlot, -1.0);
 #else
 
 	// Setup the gesture.
@@ -589,16 +589,16 @@ void CMultiPlayerAnimState::AddVCDSequenceToGestureSlot( int iGestureSlot, int i
 	m_aGestureSlots[iGestureSlot].m_iActivity = iGestureActivity;
 	m_aGestureSlots[iGestureSlot].m_bAutoKill = bAutoKill;
 	m_aGestureSlots[iGestureSlot].m_bActive = true;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_nSequence = iGestureSequence;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_nOrder = iGestureSlot;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flWeight = 1.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flPlaybackRate = 1.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flCycle = 0.0f;
-	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flPrevCycle = 0.0f;
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetSequence(iGestureSequence);
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetOrder(iGestureSlot);
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetWeight(1.0f);
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetPlaybackRate(1.0f);
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetCycle(0.0f);
+	m_aGestureSlots[iGestureSlot].m_pAnimLayer->SetPrevCycle(0.0f);
 	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flLayerAnimtime = 0.0f;
 	m_aGestureSlots[iGestureSlot].m_pAnimLayer->m_flLayerFadeOuttime = 0.0f;
 
-	pPlayer->m_flOverlayPrevEventCycle[iGestureSlot] = -1.0;
+	pPlayer->SetOverlayPrevEventCycle(iGestureSlot, -1.0);
 
 #else
 
@@ -1039,7 +1039,7 @@ void CMultiPlayerAnimState::ResetGroundSpeed( void )
 {
 #ifdef CLIENT_DLL
 		m_flMaxGroundSpeed = GetCurrentMaxGroundSpeed();
-		m_iv_flMaxGroundSpeed.Reset();
+		m_iv_flMaxGroundSpeed.Reset( gpGlobals->curtime );
 		m_iv_flMaxGroundSpeed.NoteChanged( gpGlobals->curtime, 0, false );
 #endif
 }
@@ -1112,11 +1112,11 @@ void CMultiPlayerAnimState::UpdateGestureLayer( CStudioHdr *pStudioHdr, GestureS
 #ifdef CLIENT_DLL 
 
 	// Get the current cycle.
-	float flCycle = pGesture->m_pAnimLayer->m_flCycle;
-	flCycle += pPlayer->GetSequenceCycleRate( pStudioHdr, pGesture->m_pAnimLayer->m_nSequence ) * gpGlobals->frametime;
+	float flCycle = pGesture->m_pAnimLayer->GetCycle();
+	flCycle += pPlayer->GetSequenceCycleRate( pStudioHdr, pGesture->m_pAnimLayer->GetSequence() ) * gpGlobals->frametime;
 
-	pGesture->m_pAnimLayer->m_flPrevCycle =	pGesture->m_pAnimLayer->m_flCycle;
-	pGesture->m_pAnimLayer->m_flCycle = flCycle;
+	pGesture->m_pAnimLayer->SetPrevCycle( pGesture->m_pAnimLayer->GetCycle() );
+	pGesture->m_pAnimLayer->SetCycle( flCycle );
 
 	if( flCycle > 1.0f )
 	{
@@ -1129,7 +1129,7 @@ void CMultiPlayerAnimState::UpdateGestureLayer( CStudioHdr *pStudioHdr, GestureS
 		}
 		else
 		{
-			pGesture->m_pAnimLayer->m_flCycle = 1.0f;
+			pGesture->m_pAnimLayer->SetCycle( 1.0f );
 		}
 	}
 
@@ -1188,7 +1188,7 @@ void CMultiPlayerAnimState::Update( float eyeYaw, float eyePitch )
 	}
 
 #ifdef CLIENT_DLL
-	if ( C_BasePlayer::ShouldDrawLocalPlayer() )
+	if (GetBasePlayer()->ShouldDrawLocalPlayer() )
 	{
 		GetBasePlayer()->SetPlaybackRate( 1.0f );
 	}
@@ -1619,15 +1619,15 @@ void CMultiPlayerAnimState::DebugShowAnimStateForPlayer( bool bIsServer )
 	{
 #ifdef CLIENT_DLL
 		C_AnimationLayer *pLayer = GetBasePlayer()->GetAnimOverlay( iAnim );
-		if ( pLayer && ( pLayer->m_nOrder != CBaseAnimatingOverlay::MAX_OVERLAYS ) )
+		if ( pLayer && ( pLayer->GetOrder() != CBaseAnimatingOverlay::MAX_OVERLAYS ) )
 		{
-			Anim_StatePrintf( iLine++, "Layer %s: Weight: %.2f, Cycle: %.2f", GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->m_nSequence ), pLayer->m_flWeight, pLayer->m_flCycle );
+			Anim_StatePrintf( iLine++, "Layer %s: Weight: %.2f, Cycle: %.2f", GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->GetSequence() ), pLayer->GetWeight(), pLayer->GetCycle() );
 		}
 #else
 		CAnimationLayer *pLayer = GetBasePlayer()->GetAnimOverlay( iAnim );
 		if ( pLayer && ( pLayer->m_nOrder != CBaseAnimatingOverlay::MAX_OVERLAYS ) )
 		{
-			Anim_StatePrintf( iLine++, "Layer %s: Weight: %.2f, Cycle: %.2f", GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->m_nSequence ), pLayer->m_flWeight, pLayer->m_flCycle );
+			Anim_StatePrintf( iLine++, "Layer %s: Weight: %.2f, Cycle: %.2f", GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->GetSequence()), pLayer->GetWeight(), pLayer->GetCycle());
 		}
 #endif
 	}
@@ -1730,9 +1730,9 @@ void CMultiPlayerAnimState::DebugShowAnimState( int iStartLine )
 	{
 		C_AnimationLayer *pLayer = GetBasePlayer()->GetAnimOverlay( i /*i+1?*/ );
 		Anim_StatePrintf( iLine++, "%s, weight: %.2f, cycle: %.2f, aim (%d)", 
-			pLayer->m_nOrder == CBaseAnimatingOverlay::MAX_OVERLAYS ? "--" : GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->m_nSequence ), 
-			pLayer->m_nOrder == CBaseAnimatingOverlay::MAX_OVERLAYS ? -1 :(float)pLayer->m_flWeight, 
-			pLayer->m_nOrder == CBaseAnimatingOverlay::MAX_OVERLAYS ? -1 :(float)pLayer->m_flCycle, 
+			pLayer->GetOrder() == CBaseAnimatingOverlay::MAX_OVERLAYS ? "--" : GetSequenceName( GetBasePlayer()->GetModelPtr(), pLayer->GetSequence() ), 
+			pLayer->GetOrder() == CBaseAnimatingOverlay::MAX_OVERLAYS ? -1 :(float)pLayer->GetWeight(),
+			pLayer->GetOrder() == CBaseAnimatingOverlay::MAX_OVERLAYS ? -1 :(float)pLayer->GetCycle(),
 			i
 			);
 	}
@@ -1798,9 +1798,9 @@ void CMultiPlayerAnimState::DebugGestureInfo( void )
 					iGesture, 
 					s_aGestureSlotNames[iGesture],
 					ActivityList_NameForIndex( pGesture->m_iActivity ),
-					GetSequenceName( pPlayer->GetModelPtr(), pGesture->m_pAnimLayer->m_nSequence ),
+					GetSequenceName( pPlayer->GetModelPtr(), pGesture->m_pAnimLayer->GetSequence() ),
 					( pGesture->m_bAutoKill ? "true" : "false" ),
-					pGesture->m_pAnimLayer->m_flCycle, pGesture->m_pAnimLayer->m_flPlaybackRate );
+					pGesture->m_pAnimLayer->GetCycle(), pGesture->m_pAnimLayer->GetPlaybackRate() );
 			}
 			else
 			{

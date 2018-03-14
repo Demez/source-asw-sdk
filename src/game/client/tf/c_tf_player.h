@@ -56,7 +56,7 @@ public:
 	virtual void ValidateModelIndex( void );
 
 	virtual Vector GetObserverCamOrigin( void );
-	virtual int DrawModel( int flags );
+	virtual int DrawModel( int flags, const RenderableInstance_t& instance );
 
 	virtual bool CreateMove( float flInputSampleTime, CUserCmd *pCmd );
 
@@ -69,7 +69,7 @@ public:
 
 	CTFWeaponBase *GetActiveTFWeapon( void ) const;
 
-	virtual void Simulate( void );
+	virtual bool Simulate( void );
 	virtual void FireEvent( const Vector& origin, const QAngle& angles, int event, const char *options );
 
 	void FireBullet( const FireBulletsInfo_t &info, bool bDoEffects, int nDamageType, int nCustomDamageType = TF_DMG_CUSTOM_NONE );
@@ -172,6 +172,7 @@ public:
 
 	bool			GetMedigunAutoHeal( void ){ return tf_medigun_autoheal.GetBool(); }
 	bool			ShouldAutoRezoom( void ){ return cl_autorezoom.GetBool(); }
+
 
 public:
 	// Shared functions

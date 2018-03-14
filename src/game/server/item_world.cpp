@@ -314,8 +314,9 @@ void CItem::FallThink(void)
 
 		m_vOriginalSpawnOrigin = GetAbsOrigin();
 		m_vOriginalSpawnAngles = GetAbsAngles();
-
+#ifdef HL2MP //not entirely sure if this is the right way to fix
 		HL2MPRules()->AddLevelDesignerPlacedObject(this);
+#endif
 	}
 }
 #endif // HL2MP, TF

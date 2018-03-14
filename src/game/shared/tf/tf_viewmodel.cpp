@@ -149,7 +149,7 @@ void CTFViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosit
 // Purpose: Don't render the weapon if its supposed to be lowered and we have 
 // finished the lowering animation
 //-----------------------------------------------------------------------------
-int CTFViewModel::DrawModel( int flags )
+int CTFViewModel::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// Check for lowering the weapon
 	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
@@ -179,7 +179,7 @@ int CTFViewModel::DrawModel( int flags )
 		 return 0;
 	}
 
-	return BaseClass::DrawModel( flags );
+	return BaseClass::DrawModel( flags, instance );
 }
 
 //-----------------------------------------------------------------------------

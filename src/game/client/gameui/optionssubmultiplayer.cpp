@@ -1650,10 +1650,10 @@ ConversionErrorType COptionsSubMultiplayer::StretchRGBAImage(const unsigned char
 			}
 
 			// assign the computed color to the destination pixel, round to the nearest value.  Make sure the value doesn't exceed 255.
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4)] = min((int)(destRed + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 1] = min((int)(destGreen + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 2] = min((int)(destBlue + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 3] = min((int)(destAlpha + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4)] = MIN((int)(destRed + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 1] = MIN((int)(destGreen + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 2] = MIN((int)(destBlue + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 3] = MIN((int)(destAlpha + 0.5f), 255);
 		} // column loop
 	} // row loop
 
@@ -2357,8 +2357,8 @@ static void PaletteHueReplace( RGBQUAD *palSrc, int newHue, int Start, int end )
 		g = palSrc[ i ].rgbGreen;
 		r = palSrc[ i ].rgbRed;
 		
-		maxcol = max( max( r, g ), b ) / 255.0f;
-		mincol = min( min( r, g ), b ) / 255.0f;
+		maxcol = MAX( MAX( r, g ), b ) / 255.0f;
+		mincol = MIN( MIN( r, g ), b ) / 255.0f;
 		
 		val = maxcol;
 		sat = (maxcol - mincol) / maxcol;

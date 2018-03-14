@@ -33,7 +33,7 @@ void RecvProxyArrayLength_HealingArray( void *pStruct, int objectID, int current
 {
 	C_ObjectDispenser *pDispenser = (C_ObjectDispenser*)pStruct;
 
-	if ( pDispenser->m_hHealingTargets.Size() != currentArrayLength )
+	if ( pDispenser->m_hHealingTargets.Count() != currentArrayLength )
 		pDispenser->m_hHealingTargets.SetSize( currentArrayLength );
 
 	// update the heal beams

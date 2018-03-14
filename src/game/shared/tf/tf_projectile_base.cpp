@@ -260,13 +260,13 @@ void CTFBaseProjectile::PostDataUpdate( DataUpdateType_t type )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int CTFBaseProjectile::DrawModel( int flags )
+int CTFBaseProjectile::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	// During the first 0.2 seconds of our life, don't draw ourselves.
 	if ( gpGlobals->curtime - m_flSpawnTime < 0.1f )
 		return 0;
 
-	return BaseClass::DrawModel( flags );
+	return BaseClass::DrawModel( flags, instance );
 }
 
 //-----------------------------------------------------------------------------

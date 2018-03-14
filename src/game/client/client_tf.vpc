@@ -298,13 +298,13 @@ $Project "Client (TF)"
 			$File	"game_controls\classmenu.cpp"
 		}
 
-		$Folder	"IFM"
-		{
-			$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
-			$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
-			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.cpp"
-			$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
-			$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
-		}
+		//$Folder	"IFM"
+		//{
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbase.cpp"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbase.h"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.cpp"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmbasecamera.h"
+		//	$File	"$SRCDIR\game\shared\weapon_ifmsteadycam.cpp"
+		//}
 	}
 }

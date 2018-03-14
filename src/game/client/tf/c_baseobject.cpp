@@ -305,7 +305,7 @@ void C_BaseObject::OnPlacementStateChanged( bool bValidPlacement )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void C_BaseObject::Simulate( void )
+bool C_BaseObject::Simulate( void )
 {
 	if ( IsPlacing() && !MustBeBuiltOnAttachmentPoint() )
 	{
@@ -335,6 +335,7 @@ void C_BaseObject::Simulate( void )
 	}	
 
 	BaseClass::Simulate();
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -359,7 +360,7 @@ bool C_BaseObject::WasLastPlacementPosValid( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int C_BaseObject::DrawModel( int flags )
+int C_BaseObject::DrawModel( int flags, const RenderableInstance_t& instance )
 {
 	int drawn;
 

@@ -50,7 +50,7 @@ public:
 	virtual int GetSkin();
 	BobState_t	&GetBobState() { return m_BobState; }
 
-	virtual int DrawModel( int flags );
+	virtual int DrawModel( int flags, const RenderableInstance_t& instance );
 #endif
 
 private:

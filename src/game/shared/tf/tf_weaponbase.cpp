@@ -390,7 +390,7 @@ bool CTFWeaponBase::Deploy( void )
 		// Don't override primary attacks that are already further out than this. This prevents
 		// people exploiting weapon switches to allow weapons to fire faster.
 		float flDeployTime = 0.67;
-		m_flNextPrimaryAttack = max( flOriginalPrimaryAttack, gpGlobals->curtime + flDeployTime );
+		m_flNextPrimaryAttack = MAX( flOriginalPrimaryAttack, gpGlobals->curtime + flDeployTime );
 
 		CTFPlayer *pPlayer = ToTFPlayer( GetOwner() );
 		if (!pPlayer)
@@ -644,7 +644,7 @@ bool CTFWeaponBase::ReloadSingly( void )
 			// If we have ammo, remove ammo and add it to clip
 			if ( pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) > 0 && !m_bReloadedThroughAnimEvent )
 			{
-				m_iClip1 = min( ( m_iClip1 + 1 ), GetMaxClip1() );
+				m_iClip1 = MIN( ( m_iClip1 + 1 ), GetMaxClip1() );
 				pPlayer->RemoveAmmo( 1, m_iPrimaryAmmoType );
 			}
 
@@ -690,7 +690,7 @@ void CTFWeaponBase::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCh
 		{
 			if ( pOperator->GetAmmoCount( m_iPrimaryAmmoType ) > 0 && !m_bReloadedThroughAnimEvent )
 			{
-				m_iClip1 = min( ( m_iClip1 + 1 ), GetMaxClip1() );
+				m_iClip1 = MIN( ( m_iClip1 + 1 ), GetMaxClip1() );
 				pOperator->RemoveAmmo( 1, m_iPrimaryAmmoType );
 			}
 
@@ -718,7 +718,7 @@ bool CTFWeaponBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivity
 	if ( UsesClipsForAmmo1() )
 	{
 		// need to reload primary clip?
-		int primary	= min( iClipSize1 - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );
+		int primary	= MIN( iClipSize1 - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );
 		if ( primary != 0 )
 		{
 			bReloadPrimary = true;
@@ -728,7 +728,7 @@ bool CTFWeaponBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivity
 	if ( UsesClipsForAmmo2() )
 	{
 		// need to reload secondary clip?
-		int secondary = min( iClipSize2 - m_iClip2, pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) );
+		int secondary = MIN( iClipSize2 - m_iClip2, pPlayer->GetAmmoCount( m_iSecondaryAmmoType ) );
 		if ( secondary != 0 )
 		{
 			bReloadSecondary = true;
@@ -1320,7 +1320,7 @@ void CTFWeaponBase::CreateMuzzleFlashEffects( C_BaseEntity *pAttachEnt, int nInd
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-int	CTFWeaponBase::InternalDrawModel( int flags )
+int	CTFWeaponBase::InternalDrawModel( int flags, const RenderableInstance_t& instance )
 {
 	C_TFPlayer *pOwner = ToTFPlayer( GetOwnerEntity() );
 	bool bNotViewModel = ( (pOwner && !pOwner->IsLocalPlayer()) || C_BasePlayer::ShouldDrawLocalPlayer() );
@@ -1883,7 +1883,7 @@ float CalcViewModelBobHelper( CBasePlayer *player, BobState_t *pBobState )
 
 	//Find the speed of the player
 	float speed = player->GetLocalVelocity().Length2D();
-	float flmaxSpeedDelta = max( 0, (gpGlobals->curtime - pBobState->m_flLastBobTime ) * 320.0f );
+	float flmaxSpeedDelta = MAX( 0, (gpGlobals->curtime - pBobState->m_flLastBobTime ) * 320.0f );
 
 	// don't allow too big speed changes
 	speed = clamp( speed, pBobState->m_flLastSpeed-flmaxSpeedDelta, pBobState->m_flLastSpeed+flmaxSpeedDelta );
@@ -2091,7 +2091,7 @@ bool CTFWeaponBase::OnFireEvent( C_BaseViewModel *pViewModel, const Vector& orig
 
 		if ( pPlayer && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) > 0 && !m_bReloadedThroughAnimEvent )
 		{
-			m_iClip1 = min( ( m_iClip1 + 1 ), GetMaxClip1() );
+			m_iClip1 = MIN( ( m_iClip1 + 1 ), GetMaxClip1() );
 			pPlayer->RemoveAmmo( 1, m_iPrimaryAmmoType );
 		}
 

@@ -1,5 +1,6 @@
 $Project "client"
 {
+	"game\client\client_swarm.vpc"				[$SWARM]
 	"game\client\client_episodic.vpc"			[$EPISODIC]
 	"game\client\client_hl2.vpc"				[$HL2]
 	"game\client\client_hl2r.vpc"				[$HL2R]
@@ -15,6 +16,7 @@ $Project "client"
 
 $Project "server"
 {	
+	"game\server\server_swarm.vpc"				[$SWARM]
 	"game\server\server_episodic.vpc"			[$EPISODIC]
 	"game\server\server_hl2.vpc"				[$HL2]
 	"game\server\server_hl2r.vpc"				[$HL2R]

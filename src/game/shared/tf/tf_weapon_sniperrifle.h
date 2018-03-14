@@ -49,7 +49,7 @@ public:
 	// Rendering.
 	virtual bool			IsTransparent( void )		{ return true; }
 	virtual RenderGroup_t	GetRenderGroup( void )		{ return RENDER_GROUP_TRANSLUCENT_ENTITY; }
-	virtual int				DrawModel( int flags );
+	virtual int				DrawModel( int flags, const RenderableInstance_t& instance );
 	virtual bool			ShouldDraw( void );
 
 	//
