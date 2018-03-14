@@ -423,10 +423,10 @@ void C_TFRagdoll::CreateTFRagdoll()
 	{
 		// Make us a ragdoll..
 		SetRenderFX( kRenderFxRagdoll );
-
-		matrix3x4_t boneDelta0[MAXSTUDIOBONES];
-		matrix3x4_t boneDelta1[MAXSTUDIOBONES];
-		matrix3x4_t currentBones[MAXSTUDIOBONES];
+		
+		matrix3x4a_t boneDelta0[MAXSTUDIOBONES];
+		matrix3x4a_t boneDelta1[MAXSTUDIOBONES];
+		matrix3x4a_t currentBones[MAXSTUDIOBONES];
 		const float boneDt = 0.05f;
 
 		// We have to make sure that we're initting this client ragdoll off of the same model.
@@ -606,13 +606,13 @@ void C_TFRagdoll::ClientThink( void )
 
 	if ( m_bFadingOut == true )
 	{
-		int iAlpha = GetRenderColor().a;
+		int iAlpha = GetRenderAlpha();
 		int iFadeSpeed = 600.0f;
 
 		iAlpha = MAX( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
 
 		SetRenderMode( kRenderTransAlpha );
-		SetRenderColorA( iAlpha );
+		SetRenderAlpha( iAlpha );
 
 		if ( iAlpha == 0 )
 		{
@@ -819,6 +819,7 @@ public:
 
 		if ( ToolsEnabled() )
 		{
+			
 			ToolFramework_RecordMaterialParams( GetMaterial() );
 		}
 	}
