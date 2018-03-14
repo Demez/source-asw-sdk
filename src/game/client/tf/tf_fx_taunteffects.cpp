@@ -73,4 +73,4 @@ void TF_ThrowCigaretteCallback( const CEffectData &data )
 	pTemp->SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 }
 
-DECLARE_CLIENT_EFFECT( "TF_ThrowCigarette", TF_ThrowCigaretteCallback );
+DECLARE_CLIENT_EFFECT( TF_ThrowCigarette, TF_ThrowCigaretteCallback );

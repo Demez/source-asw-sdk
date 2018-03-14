@@ -379,7 +379,7 @@ void C_TFRagdoll::CreateTFRagdoll()
 			Interp_Copy( pPlayer );
 
 			SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetRotationInterpolator().Reset();
+			GetRotationInterpolator().Reset( gpGlobals->curtime );
 
 			m_flAnimTime = pPlayer->m_flAnimTime;
 			SetSequence( pPlayer->GetSequence() );
@@ -2488,8 +2488,8 @@ void C_TFPlayer::UpdateIDTarget()
 
 	trace_t tr;
 	Vector vecStart, vecEnd;
-	VectorMA( MainViewOrigin(), MAX_TRACE_LENGTH, MainViewForward(), vecEnd );
-	VectorMA( MainViewOrigin(), 10,   MainViewForward(), vecStart );
+	VectorMA( MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot()), MAX_TRACE_LENGTH, MainViewForward(engine->GetActiveSplitScreenPlayerSlot()), vecEnd );
+	VectorMA( MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot()), 10,   MainViewForward(engine->GetActiveSplitScreenPlayerSlot()), vecStart );
 
 	// If we're in observer mode, ignore our observer target. Otherwise, ignore ourselves.
 	if ( IsObserver() )
@@ -3040,7 +3040,7 @@ int	C_TFPlayer::DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags 
 		// Force the invulnerable material
 		modelrender->ForcedMaterialOverride( *pPlayer->GetInvulnMaterialRef() );
 
-		ret = pViewmodel->DrawOverriddenViewmodel( flags );
+		ret = pViewmodel->DrawOverriddenViewmodel( this, flags, instance );
 
 		modelrender->ForcedMaterialOverride( NULL );
 	}

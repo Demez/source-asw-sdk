@@ -61,7 +61,7 @@ DECLARE_BUILD_FACTORY( CTFFreezePanelHealth );
 CTFFreezePanel::CTFFreezePanel( const char *pElementName )
 	: EditablePanel( NULL, "FreezePanel" ), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 	SetVisible( false );
 	SetScheme( "ClientScheme" );
@@ -416,13 +416,13 @@ CTFFreezePanelCallout *CTFFreezePanel::TestAndAddCallout( Vector &origin, Vector
 					{
 						// Verify that we have LOS to the gib
 						trace_t	tr;
-						UTIL_TraceLine( origin, MainViewOrigin(), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
+						UTIL_TraceLine( origin, MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot()), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
 						bClear = ( tr.fraction >= 1.0f );
 					}
 
 					if ( bClear )
 					{
-						CTFFreezePanelCallout *pCallout = new CTFFreezePanelCallout( g_pClientMode->GetViewport(), "FreezePanelCallout" );
+						CTFFreezePanelCallout *pCallout = new CTFFreezePanelCallout( GetClientMode()->GetViewport(), "FreezePanelCallout" );
 						m_pCalloutPanels.AddToTail( vgui::SETUP_PANEL(pCallout) );
 						vecCalloutsTL->AddToTail( vecCalloutTL );
 						vecCalloutsBR->AddToTail( vecCalloutBR );
@@ -639,7 +639,7 @@ void CTFFreezePanel::ShowSnapshotPanel( bool bShow )
 
 		m_pScreenshotPanel->SetDialogVariable( "text", wLabel );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( this, "HudSnapShotReminderIn" );
+		GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( this, "HudSnapShotReminderIn" );
 	}
 
 	m_pScreenshotPanel->SetVisible( bShow );

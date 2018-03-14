@@ -206,7 +206,7 @@ void C_TFWeaponBuilder::SetupObjectSelectionSprite( void )
 	char *iconTexture = GetObjectInfo( m_iObjectType )->m_pIconActive;
 	if ( iconTexture && iconTexture[ 0 ] )
 	{
-		m_pSelectionTextureActive = gHUD.GetIcon( iconTexture );
+		m_pSelectionTextureActive = HudIcons().GetIcon( iconTexture );
 	}
 	else
 	{
@@ -216,7 +216,7 @@ void C_TFWeaponBuilder::SetupObjectSelectionSprite( void )
 	iconTexture = GetObjectInfo( m_iObjectType )->m_pIconInactive;
 	if ( iconTexture && iconTexture[ 0 ] )
 	{
-		m_pSelectionTextureInactive = gHUD.GetIcon( iconTexture );
+		m_pSelectionTextureInactive = HudIcons().GetIcon( iconTexture );
 	}
 	else
 	{

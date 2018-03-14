@@ -686,7 +686,7 @@ void CTFWeaponBase::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCh
 {
 	if ( (pEvent->type & AE_TYPE_NEWEVENTSYSTEM) /*&& (pEvent->type & AE_TYPE_SERVER)*/ )
 	{
-		if ( pEvent->event == AE_WPN_INCREMENTAMMO )
+		if ( pEvent->Event() == AE_WPN_INCREMENTAMMO )
 		{
 			if ( pOperator->GetAmmoCount( m_iPrimaryAmmoType ) > 0 && !m_bReloadedThroughAnimEvent )
 			{
@@ -1330,7 +1330,7 @@ int	CTFWeaponBase::InternalDrawModel( int flags, const RenderableInstance_t& ins
 		modelrender->ForcedMaterialOverride( *pOwner->GetInvulnMaterialRef() );
 	}
 
-	int ret = BaseClass::InternalDrawModel( flags );
+	int ret = BaseClass::InternalDrawModel( flags|extraFlags, instance );
 
 	if ( bUseInvulnMaterial )
 	{
@@ -1495,7 +1495,7 @@ bool CTFWeaponBase::ShouldDrawCrosshair( void )
 
 void CTFWeaponBase::Redraw()
 {
-	if ( ShouldDrawCrosshair() && g_pClientMode->ShouldDrawCrosshair() )
+	if ( ShouldDrawCrosshair() && GetClientMode()->ShouldDrawCrosshair() )
 	{
 		DrawCrosshair();
 	}

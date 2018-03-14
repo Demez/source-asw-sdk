@@ -48,7 +48,7 @@ DECLARE_HUDELEMENT( CHudDemomanPipes );
 //-----------------------------------------------------------------------------
 CHudDemomanPipes::CHudDemomanPipes( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudDemomanPipes" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	m_pPipesPresent = new EditablePanel( this, "PipesPresentPanel" );

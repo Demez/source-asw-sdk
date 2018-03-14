@@ -397,7 +397,7 @@ void CTFSpectatorGUI::ShowPanel(bool bShow)
 		{
 			if ( pStatus )
 			{
-				pStatus->SetParent( g_pClientMode->GetViewport() );
+				pStatus->SetParent( GetClientMode()->GetViewport() );
 			}
 
 			if ( pEngBuilds )

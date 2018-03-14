@@ -186,7 +186,7 @@ void CTFSteamStats::UploadStats()
 	CAchievementMgr *pAchievementMgr = dynamic_cast<CAchievementMgr *>( engine->GetAchievementMgr() );
 	if ( pAchievementMgr )
 	{		
-		pAchievementMgr->UploadUserData();
+		pAchievementMgr->UploadUserData( STEAM_PLAYER_SLOT );
 	}
 
 	SetNextForceUploadTime();

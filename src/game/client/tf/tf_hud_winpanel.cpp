@@ -34,7 +34,7 @@ DECLARE_HUDELEMENT_DEPTH( CTFWinPanel, 1 );
 //-----------------------------------------------------------------------------
 CTFWinPanel::CTFWinPanel( const char *pElementName ) : EditablePanel( NULL, "WinPanel" ), CHudElement( pElementName )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 	m_bShouldBeVisible = false;
 	SetAlpha( 0 );

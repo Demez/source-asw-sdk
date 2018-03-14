@@ -37,7 +37,7 @@ DECLARE_HUD_MESSAGE( CHudNotificationPanel, HudNotifyCustom );
 //-----------------------------------------------------------------------------
 CHudNotificationPanel::CHudNotificationPanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "NotificationPanel" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_MISCSTATUS );

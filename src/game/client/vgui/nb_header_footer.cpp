@@ -4,9 +4,13 @@
 #include "vgui_controls/ImagePanel.h"
 #include <vgui/ISurface.h>
 #include "vgui_hudvideo.h"
-#include "asw_video.h"
 #include "VGUIMatSurface/IMatSystemSurface.h"
+#ifdef SWARM_DLL
+#include "asw_video.h"
 #include "asw_gamerules.h"
+#elif TF_CLIENT_DLL
+#include "tf_gamerules.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -126,8 +130,15 @@ int CASW_Background_Movie::SetTextureMaterial()
 
 void CASW_Background_Movie::Update()
 {
-	if ( engine->IsConnected() && ASWGameRules() )
+	if ( engine->IsConnected() && 
+#ifdef SWARM_DLL
+		ASWGameRules()
+#else
+		TFGameRules()
+#endif
+		)
 	{
+#ifdef SWARM_DLL
 		int nGameState = ASWGameRules()->GetGameState();
 		if ( nGameState >= ASW_GS_DEBRIEF && ASWGameRules()->GetMissionSuccess() )
 		{
@@ -136,7 +147,15 @@ void CASW_Background_Movie::Update()
 		if ( nGameState != m_nLastGameState && !( nGameState == ASW_GS_LAUNCHING || nGameState == ASW_GS_INGAME ) )
 		{
 			const char *pFilename = NULL;
+#else
+		// Do something based on the gamerules...
+		int nGameState = 1;
+		if (nGameState != m_nLastGameState)
+		{
+			// todo: whats this? [str]
+#endif
 #ifdef ASW_BINK_MOVIES
+#ifdef SWARM_DLL
 			if ( ASWGameRules()->GetGameState() >= ASW_GS_DEBRIEF )
 			{
 				if ( ASWGameRules()->GetMissionSuccess() )
@@ -161,12 +180,19 @@ void CASW_Background_Movie::Update()
 				}
 			}
 #else
+			SetCurrentMovie( "media/BGFX_01.bik" );
+#endif
+#else
 			pFilename = "media/test.avi";
 #endif
+#ifdef SWARM_DLL
 			if ( pFilename )
 			{
 				SetCurrentMovie( pFilename );
 			}
+#else
+			m_nLastGameState = nGameState;
+#endif
 		}
 		m_nLastGameState = nGameState;
 	}
@@ -175,11 +201,17 @@ void CASW_Background_Movie::Update()
 		int nGameState = 0;
 		if ( nGameState != m_nLastGameState )
 		{
+#ifdef UI_USING_RANDOMMENUMOVIES
+			int nMovieIndex = 0;
+			nMovieIndex = random->RandomInt(0, ARRAYSIZE(g_ppszRandomMenuMovies)); 
+			SetCurrentMovie( g_ppszRandomMenuMovies[nMovieIndex] );
+#else
 #ifdef ASW_BINK_MOVIES
 			SetCurrentMovie( "media/BG_02.bik" );
 #else
 			SetCurrentMovie( "media/test.avi" );
 #endif
+#endif //UI_USING_RANDOMMENUMOVIES
 			m_nLastGameState = nGameState;
 		}
 	}

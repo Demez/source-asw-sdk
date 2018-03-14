@@ -37,7 +37,7 @@ void FX_TFTracerSound( const Vector &start, const Vector &end, int iTracerType )
 	
 	const char *pszSoundName = "Bullets.DefaultNearmiss";
 	float flWhizDist = 64;
-	Vector vecListenOrigin = MainViewOrigin();
+	Vector vecListenOrigin = MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot());
 
 	switch( iTracerType )
 	{
@@ -122,4 +122,4 @@ void BrightTracerCallback( const CEffectData &data )
 	FX_BrightTracer( (Vector&)data.m_vStart, (Vector&)data.m_vOrigin );
 }
 
-DECLARE_CLIENT_EFFECT( "BrightTracer", BrightTracerCallback );
+DECLARE_CLIENT_EFFECT( BrightTracer, BrightTracerCallback );

@@ -186,8 +186,8 @@ void TF_3rdPersonMuzzleFlashCallback_SentryGun( const CEffectData &data )
 }
 
 //TODO: Come back and make this guy a nice particle.
-DECLARE_CLIENT_EFFECT( "TF_3rdPersonMuzzleFlash", TF_3rdPersonMuzzleFlashCallback );
-DECLARE_CLIENT_EFFECT( "TF_3rdPersonMuzzleFlash_SentryGun", TF_3rdPersonMuzzleFlashCallback_SentryGun );
+DECLARE_CLIENT_EFFECT( TF_3rdPersonMuzzleFlash, TF_3rdPersonMuzzleFlashCallback );
+DECLARE_CLIENT_EFFECT( TF_3rdPersonMuzzleFlash_SentryGun, TF_3rdPersonMuzzleFlashCallback_SentryGun );
 
 
 //-----------------------------------------------------------------------------

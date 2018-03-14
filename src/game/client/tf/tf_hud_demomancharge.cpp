@@ -48,7 +48,7 @@ DECLARE_HUDELEMENT( CHudDemomanChargeMeter );
 //-----------------------------------------------------------------------------
 CHudDemomanChargeMeter::CHudDemomanChargeMeter( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudDemomanCharge" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	m_pChargeMeter = new ContinuousProgressBar( this, "ChargeMeter" );

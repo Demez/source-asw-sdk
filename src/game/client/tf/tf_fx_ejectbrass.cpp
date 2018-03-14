@@ -82,4 +82,4 @@ void TF_EjectBrassCallback( const CEffectData &data )
 	pTemp->SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 }
 
-DECLARE_CLIENT_EFFECT( "TF_EjectBrass", TF_EjectBrassCallback );
+DECLARE_CLIENT_EFFECT( TF_EjectBrass, TF_EjectBrassCallback );

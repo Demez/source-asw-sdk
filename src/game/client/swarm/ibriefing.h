@@ -4,7 +4,11 @@
 #pragma once
 #endif
 
-#include "asw_shareddefs.h"
+#ifdef SWARM_DLL
+#include "..\swarm\asw_shareddefs.h"
+#else
+#include "..\swarm\asw_shareddefs.h"
+#endif
 
 class CASW_Marine_Profile;
 

@@ -70,7 +70,7 @@ void CTFHudDeathNotice::ApplySchemeSettings( vgui::IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
 
-	m_iconDomination = gHUD.GetIcon( "leaderboard_dominated" );
+	m_iconDomination = HudIcons().GetIcon( "leaderboard_dominated" );
 }
 
 bool CTFHudDeathNotice::IsVisible( void )

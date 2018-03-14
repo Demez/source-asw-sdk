@@ -32,7 +32,7 @@ void CTFViewRender::Render2DEffectsPostHUD( const CViewSetup &view )
 	BaseClass::Render2DEffectsPostHUD( view );
 
 	// if we're in the intro menus
-	if ( gViewPortInterface->GetActivePanel() != NULL )
+	if ( GetViewPortInterface()->GetActivePanel() != NULL )
 	{
 		DoEnginePostProcessing( view.x, view.y, view.width, view.height, false, true );
 	}

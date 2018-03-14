@@ -255,7 +255,7 @@ void CTFIntroMenu::UpdateCaptions( void )
 			if ( ( pCaption->m_flCaptionStart >= 0 ) && ( pCaption->m_flCaptionStart + pCaption->m_flDisplayTime < gpGlobals->curtime ) )
 			{
 				// fade out the caption
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "VideoCaptionFadeOut" );
+				GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "VideoCaptionFadeOut" );
 
 				// move to the next caption
 				m_iCurrentCaption++;
@@ -276,7 +276,7 @@ void CTFIntroMenu::UpdateCaptions( void )
 					pCaption->m_flCaptionStart = gpGlobals->curtime;
 
 					// fade in the next caption
-					g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "VideoCaptionFadeIn" );
+					GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "VideoCaptionFadeIn" );
 				}
 			}
 		}

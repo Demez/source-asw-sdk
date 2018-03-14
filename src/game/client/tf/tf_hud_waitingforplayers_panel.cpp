@@ -50,7 +50,7 @@ DECLARE_HUDELEMENT_DEPTH( CTFWaitingForPlayersPanel, 1 );
 CTFWaitingForPlayersPanel::CTFWaitingForPlayersPanel( const char *pElementName )
 	: EditablePanel( NULL, "WaitingForPlayersPanel" ), CHudElement( pElementName )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 	SetScheme( "ClientScheme" );
 }

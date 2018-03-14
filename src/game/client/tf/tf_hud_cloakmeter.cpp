@@ -47,7 +47,7 @@ DECLARE_HUDELEMENT( CHudSpyCloakMeter );
 //-----------------------------------------------------------------------------
 CHudSpyCloakMeter::CHudSpyCloakMeter( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudCloakMeter" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	m_pCloakMeter = new ContinuousProgressBar( this, "CloakMeter" );

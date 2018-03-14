@@ -168,9 +168,9 @@ public:
 		if ( bShow )
 		{
 			// make sure the Red class menu isn't open
-			if ( gViewPortInterface )
+			if ( GetViewPortInterface() )
 			{
-				gViewPortInterface->ShowPanel( PANEL_CLASS_RED, false );
+				GetViewPortInterface()->ShowPanel( PANEL_CLASS_RED, false );
 			}
 		}
 
@@ -237,9 +237,9 @@ public:
 		if ( bShow )
 		{
 			// make sure the Red class menu isn't open
-			if ( gViewPortInterface )
+			if ( GetViewPortInterface() )
 			{
-				gViewPortInterface->ShowPanel( PANEL_CLASS_BLUE, false );
+				GetViewPortInterface()->ShowPanel( PANEL_CLASS_BLUE, false );
 			}
 		}
 

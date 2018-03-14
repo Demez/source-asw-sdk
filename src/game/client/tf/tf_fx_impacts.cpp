@@ -60,7 +60,7 @@ void ImpactCallback( const CEffectData &data )
 	}
 }
 
-DECLARE_CLIENT_EFFECT( "Impact", ImpactCallback );
+DECLARE_CLIENT_EFFECT( Impact, ImpactCallback );
 
 
 //-----------------------------------------------------------------------------
@@ -85,10 +85,10 @@ void TFSplashCallback( const CEffectData &data )
 {
 	TFSplashCallbackHelper( data, "water_bulletsplash01" );
 }
-DECLARE_CLIENT_EFFECT( "tf_gunshotsplash", TFSplashCallback );
+DECLARE_CLIENT_EFFECT( tf_gunshotsplash, TFSplashCallback );
 
 void TFSplashCallbackMinigun( const CEffectData &data )
 {
 	TFSplashCallbackHelper( data, "water_bulletsplash01_minigun" );
 }
-DECLARE_CLIENT_EFFECT( "tf_gunshotsplash_minigun", TFSplashCallbackMinigun );
+DECLARE_CLIENT_EFFECT( tf_gunshotsplash_minigun, TFSplashCallbackMinigun );

@@ -77,7 +77,7 @@ class CAchievementTFPlayGameEveryClass : public CTFAchievementFullRound
 
 	virtual void Event_OnRoundComplete( float flRoundTime, IGameEvent *event )
 	{
-		float flLastClassChangeTime = m_pAchievementMgr->GetLastClassChangeTime();
+		float flLastClassChangeTime = m_pAchievementMgr->GetLastClassChangeTime( STEAM_PLAYER_SLOT );
 		if ( flLastClassChangeTime > 0 ) 
 		{					
 			// has the player been present and not changed class since the start of this round (minus a grace period)?
@@ -123,7 +123,7 @@ class CAchievementTFPlayGameEveryMap : public CTFAchievementFullRound
 
 	virtual void Event_OnRoundComplete( float flRoundTime, IGameEvent *event )
 	{
-		float flTeamplayStartTime = m_pAchievementMgr->GetTeamplayStartTime();
+		float flTeamplayStartTime = m_pAchievementMgr->GetTeamplayStartTime( STEAM_PLAYER_SLOT );
 		if ( flTeamplayStartTime > 0 ) 
 		{	
 			// has the player been present and on a game team since the start of this round (minus a grace period)?
@@ -152,7 +152,7 @@ class CAchievementTFGetHealPoints : public CBaseAchievement
 		m_iCount = classStats.accumulated.m_iStat[TFSTAT_HEALING];
 		if ( m_iCount != iOldCount )
 		{
-			m_pAchievementMgr->SetDirty( true );
+			m_pAchievementMgr->SetDirty( true, m_nUserSlot );	
 		}
 
 		if ( IsLocalTFPlayerClass( TF_CLASS_MEDIC ) )
@@ -212,7 +212,7 @@ class CAchievementTFGetHeadshots: public CBaseAchievement
 		m_iCount = classStats.accumulated.m_iStat[TFSTAT_HEADSHOTS];
 		if ( m_iCount != iOldCount )
 		{
-			m_pAchievementMgr->SetDirty( true );
+			m_pAchievementMgr->SetDirty( true, m_nUserSlot );
 		}
 
 		if ( IsLocalTFPlayerClass( TF_CLASS_SNIPER ) )
@@ -374,7 +374,7 @@ class CAchievementTFGetMultipleKills : public CBaseAchievement
 		m_iCount = iKills;
 		if ( m_iCount != iOldCount )
 		{
-			m_pAchievementMgr->SetDirty( true );
+			m_pAchievementMgr->SetDirty( true, m_nUserSlot );
 		}
 
 		EvaluateNewAchievement();
@@ -466,7 +466,7 @@ class CAchievementTFWinHydroNoEnemyCaps : public CBaseAchievement
 	{
 		// winning hydro with no enemy caps means there were 2 previous minirounds completed (3 total for a shutout)
 		// and local player's team won the final round
-		if ( ( 2 == m_pAchievementMgr->GetMiniroundsCompleted() ) && ( CheckWinNoEnemyCaps( event, TEAM_ROLE_NONE ) ) )
+		if ( ( 2 == m_pAchievementMgr->GetMiniroundsCompleted( STEAM_PLAYER_SLOT ) ) && ( CheckWinNoEnemyCaps( event, TEAM_ROLE_NONE ) ) )
 		{
 			IncrementCount();
 		}
@@ -492,7 +492,7 @@ class CAchievementTFWinDustbowlNoEnemyCaps : public CBaseAchievement
 	{
 		// defending dustbowl with no enemy caps means there were no previous minirounds completed (that would be an attacker capture),
 		// the player was on the defending team and they won with no enemy caps
-		if ( ( 0 == m_pAchievementMgr->GetMiniroundsCompleted() ) && CheckWinNoEnemyCaps( event, TEAM_ROLE_DEFENDERS ) )
+		if ( ( 0 == m_pAchievementMgr->GetMiniroundsCompleted( STEAM_PLAYER_SLOT ) ) && CheckWinNoEnemyCaps( event, TEAM_ROLE_DEFENDERS ) )
 		{
 			IncrementCount();
 		}

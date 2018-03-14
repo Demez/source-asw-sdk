@@ -341,7 +341,7 @@ void CTFHudFlagObjectives::ApplySchemeSettings( IScheme *pScheme )
 //-----------------------------------------------------------------------------
 void CTFHudFlagObjectives::Reset()
 {
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "FlagOutlineHide" );
+	GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "FlagOutlineHide" );
 
 	if ( m_pCarriedImage && m_pCarriedImage->IsVisible() )
 	{
@@ -535,7 +535,7 @@ void CTFHudFlagObjectives::UpdateStatus( void )
 				m_pCarriedImage->SetVisible( true );
 			}
 
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "FlagOutline" );
+			GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "FlagOutline" );
 
 			if ( m_pCapturePoint )
 			{
@@ -569,7 +569,7 @@ void CTFHudFlagObjectives::UpdateStatus( void )
 		if ( m_bCarryingFlag )
 		{
 			m_bCarryingFlag = false;
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "FlagOutline" );
+			GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "FlagOutline" );
 		}
 
 		m_bFlagAnimationPlayed = false;

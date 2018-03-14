@@ -442,7 +442,7 @@ void CModelPanel::Paint()
 	}
 
 	Vector vecExtraModelOffset( 0, 0, 0 );
-	float flWidthRatio = engine->GetScreenAspectRatio() / ( 4.0f / 3.0f );
+	float flWidthRatio = engine->GetScreenAspectRatio( ScreenWidth(), ScreenHeight() ) / ( 4.0f / 3.0f );
 
 	// is this a player model?
 	if ( Q_strstr( GetModelName(), "models/player/" ) )

@@ -43,7 +43,7 @@ DECLARE_HUDELEMENT( CTFHudWeaponAmmo );
 //-----------------------------------------------------------------------------
 CTFHudWeaponAmmo::CTFHudWeaponAmmo( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudWeaponAmmo" ) 
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD );
@@ -169,7 +169,8 @@ void CTFHudWeaponAmmo::OnThink()
 {
 	// Get the player and active weapon.
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-	C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
+	//C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
+	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
 
 	if ( m_flNextThink < gpGlobals->curtime )
 	{

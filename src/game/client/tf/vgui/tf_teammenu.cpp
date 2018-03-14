@@ -299,7 +299,7 @@ void CTFTeamMenu::ShowPanel( bool bShow )
 
 	if ( !C_TFPlayer::GetLocalTFPlayer() )
 		return;
-	if ( !gameuifuncs || !gViewPortInterface || !engine )
+	if ( !gameuifuncs || !GetViewPortInterface() || !engine )
 		return;
 
 	if ( bShow )
@@ -322,8 +322,8 @@ void CTFTeamMenu::ShowPanel( bool bShow )
 			return;
 		}
 
-		gViewPortInterface->ShowPanel( PANEL_CLASS_RED, false );
-		gViewPortInterface->ShowPanel( PANEL_CLASS_BLUE, false );
+		GetViewPortInterface()->ShowPanel( PANEL_CLASS_RED, false );
+		GetViewPortInterface()->ShowPanel( PANEL_CLASS_BLUE, false );
 
 		engine->CheckPoint( "TeamMenu" );
 
@@ -518,8 +518,8 @@ void CTFTeamMenu::OnKeyCodePressed( KeyCode code )
 	}
 	else if ( m_iScoreBoardKey != BUTTON_CODE_INVALID && m_iScoreBoardKey == code )
 	{
-		gViewPortInterface->ShowPanel( PANEL_SCOREBOARD, true );
-		gViewPortInterface->PostMessageToPanel( PANEL_SCOREBOARD, new KeyValues( "PollHideCode", "code", code ) );
+		GetViewPortInterface()->ShowPanel( PANEL_SCOREBOARD, true );
+		GetViewPortInterface()->PostMessageToPanel( PANEL_SCOREBOARD, new KeyValues( "PollHideCode", "code", code ) );
 	}
 	else
 	{

@@ -97,7 +97,7 @@ void CTFModeManager::Init()
 
 void CTFModeManager::LevelInit( const char *newmap )
 {
-	g_pClientMode->LevelInit( newmap );
+	GetClientMode()->LevelInit( newmap );
 
 	ConVarRef voice_steal( "voice_steal" );
 
@@ -109,7 +109,7 @@ void CTFModeManager::LevelInit( const char *newmap )
 
 void CTFModeManager::LevelShutdown( void )
 {
-	g_pClientMode->LevelShutdown();
+	GetClientMode()->LevelShutdown();
 }
 
 //-----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ void ClientModeTFNormal::Init()
 	}
 
 #if defined( _X360 )
-	m_pScoreboard = (CTFClientScoreBoardDialog *)( gViewPortInterface->FindPanelByName( PANEL_SCOREBOARD ) );
+	m_pScoreboard = (CTFClientScoreBoardDialog *)( GetViewPortInterface()->FindPanelByName( PANEL_SCOREBOARD ) );
 	Assert( m_pScoreboard );
 #endif
 

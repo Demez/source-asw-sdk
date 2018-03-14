@@ -4,8 +4,13 @@
 #pragma once
 #endif
 
+#ifdef SWARM_DLL
 #include "asw_shareddefs.h"
 #include "asw_medals_shared.h"
+#else
+#include "..\swarm\asw_shareddefs.h"
+#include "..\swarm\asw_medals_shared.h"
+#endif
 
 // class responsible for loading/saving the client's medal store
 

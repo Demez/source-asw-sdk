@@ -57,7 +57,7 @@ DECLARE_HUDELEMENT( CHudStalemate );
 //-----------------------------------------------------------------------------
 CHudStalemate::CHudStalemate( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudStalemate" )
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_MISCSTATUS );

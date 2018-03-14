@@ -65,7 +65,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 CHudScopeCharge::CHudScopeCharge( const char *pElementName ) : CHudElement(pElementName), BaseClass(NULL, "HudScopeCharge")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );
@@ -159,7 +159,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 CHudScope::CHudScope( const char *pElementName ) : CHudElement(pElementName), BaseClass(NULL, "HudScope")
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 	
 	SetHiddenBits( HIDEHUD_PLAYERDEAD );

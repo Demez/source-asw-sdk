@@ -367,11 +367,11 @@ int C_BaseObject::DrawModel( int flags, const RenderableInstance_t& instance )
 	// If we're a brush-built, map-defined object chain up to baseentity draw
 	if ( modelinfo->GetModelType( GetModel() ) == mod_brush )
 	{
-		drawn = CBaseEntity::DrawModel(flags);
+		drawn = CBaseEntity::DrawModel( flags, instance );;
 	}
 	else
 	{
-		drawn = BaseClass::DrawModel(flags);
+		drawn = BaseClass::DrawModel( flags, instance );;
 	}
 
 	HighlightBuildPoints( flags );
@@ -868,7 +868,7 @@ void C_BaseObject::StopAnimGeneratedSounds( void )
 	{
 		if ( pevent[i].cycle < flCurrentCycle )
 		{
-			if ( pevent[i].event == CL_EVENT_SOUND || pevent[i].event == AE_CL_PLAYSOUND )
+			if ( pevent[i].Event() == CL_EVENT_SOUND || pevent[i].Event() == AE_CL_PLAYSOUND )
 			{
 				StopSound( entindex(), pevent[i].options );
 			}

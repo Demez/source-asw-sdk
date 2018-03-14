@@ -44,7 +44,7 @@ using namespace vgui;
 CDisguiseStatus::CDisguiseStatus( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "DisguiseStatus" )
 {
-	vgui::Panel *pParent = g_pClientMode->GetViewport();
+	vgui::Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	SetHiddenBits( HIDEHUD_MISCSTATUS );

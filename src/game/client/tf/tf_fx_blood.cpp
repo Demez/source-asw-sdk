@@ -54,7 +54,7 @@ void TFBloodSprayCallback( Vector vecOrigin, Vector vecNormal, ClientEntityHandl
 
 	// Now throw out a spray away from the view
 	// Get the distance to the view
-	float flDistance = (vecOrigin - MainViewOrigin()).Length();
+	float flDistance = (vecOrigin - MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot())).Length();
 	float flLODDistance = 0.25 * (flDistance / 512);
 
 	Vector right, up;
@@ -71,7 +71,7 @@ void TFBloodSprayCallback( Vector vecOrigin, Vector vecNormal, ClientEntityHandl
 
 	// If the normal's too close to being along the view, push it out
 	Vector vecForward, vecRight;
-	AngleVectors( MainViewAngles(), &vecForward, &vecRight, NULL );
+	AngleVectors( MainViewAngles(engine->GetActiveSplitScreenPlayerSlot()), &vecForward, &vecRight, NULL );
 	float flDot = DotProduct( vecNormal, vecForward );
 	if ( fabs(flDot) > 0.5 )
 	{

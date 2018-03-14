@@ -53,8 +53,8 @@
 /*
 CON_COMMAND( spec_help, "Show spectator help screen")
 {
-	if ( gViewPortInterface )
-		gViewPortInterface->ShowPanel( PANEL_INFO, true );
+	if ( GetViewPortInterface() )
+		GetViewPortInterface()->ShowPanel( PANEL_INFO, true );
 }
 
 CON_COMMAND( spec_menu, "Activates spectator menu")
@@ -71,14 +71,14 @@ CON_COMMAND( spec_menu, "Activates spectator menu")
 		bShowIt = atoi( args[ 1 ] ) == 1;
 	}
 
-	if ( gViewPortInterface )
-		gViewPortInterface->ShowPanel( PANEL_SPECMENU, bShowIt );
+	if ( GetViewPortInterface() )
+		GetViewPortInterface()->ShowPanel( PANEL_SPECMENU, bShowIt );
 }
 */
 
 CON_COMMAND( showmapinfo, "Show map info panel" )
 {
-	if ( !gViewPortInterface )
+	if ( !GetViewPortInterface() )
 		return;
 
 	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
@@ -90,20 +90,20 @@ CON_COMMAND( showmapinfo, "Show map info panel" )
 		     ( ( pPlayer->GetTeamNumber() != TEAM_UNASSIGNED ) && ( pPlayer->GetPlayerClass()->GetClassIndex() != TF_CLASS_UNDEFINED ) ) )
 		{
 			// close all the other panels that could be open
-			gViewPortInterface->ShowPanel( PANEL_TEAM, false );
-			gViewPortInterface->ShowPanel( PANEL_CLASS_RED, false );
-			gViewPortInterface->ShowPanel( PANEL_CLASS_BLUE, false );
-			gViewPortInterface->ShowPanel( PANEL_INTRO, false );
-			gViewPortInterface->ShowPanel( PANEL_ROUNDINFO, false );
+			GetViewPortInterface()->ShowPanel( PANEL_TEAM, false );
+			GetViewPortInterface()->ShowPanel( PANEL_CLASS_RED, false );
+			GetViewPortInterface()->ShowPanel( PANEL_CLASS_BLUE, false );
+			GetViewPortInterface()->ShowPanel( PANEL_INTRO, false );
+			GetViewPortInterface()->ShowPanel( PANEL_ROUNDINFO, false );
 
-			gViewPortInterface->ShowPanel( PANEL_MAPINFO, true );
+			GetViewPortInterface()->ShowPanel( PANEL_MAPINFO, true );
 		}
 	}
 }
 
 CON_COMMAND( changeteam, "Choose a new team" )
 {
-	if ( !gViewPortInterface )
+	if ( !GetViewPortInterface() )
 		return;
 
 	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
@@ -111,13 +111,13 @@ CON_COMMAND( changeteam, "Choose a new team" )
 	// don't let the player open the team menu themselves until they're on a team
 	if ( pPlayer && ( pPlayer->GetTeamNumber() != TEAM_UNASSIGNED ) )
 	{
-		gViewPortInterface->ShowPanel( PANEL_TEAM, true );
+		GetViewPortInterface()->ShowPanel( PANEL_TEAM, true );
 	}
 }
 
 CON_COMMAND( changeclass, "Choose a new class" )
 {
-	if ( !gViewPortInterface )
+	if ( !GetViewPortInterface() )
 		return;
 
 	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
@@ -127,10 +127,10 @@ CON_COMMAND( changeclass, "Choose a new class" )
 		switch( pPlayer->GetTeamNumber() )
 		{
 		case TF_TEAM_RED:
-			gViewPortInterface->ShowPanel( PANEL_CLASS_RED, true );
+			GetViewPortInterface()->ShowPanel( PANEL_CLASS_RED, true );
 			break;
 		case TF_TEAM_BLUE:
-			gViewPortInterface->ShowPanel( PANEL_CLASS_BLUE, true );
+			GetViewPortInterface()->ShowPanel( PANEL_CLASS_BLUE, true );
 			break;
 		default:
 			break;
@@ -140,22 +140,22 @@ CON_COMMAND( changeclass, "Choose a new class" )
 
 CON_COMMAND( togglescores, "Toggles score panel")
 {
-	if ( !gViewPortInterface )
+	if ( !GetViewPortInterface() )
 		return;
 
-	IViewPortPanel *scoreboard = gViewPortInterface->FindPanelByName( PANEL_SCOREBOARD );
+	IViewPortPanel *scoreboard = GetViewPortInterface()->FindPanelByName( PANEL_SCOREBOARD );
 
 	if ( !scoreboard )
 		return;
 
 	if ( scoreboard->IsVisible() )
 	{
-		gViewPortInterface->ShowPanel( scoreboard, false );
+		GetViewPortInterface()->ShowPanel( scoreboard, false );
 		GetClientVoiceMgr()->StopSquelchMode();
 	}
 	else
 	{
-		gViewPortInterface->ShowPanel( scoreboard, true );
+		GetViewPortInterface()->ShowPanel( scoreboard, true );
 	}
 }
 
@@ -297,7 +297,7 @@ void TFViewport::OnScreenSizeChanged( int iOldWide, int iOldTall )
 	BaseClass::OnScreenSizeChanged( iOldWide, iOldTall );
 
 	// we've changed resolution, let's try to figure out if we need to show any of our menus
-	if ( !gViewPortInterface )
+	if ( !GetViewPortInterface() )
 		return;
 
 	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
@@ -314,10 +314,10 @@ void TFViewport::OnScreenSizeChanged( int iOldWide, int iOldTall )
 			switch( pPlayer->GetTeamNumber() )
 			{
 			case TF_TEAM_RED:
-				gViewPortInterface->ShowPanel( PANEL_CLASS_RED, true );
+				GetViewPortInterface()->ShowPanel( PANEL_CLASS_RED, true );
 				break;
 			case TF_TEAM_BLUE:
-				gViewPortInterface->ShowPanel( PANEL_CLASS_BLUE, true );
+				GetViewPortInterface()->ShowPanel( PANEL_CLASS_BLUE, true );
 				break;
 			}
 		}

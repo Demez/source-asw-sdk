@@ -82,8 +82,8 @@ void CTFMedicCallerPanel::PerformLayout( void )
 void CTFMedicCallerPanel::GetCallerPosition( const Vector &vecDelta, float flRadius, float *xpos, float *ypos, float *flRotation )
 {
 	// Player Data
-	Vector playerPosition = MainViewOrigin();
-	QAngle playerAngles = MainViewAngles();
+	Vector playerPosition = MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot());
+	QAngle playerAngles = MainViewAngles(engine->GetActiveSplitScreenPlayerSlot());
 
 	Vector forward, right, up(0,0,1);
 	AngleVectors (playerAngles, &forward, NULL, NULL );
@@ -161,7 +161,7 @@ void CTFMedicCallerPanel::PaintBackground( void )
 	// Reposition the callout based on our target's position
 	int iX, iY;
 	Vector vecTarget = (m_hPlayer->GetAbsOrigin() + m_vecOffset);
-	Vector vecDelta = vecTarget - MainViewOrigin();
+	Vector vecDelta = vecTarget - MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot());
 	bool bOnscreen = GetVectorInScreenSpace( vecTarget, iX, iY );
 
 	int halfWidth = GetWide() / 2;
@@ -178,7 +178,7 @@ void CTFMedicCallerPanel::PaintBackground( void )
 		iY = ypos;
 
 		Vector vCenter = m_hPlayer->WorldSpaceCenter( );
-		if( MainViewRight().Dot( vCenter - MainViewOrigin() ) > 0 )
+		if( MainViewRight(engine->GetActiveSplitScreenPlayerSlot()).Dot( vCenter - MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot()) ) > 0 )
 		{
 			m_iDrawArrow = DRAW_ARROW_RIGHT;
 		}
@@ -196,7 +196,7 @@ void CTFMedicCallerPanel::PaintBackground( void )
 		// On screen
 		// If our target isn't visible, we draw transparently
 		trace_t	tr;
-		UTIL_TraceLine( vecTarget, MainViewOrigin(), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
+		UTIL_TraceLine( vecTarget, MainViewOrigin(engine->GetActiveSplitScreenPlayerSlot()), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
 		if ( tr.fraction >= 1.0f )
 		{
 			m_bOnscreen = true;
@@ -295,7 +295,7 @@ void CTFMedicCallerPanel::SetPlayer( C_TFPlayer *pPlayer, float flDuration, Vect
 //-----------------------------------------------------------------------------
 void CTFMedicCallerPanel::AddMedicCaller( C_TFPlayer *pPlayer, float flDuration, Vector &vecOffset )
 {
-	CTFMedicCallerPanel *pCaller = new CTFMedicCallerPanel( g_pClientMode->GetViewport(), "MedicCallerPanel" );
+	CTFMedicCallerPanel *pCaller = new CTFMedicCallerPanel( GetClientMode()->GetViewport(), "MedicCallerPanel" );
 	vgui::SETUP_PANEL(pCaller);
 	pCaller->SetBounds( 0,0, MEDICCALLER_WIDE, MEDICCALLER_TALL );
 	pCaller->SetPlayer( pPlayer, flDuration, vecOffset );

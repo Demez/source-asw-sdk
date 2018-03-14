@@ -430,7 +430,7 @@ void CTFHudTimeStatus::SetExtraTimePanels()
 				m_pOvertimeLabel->SetAlpha( 0 );
 				m_pOvertimeBG->SetAlpha( 0 );
 
-				g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "OvertimeShow" ); 
+				GetClientMode()->GetViewportAnimationController()->StartAnimationSequence( "OvertimeShow" ); 
 
 				// need to turn off the SuddenDeath images if they're on
 				m_pSuddenDeathBG->SetVisible( false );
@@ -622,7 +622,7 @@ DECLARE_HUDELEMENT( CTFHudObjectiveStatus );
 //-----------------------------------------------------------------------------
 CTFHudObjectiveStatus::CTFHudObjectiveStatus( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudObjectiveStatus" ) 
 {
-	Panel *pParent = g_pClientMode->GetViewport();
+	Panel *pParent = GetClientMode()->GetViewport();
 	SetParent( pParent );
 
 	m_pFlagPanel = new CTFHudFlagObjectives( this, "ObjectiveStatusFlagPanel" );
