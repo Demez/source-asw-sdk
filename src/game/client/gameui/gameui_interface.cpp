@@ -37,7 +37,7 @@
 #include "ModInfo.h"
 #include "game/client/IGameClientExports.h"
 #include "materialsystem/imaterialsystem.h"
-//#include "matchmaking/imatchframework.h"
+#include "matchmaking/imatchframework.h"
 #include "ixboxsystem.h"
 #include "iachievementmgr.h"
 #include "IGameUIFuncs.h"
@@ -60,12 +60,25 @@
 #include "steam/steam_api.h"
 #include "protocol.h"
 
+#if defined( SWARM_DLL )
+
 #include "shared/basemodpanel.h"
 #include "shared/basemodui.h"
-
 typedef BaseModUI::CBaseModPanel UI_BASEMOD_PANEL_CLASS;
 inline UI_BASEMOD_PANEL_CLASS & GetUiBaseModPanelClass() { return UI_BASEMOD_PANEL_CLASS::GetSingleton(); }
 inline UI_BASEMOD_PANEL_CLASS & ConstructUiBaseModPanelClass() { return * new UI_BASEMOD_PANEL_CLASS(); }
+class IMatchExtSwarm *g_pMatchExtSwarm = NULL;
+
+
+
+#else
+
+#include "BasePanel.h"
+typedef CBasePanel UI_BASEMOD_PANEL_CLASS;
+inline UI_BASEMOD_PANEL_CLASS & GetUiBaseModPanelClass() { return *BasePanel(); }
+inline UI_BASEMOD_PANEL_CLASS & ConstructUiBaseModPanelClass() { return *BasePanelSingleton(); }
+
+#endif
 
 #ifdef _X360
 #include "xbox/xbox_win32stubs.h"
@@ -242,7 +255,7 @@ void CGameUI::PostInit()
 		enginesound->PrecacheSound( "UI/menu_countdown.wav", true, true );
 	}
 
-#ifdef SDK_CLIENT_DLL
+#ifdef SWARM_DLL
 	// to know once client dlls have been loaded
 	BaseModUI::CUIGameData::Get()->OnGameUIPostInit();
 #endif
@@ -795,7 +808,6 @@ void CGameUI::OnLevelLoadingFinished(bool bError, const char *failureReason, con
 	// notify all the modules
 	g_VModuleLoader.PostMessageToAllModules( new KeyValues( "LoadingFinished" ) );
 
-	GetUiBaseModPanelClass().OnLevelLoadingFinished( new KeyValues( "LoadingFinished" ) );
 	HideLoadingBackgroundDialog();
 
 
@@ -1028,14 +1040,14 @@ bool CGameUI::HasLoadingBackgroundDialog()
 
 void CGameUI::NeedConnectionProblemWaitScreen()
 {
-#ifdef SDK_CLIENT_DLL
+#ifdef SWARM_DLL
 	BaseModUI::CUIGameData::Get()->NeedConnectionProblemWaitScreen();
 #endif
 }
 
 void CGameUI::ShowPasswordUI( char const *pchCurrentPW )
 {
-#ifdef SDK_CLIENT_DLL
+#ifdef SWARM_DLL
 	BaseModUI::CUIGameData::Get()->ShowPasswordUI( pchCurrentPW );
 #endif
 }

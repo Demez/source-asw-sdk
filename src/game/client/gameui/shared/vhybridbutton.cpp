@@ -23,7 +23,7 @@
 #endif
 
 // UI defines. Include if you want to implement some of them [str]
-#include "ui_defines.h"
+#include "..\specific\ui_defines_swarm.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -379,37 +379,33 @@ void BaseModHybridButton::PaintButtonEx()
 			{
 				//col.SetColor( 0, 128, 128, 255 );
 				col.SetColor( UI_STYLE_ENABLED5 );
-				//col.SetColor( 169, 213, 255, 255 );
 			}
 			else if ( m_nStyle == BUTTON_ALIENSWARMMENUBUTTON || m_nStyle == BUTTON_ALIENSWARMMENUBUTTONSMALL )
 			{
 				col.SetColor( UI_STYLE_ENABLED11 );
-				//col.SetColor( 135, 170, 193, 255 );
 			}
 			else
 			{
+				//col.SetColor( 125, 125, 125, 255 );
 				col.SetColor( UI_STYLE_ENABLED );
-				//col.SetColor( 83, 148, 192, 255 );
 			}
 			break;
 		case Disabled:
 			//col.SetColor( 88, 97, 104, 255 );
 			//col.SetColor( 65, 74, 96, 255 );
 			col.SetColor( UI_STYLE_DISABLED );
-			//col.SetColor( 32, 59, 82, 255 );
 			bDrawText = true;
 			bDrawGlow = false;
 			break;
 		case FocusDisabled:
 			col.SetColor( UI_STYLE_FOCUSDISABLED );
-			//col.SetColor( 182, 189, 194, 255 );
 			bDrawText = false;
 			bDrawGlow = true;
 			break;
 		case Open:
 			// flyout menu is attached
+			//col.SetColor( 200, 200, 200, 255 );
 			col.SetColor( UI_STYLE_OPEN );
-			//col.SetColor( 169, 213, 255, 255 );
 			bDrawGlow = true;
 			bDrawCursor = true;
 			break;

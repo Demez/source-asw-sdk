@@ -105,6 +105,13 @@
 #include "tier2/tier2_logging.h"
 #include "fmtstr.h"
 
+#ifdef INFESTED_DLL
+#include "missionchooser/iasw_mission_chooser.h"
+#include "missionchooser/iasw_mission_chooser_source.h"
+#include "matchmaking/swarm/imatchext_swarm.h"
+#include "asw_gamerules.h"
+#endif
+
 #ifdef _WIN32
 #include "IGameUIFuncs.h"
 #endif
@@ -172,6 +179,11 @@ IGameUIFuncs *gameuifuncs = NULL;
 IXboxSystem *xboxsystem = NULL;	// Xbox 360 only
 IScriptManager *scriptmanager = NULL;
 IBlackBox *blackboxrecorder = NULL;
+
+#ifdef INFESTED_DLL
+IASW_Mission_Chooser *missionchooser = NULL;
+IMatchExtSwarm *g_pMatchExtSwarm = NULL;
+#endif
 
 IGameSystem *SoundEmitterSystem();
 void SoundSystemPreloadSounds( void );
@@ -697,6 +709,13 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 #endif
 	}
 #endif // SERVER_USES_VGUI
+
+#ifdef INFESTED_DLL
+	if ( (missionchooser = (IASW_Mission_Chooser *)appSystemFactory(ASW_MISSION_CHOOSER_VERSION, NULL)) == NULL )
+		return false;
+	if ( (g_pMatchExtSwarm = (IMatchExtSwarm *)appSystemFactory(IMATCHEXT_SWARM_INTERFACE, NULL)) == NULL )
+		return false;
+#endif
 
 	if ( !g_pMatchFramework )
 		return false;

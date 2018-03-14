@@ -44,7 +44,7 @@ public:
 
 	bool GetRootBone( matrix3x4_t &rootBone );
 
-private:
+protected:
 
 	// This is the entity that we're keeping the cache updated for.
 	C_BaseAnimating *m_pOwner;

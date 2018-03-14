@@ -4,13 +4,8 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_bitmapbutton.h"
 #include "KeyValues.h"
-#ifdef GAMEUI_SHARED
 #include "missionchooser/iasw_mission_chooser.h"
 #include "missionchooser/iasw_mission_chooser_source.h"
-#else//if defined( REVAMPED_CLIENT ) || defined ( HL2MP )
-#include "missionchooser/hl2r/ihl2r_mission_chooser.h"
-#include "missionchooser/hl2r/ihl2r_mission_chooser_source.h"
-#endif
 #include "filesystem.h"
 #include "nb_select_mission_panel.h"
 #include "vgui/ISurface.h"
@@ -55,14 +50,14 @@ void CNB_Select_Mission_Entry::OnThink()
 {
 	BaseClass::OnThink();
 
-	IHL2R_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
+	IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
 
 	// TODO: If voting, then use:
-	//IHL2R_Mission_Chooser_Source *pSource = GetVotingMissionSource();
+	//IASW_Mission_Chooser_Source *pSource = GetVotingMissionSource();
 
 	if ( !pSource )
 	{
-		//Warning( "Unable to select a mission as couldn't find an IHL2R_Mission_Chooser_Source\n" );
+		//Warning( "Unable to select a mission as couldn't find an IASW_Mission_Chooser_Source\n" );
 		return;
 	}
 
@@ -72,7 +67,7 @@ void CNB_Select_Mission_Entry::OnThink()
 	white.b = 255;
 	white.a = 255;
 
-	HL2R_Mission_Chooser_Mission *pMission = pSource->GetMission( m_nMissionIndex, true );
+	ASW_Mission_Chooser_Mission *pMission = pSource->GetMission( m_nMissionIndex, true );
 	if ( pMission )
 	{
 		if ( Q_strcmp( pMission->m_szMissionName, m_szMissionName ) )
@@ -189,10 +184,10 @@ void CNB_Select_Mission_Entry::OnCommand( const char *command )
 {
 	if ( !Q_stricmp( "MissionClicked", command ) )
 	{
-		IHL2R_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
+		IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
 		if ( pSource )
 		{
-			HL2R_Mission_Chooser_Mission *pMission = pSource->GetMission( m_nMissionIndex, true );
+			ASW_Mission_Chooser_Mission *pMission = pSource->GetMission( m_nMissionIndex, true );
 			if ( pMission )
 			{
 				CNB_Select_Mission_Panel *pPanel = dynamic_cast<CNB_Select_Mission_Panel*>( GetParent()->GetParent()->GetParent() );

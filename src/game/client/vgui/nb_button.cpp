@@ -2,13 +2,6 @@
 #include "nb_button.h"
 #include "vgui/ISurface.h"
 
-// UI defines. Include if you want to implement some of them [str]
-//#ifdef HL2_CLIENT_DLL
-//#include "hl2/ui_defines.h"
-//#elif GAMEUI_SHARED
-#include "shared/ui_defines.h"
-//#endif
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -109,20 +102,20 @@ void CNB_Button::DrawRoundedBox( int x, int y, int wide, int tall, Color color, 
 void CNB_Button::PaintBackground()
 {
 	// draw gray outline background
-	DrawRoundedBox( 0, 0, GetWide(), GetTall(), Color( UI_STYLE_BUTTON_OUTLINE ), 1.0f, false, Color( 0, 0, 0, 0 ) );
+	DrawRoundedBox( 0, 0, GetWide(), GetTall(), Color( 78, 94, 110, 255 ), 1.0f, false, Color( 0, 0, 0, 0 ) );
 
 	int nBorder = MAX( YRES( 1 ), 1 );
 	if ( IsArmed() || IsDepressed() )
 	{
-		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( UI_STYLE_BUTTON_ARMED ), 1.0f, true, Color( UI_STYLE_BUTTON_CENTER ) );
+		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( 20, 59, 96, 255 ), 1.0f, true, Color( 28, 80, 130, 255 ) );
 	}
 	else if ( IsEnabled() )
 	{
-		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( UI_STYLE_BUTTON_ENABLED ), 1.0f, false, Color( 0, 0, 0, 0 ) );
+		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( 24, 43, 66, 255 ), 1.0f, false, Color( 0, 0, 0, 0 ) );
 	}
 	else
 	{
-		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( UI_STYLE_BUTTON_BACKGROUND ), 1.0f, false, Color( 0, 0, 0, 0 ) );
+		DrawRoundedBox( nBorder, nBorder, GetWide() - nBorder * 2, GetTall() - nBorder * 2, Color( 65, 78, 91, 255 ), 1.0f, false, Color( 0, 0, 0, 0 ) );
 	}
 }
 

@@ -105,7 +105,9 @@ public:
 	virtual void		Splash( void );
 	virtual void 		ModifyOrAppendPlayerCriteria( AI_CriteriaSet& set );
 
+#ifndef SWARM_DLL
 	virtual bool ShouldRegenerateOriginFromCellBits() const{return true;}
+#endif
 
 	void				DrawDebugGeometryOverlays(void);
 

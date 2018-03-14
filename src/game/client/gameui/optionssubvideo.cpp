@@ -1350,7 +1350,7 @@ COptionsSubVideoThirdPartyCreditsDlg::COptionsSubVideoThirdPartyCreditsDlg( vgui
 	SetProportional( true );
 
 	// parent is ignored, since we want look like we're steal focus from the parent (we'll become modal below)
-#ifdef SDK_CLIENT_DLL
+#ifdef SWARM_DLL
 	SetScheme( "SwarmFrameScheme" );
 #endif
 

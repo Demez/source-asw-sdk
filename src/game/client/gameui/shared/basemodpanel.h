@@ -15,10 +15,9 @@
 #include "../OptionsSubKeyboard.h"
 #include "../OptionsSubMouse.h"
 #include "optionsmousedialog.h"
-
 #include "avi/ibik.h"
 #include "ixboxsystem.h"
-//#include "matchmaking/imatchframework.h"
+#include "matchmaking/imatchframework.h"
 
 class COptionsDialog;
 class COptionsMouseDialog;
@@ -36,36 +35,53 @@ namespace BaseModUI
 	{
 		WT_NONE = 0,
 		WT_ACHIEVEMENTS,
-		WT_ATTRACTSCREEN,
 		WT_AUDIO,
+		WT_AUDIOVIDEO,
+		WT_CLOUD,
 		WT_CONTROLLER,
 		WT_CONTROLLER_STICKS,
 		WT_CONTROLLER_BUTTONS,
-		WT_DOWNLOADCAMPAIGN,
+		WT_DOWNLOADS,
 		WT_GAMELOBBY,
 		WT_GAMEOPTIONS,
+		WT_GAMESETTINGS,
 		WT_GENERICCONFIRMATION,
+		WT_INGAMEDIFFICULTYSELECT,
 		WT_INGAMEMAINMENU,
+		WT_INGAMECHAPTERSELECT,
+		WT_INGAMEKICKPLAYERLIST,
+		WT_VOTEOPTIONS,
 		WT_KEYBOARDMOUSE,
+		WT_LOADINGPROGRESSBKGND,
 		WT_LOADINGPROGRESS,
 		WT_MAINMENU,
+		WT_MULTIPLAYER,
 		WT_OPTIONS,
+		WT_SEARCHINGFORLIVEGAMES,
+		WT_SIGNINDIALOG,
 		WT_SINGLEPLAYER,
 		WT_GENERICWAITSCREEN,
+		WT_ATTRACTSCREEN,
+		WT_ALLGAMESEARCHRESULTS,
+		WT_FOUNDPUBLICGAMES,
 		WT_TRANSITIONSCREEN,
+		WT_PASSWORDENTRY,
 		WT_VIDEO,
-//SINGLEPLAYER--------------------
+		WT_STEAMCLOUDCONFIRM,
+		WT_STEAMGROUPSERVERS,
+		WT_CUSTOMCAMPAIGNS,
+		WT_ADDONS,
+		WT_DOWNLOADCAMPAIGN,
+		WT_LEADERBOARD,
+		WT_ADDONASSOCIATION,
+		WT_GETLEGACYDATA,
+		WT_JUKEBOX,
+// SINGLEPLAYER --------------------
 		WT_NEWGAME,
 		WT_LOADGAME,
 		WT_SAVEGAME,
 		WT_GAMEPLAYSETTINGS,
 		WT_DEVELOPERCOMMENTARIES,
-//COOP----------------------------
-		WT_GAMESETTINGS,
-		//WT_COOPSETTINGS,
-//HL2DM---------------------------
-		//WT_DMSETTINGS,
-//--------------------------------
 		WT_WINDOW_COUNT // WT_WINDOW_COUNT must be last in the list!
 	};
 
@@ -98,7 +114,7 @@ namespace BaseModUI
 	//=============================================================================
 	//
 	//=============================================================================
-	class CBaseModPanel : public vgui::EditablePanel
+	class CBaseModPanel : public vgui::EditablePanel, public IMatchEventsSink
 	{
 		DECLARE_CLASS_SIMPLE( CBaseModPanel, vgui::EditablePanel );
 

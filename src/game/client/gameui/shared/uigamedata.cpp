@@ -32,12 +32,16 @@
 
 // BaseModUI High-level windows
 
+#include "VFoundGames.h"
+#include "VFoundGroupGames.h"
+#include "VGameLobby.h"
 #include "VGenericConfirmation.h"
 #include "VGenericWaitScreen.h"
 #include "VInGameMainMenu.h"
 #include "VMainMenu.h"
 #include "VFooterPanel.h"
 #include "VAttractScreen.h"
+#include "VPasswordEntry.h"
 // vgui controls
 #include "vgui/ILocalize.h"
 
@@ -76,6 +80,17 @@ const tokenset_t< const char * > BaseModUI::s_characterPortraits[] =
 {
 	{ "",			"select_Random" },
 	{ "random",		"select_Random" },
+
+	//{ "BtnNamVet",	"select_Bill" },
+	//{ "BtnTeenGirl",	"select_Zoey" },
+	//{ "BtnBiker",		"select_Francis" },
+	//{ "BtnManager",	"select_Louis" },
+
+	{ "coach",		"s_panel_lobby_coach" },
+	{ "producer",	"s_panel_lobby_producer" },
+	{ "gambler",	"s_panel_lobby_gambler" },
+	{ "mechanic",	"s_panel_lobby_mechanic" },
+
 	{ "infected",	"s_panel_hand" },
 
 	{ NULL, "" }
@@ -91,14 +106,95 @@ struct X360MarketPlaceEntryPoint
 };
 static X360MarketPlaceEntryPoint g_MarketplaceEntryPoint;
 
+#ifdef _X360
+struct X360MarketPlaceQuery
+{
+	uint64 uiOfferID;
+	HRESULT hResult;
+	XOVERLAPPED xOverlapped;
+};
+static CUtlVector< X360MarketPlaceQuery * > g_arrMarketPlaceQueries;
+#endif
 
 static void GoToMarketplaceForOffer()
 {
+#ifdef _X360
+	// Stop installing to the hard drive, otherwise STFC fragmentation hazard, as multiple non sequential HDD writes will occur.
+	// This needs to be done before the DLC might be downloaded to the HDD, otherwise it could be fragmented.
+	// We restart the installer on DLC download completion. We do not handle the cancel/abort case. The installer
+	// will restart through the pre-dlc path, i.e. after attract or exiting a map back to the main menu.
+	if ( g_pXboxInstaller )
+		g_pXboxInstaller->Stop();
+
+	// See if we need to free some of the queries
+	for ( int k = 0; k < g_arrMarketPlaceQueries.Count(); ++ k )
+	{
+		X360MarketPlaceQuery *pQuery = g_arrMarketPlaceQueries[k];
+		if ( XHasOverlappedIoCompleted( &pQuery->xOverlapped ) )
+		{
+			delete pQuery;
+			g_arrMarketPlaceQueries.FastRemove( k -- );
+		}
+	}
+
+	// Allocate a new query
+	X360MarketPlaceQuery *pQuery = new X360MarketPlaceQuery;
+	memset( pQuery, 0, sizeof( *pQuery ) );
+	pQuery->uiOfferID = g_MarketplaceEntryPoint.uiOfferID;
+	g_arrMarketPlaceQueries.AddToTail( pQuery );
+
+	// Open the marketplace entry point
+	int iSlot = CBaseModPanel::GetSingleton().GetLastActiveUserId();
+	int iCtrlr = XBX_GetUserIsGuest( iSlot ) ? XBX_GetPrimaryUserId() : XBX_GetUserId( iSlot );
+	xonline->XShowMarketplaceDownloadItemsUI( iCtrlr,
+		g_MarketplaceEntryPoint.dwEntryPoint, &pQuery->uiOfferID, 1,
+		&pQuery->hResult, &pQuery->xOverlapped );
+#endif
 }
 
 static void ShowMarketplaceUiForOffer()
 {
+#ifdef _X360
+	// Stop installing to the hard drive, otherwise STFC fragmentation hazard, as multiple non sequential HDD writes will occur.
+	// This needs to be done before the DLC might be downloaded to the HDD, otherwise it could be fragmented.
+	// We restart the installer on DLC download completion. We do not handle the cancel/abort case. The installer
+	// will restart through the pre-dlc path, i.e. after attract or exiting a map back to the main menu.
+	if ( g_pXboxInstaller )
+		g_pXboxInstaller->Stop();
+
+	// Open the marketplace entry point
+	int iSlot = CBaseModPanel::GetSingleton().GetLastActiveUserId();
+	int iCtrlr = XBX_GetUserIsGuest( iSlot ) ? XBX_GetPrimaryUserId() : XBX_GetUserId( iSlot );
+	DWORD ret = xonline->XShowMarketplaceUI( iCtrlr, g_MarketplaceEntryPoint.dwEntryPoint, g_MarketplaceEntryPoint.uiOfferID, DWORD( -1 ) );
+	DevMsg( "XShowMarketplaceUI for offer %llx entry point %d ctrlr%d returned %d\n",
+		g_MarketplaceEntryPoint.uiOfferID, g_MarketplaceEntryPoint.dwEntryPoint, iCtrlr, ret );
+#endif
 }
+
+#ifdef _X360
+CON_COMMAND( x360_marketplace_offer, "Get a known offer from x360 marketplace" )
+{
+	if ( args.ArgC() != 4 )
+	{
+		Warning( "Usage: x360_marketplace_offer type 0xOFFERID ui|dl\n" );
+		return;
+	}
+
+	int iEntryPoint = Q_atoi( args.Arg( 1 ) );
+	char const *szArg2 = args.Arg( 2 );
+	uint64 uiOfferId = 0ull;
+	if ( 1 != sscanf( szArg2, "0x%llx", &uiOfferId ) )
+		uiOfferId = 0ull;
+
+	// Go to marketplace
+	g_MarketplaceEntryPoint.dwEntryPoint = iEntryPoint;
+	g_MarketplaceEntryPoint.uiOfferID = uiOfferId;
+	if ( !Q_stricmp( args.Arg( 3 ), "ui" ) )
+		ShowMarketplaceUiForOffer();
+	else
+		GoToMarketplaceForOffer();
+}
+#endif
 
 //=============================================================================
 //
@@ -119,6 +215,8 @@ CUIGameData::CUIGameData() :
 	m_flTimeLastFrame = Plat_FloatTime();
 	m_bShowConnectionProblemActive = false;
 
+	g_pMatchFramework->GetEventsSubscription()->Subscribe( this );
+
 	m_bXUIOpen = false;
 
 	m_bWaitingForStorageDeviceHandle = false;
@@ -134,6 +232,8 @@ CUIGameData::CUIGameData() :
 //=============================================================================
 CUIGameData::~CUIGameData()
 {
+	// Unsubscribe from events system
+	g_pMatchFramework->GetEventsSubscription()->Unsubscribe( this );
 }
 
 //=============================================================================
@@ -156,10 +256,37 @@ void CUIGameData::Shutdown()
 		m_Instance = NULL;
 	}
 }
+
+#ifdef _X360
+CON_COMMAND( ui_fake_connection_problem, "" )
+{
+	int numMilliSeconds = 1000;
+	if ( args.ArgC() > 1 )
+	{
+		numMilliSeconds = Q_atoi( args.Arg( 1 ) );
+	}
+	
+	float flTime = Plat_FloatTime();
+	DevMsg( "ui_fake_connection_problem %d @%.2f\n", numMilliSeconds, flTime );
+
+	int numTries = 2;
+	while ( ( 1000 * ( Plat_FloatTime() - flTime ) < numMilliSeconds ) &&
+		numTries --> 0 )
+	{
+		ThreadSleep( numMilliSeconds + 50 );
+	}
+
+	flTime = Plat_FloatTime();
+	DevMsg( "ui_fake_connection_problem finished @%.2f\n", flTime );
+}
+#endif
+
 //=============================================================================
 void CUIGameData::RunFrame()
 {
 	RunFrame_Storage();
+
+	RunFrame_Invite();
 
 	if ( m_flShowConnectionProblemTimer > 0.0f )
 	{
@@ -245,42 +372,58 @@ void CUIGameData::OnGameUIPostInit()
 //=============================================================================
 bool CUIGameData::CanPlayer2Join()
 {
+	if ( demo_ui_enable.GetString()[0] )
+		return false;
+
+#ifdef _X360
+	if ( XBX_GetNumGameUsers() != 1 )
+		return false;
+
+	if ( XBX_GetPrimaryUserIsGuest() )
+		return false;
+
+	if ( CBaseModPanel::GetSingleton().GetActiveWindowType() != WT_MAINMENU )
+		return false;
+
+	return true;
+#else
 	return false;
+#endif
 }
 
-/*//=============================================================================
+//=============================================================================
 void CUIGameData::OpenFriendRequestPanel(int index, uint64 playerXuid)
 {
 #ifdef _X360 
 	XShowFriendRequestUI(index, playerXuid);
 #endif
-}*/
+}
 
 //=============================================================================
-void CUIGameData::OpenInviteUI(char const *szInviteUiType)
+void CUIGameData::OpenInviteUI( char const *szInviteUiType )
 {
 #ifdef _X360 
 	int iSlot = CBaseModPanel::GetSingleton().GetLastActiveUserId();
-	int iCtrlr = XBX_GetUserIsGuest(iSlot) ? XBX_GetPrimaryUserId() : XBX_GetUserId(iSlot);
-
-	if (!Q_stricmp(szInviteUiType, "friends"))
-		::XShowFriendsUI(iCtrlr);
-	else if (!Q_stricmp(szInviteUiType, "players"))
-		xonline->XShowGameInviteUI(iCtrlr, NULL, 0, 0);
-	else if (!Q_stricmp(szInviteUiType, "party"))
-		xonline->XShowPartyUI(iCtrlr);
-	else if (!Q_stricmp(szInviteUiType, "inviteparty"))
-		xonline->XPartySendGameInvites(iCtrlr, NULL);
-	else if (!Q_stricmp(szInviteUiType, "community"))
-		xonline->XShowCommunitySessionsUI(iCtrlr, XSHOWCOMMUNITYSESSION_SHOWPARTY);
-	else if (!Q_stricmp(szInviteUiType, "voiceui"))
-		::XShowVoiceChannelUI(iCtrlr);
-	else if (!Q_stricmp(szInviteUiType, "gamevoiceui"))
+	int iCtrlr = XBX_GetUserIsGuest( iSlot ) ? XBX_GetPrimaryUserId() : XBX_GetUserId( iSlot );
+	
+	if ( !Q_stricmp( szInviteUiType, "friends" ) )
+		::XShowFriendsUI( iCtrlr );
+	else if ( !Q_stricmp( szInviteUiType, "players" ) )
+		xonline->XShowGameInviteUI( iCtrlr, NULL, 0, 0 );
+	else if ( !Q_stricmp( szInviteUiType, "party" ) )
+		xonline->XShowPartyUI( iCtrlr );
+	else if ( !Q_stricmp( szInviteUiType, "inviteparty" ) )
+		xonline->XPartySendGameInvites( iCtrlr, NULL );
+	else if ( !Q_stricmp( szInviteUiType, "community" ) )
+		xonline->XShowCommunitySessionsUI( iCtrlr, XSHOWCOMMUNITYSESSION_SHOWPARTY );
+	else if ( !Q_stricmp( szInviteUiType, "voiceui" ) )
+		::XShowVoiceChannelUI( iCtrlr );
+	else if ( !Q_stricmp( szInviteUiType, "gamevoiceui" ) )
 		::XShowGameVoiceChannelUI();
 	else
 	{
-		DevWarning("OpenInviteUI with wrong parameter `%s`!\n", szInviteUiType);
-		Assert(0);
+		DevWarning( "OpenInviteUI with wrong parameter `%s`!\n", szInviteUiType );
+		Assert( 0 );
 	}
 #endif
 }
@@ -306,16 +449,68 @@ void CUIGameData::ExecuteOverlayCommand( char const *szCommand )
 //=============================================================================
 bool CUIGameData::SignedInToLive()
 {
+#ifdef _X360
+
+	if ( XBX_GetNumGameUsers() <= 0 ||
+		 XBX_GetPrimaryUserIsGuest() )
+		 return false;
+
+	for ( DWORD k = 0; k < XBX_GetNumGameUsers(); ++ k )
+	{
+		int iController = XBX_GetUserId( k );
+		IPlayer *player = g_pMatchFramework->GetMatchSystem()->GetPlayerManager()->GetLocalPlayer( iController );
+		if ( !player )
+			return false;
+		if ( player->GetOnlineState() != IPlayer::STATE_ONLINE )
+			return false;
+	}
+#endif
+	
 	return true;
 }
 
 bool CUIGameData::AnyUserSignedInToLiveWithMultiplayerDisabled()
 {
+#ifdef _X360
+	if ( XBX_GetNumGameUsers() <= 0 ||
+		XBX_GetPrimaryUserIsGuest() )
+		return false;
+
+	for ( DWORD k = 0; k < XBX_GetNumGameUsers(); ++ k )
+	{
+		int iController = XBX_GetUserId( k );
+		IPlayer *player = g_pMatchFramework->GetMatchSystem()->GetPlayerManager()->GetLocalPlayer( iController );
+		if ( player && player->GetOnlineState() == IPlayer::STATE_NO_MULTIPLAYER )
+			return true;
+	}
+#endif
+
 	return false;
 }
 
 bool CUIGameData::CheckAndDisplayErrorIfOffline( CBaseModFrame *pCallerFrame, char const *szMsg )
 {
+#ifdef _X360
+	bool bOnlineFound = false;
+	if ( XBX_GetNumGameUsers() > 0 &&
+		!XBX_GetPrimaryUserIsGuest() )
+	{
+		for ( DWORD k = 0; k < XBX_GetNumGameUsers(); ++ k )
+		{
+			int iController = XBX_GetUserId( k );
+			IPlayer *player = g_pMatchFramework->GetMatchSystem()->GetPlayerManager()->GetLocalPlayer( iController );
+			if ( player && player->GetOnlineState() > IPlayer::STATE_OFFLINE )
+				return false;
+		}
+	}
+
+	if ( bOnlineFound )
+		return false;
+
+	DisplayOkOnlyMsgBox( pCallerFrame, "#L4D360UI_XboxLive", szMsg );
+	return true;
+#endif
+
 	return false;
 }
 
@@ -332,10 +527,26 @@ bool CUIGameData::CheckAndDisplayErrorIfNotSignedInToLive( CBaseModFrame *pCalle
 	if ( AnyUserSignedInToLiveWithMultiplayerDisabled() )
 	{
 		szMsg = "#L4D360UI_MsgBx_NeedLiveNonGoldMsg";
+
+#ifdef _X360
+		// Show the splitscreen version if there are 2 non-guest accounts
+		if ( XBX_GetNumGameUsers() > 1 && XBX_GetUserIsGuest( 0 ) == false && XBX_GetUserIsGuest( 1 ) == false )
+		{
+			szMsg = "#L4D360UI_MsgBx_NeedLiveNonGoldSplitscreenMsg";
+		}
+#endif
 	}
 	else
 	{
 		szMsg = "#L4D360UI_MsgBx_NeedLiveSinglescreenMsg";
+
+#ifdef _X360
+		// Show the splitscreen version if there are 2 non-guest accounts
+		if ( XBX_GetNumGameUsers() > 1 && XBX_GetUserIsGuest( 0 ) == false && XBX_GetUserIsGuest( 1 ) == false )
+		{
+			szMsg = "#L4D360UI_MsgBx_NeedLiveSplitscreenMsg";
+		}
+#endif
 	}
 
 	DisplayOkOnlyMsgBox( pCallerFrame, "#L4D360UI_XboxLive", szMsg );
@@ -404,7 +615,7 @@ bool CUIGameData::IsXUIOpen()
 	return m_bXUIOpen;
 }
 
-void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime, KeyValues *pSettings )
+void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime, KeyValues *pSettings, float maxDisplayTime )
 {
 	if ( UI_IsDebug() )
 	{
@@ -431,6 +642,7 @@ void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime
 		waitScreen->SetNavBack( backFrame );
 		waitScreen->ClearData();
 		waitScreen->AddMessageText( messageText, minDisplayTime );
+		waitScreen->SetMaxDisplayTime( maxDisplayTime );
 	}
 }
 
@@ -496,14 +708,44 @@ static void PasswordNotEntered()
 
 void CUIGameData::ShowPasswordUI( char const *pchCurrentPW )
 {
+	PasswordEntry *pwEntry = static_cast<PasswordEntry*>( CBaseModPanel::GetSingleton().OpenWindow( WT_PASSWORDENTRY, NULL, false ) );
+	if ( pwEntry )
+	{
+		PasswordEntry::Data_t data;
+		data.pWindowTitle = "#L4D360UI_PasswordEntry_Title";
+		data.pMessageText = "#L4D360UI_PasswordEntry_Prompt";
+		data.bOkButtonEnabled = true;
+		data.bCancelButtonEnabled = true;
+		data.m_szCurrentPW = pchCurrentPW;
+		data.pfnOkCallback = PasswordEntered;
+		data.pfnCancelCallback = PasswordNotEntered;
+		pwEntry->SetUsageData(data);
+	}
 }
 
 void CUIGameData::FinishPasswordUI( bool bOk )
 {
+	PasswordEntry *pwEntry = static_cast<PasswordEntry*>( CBaseModPanel::GetSingleton().GetWindow( WT_PASSWORDENTRY ) );
+	if ( pwEntry )
+	{
+		if ( bOk )
+		{
+			char pw[ 256 ];
+			pwEntry->GetPassword( pw, sizeof( pw ) );
+			engine->SetConnectionPassword( pw );
+		}
+		else
+		{
+			engine->SetConnectionPassword( "" );
+		}
+	}
 }
 
 IImage *CUIGameData::GetAvatarImage( XUID playerID )
 {
+#ifdef _X360
+	return NULL;
+#else
 	if ( !playerID )
 		return NULL;
 
@@ -531,6 +773,7 @@ IImage *CUIGameData::GetAvatarImage( XUID playerID )
 	}
 
 	return pImage;
+#endif // !_X360
 }
 
 char const * CUIGameData::GetPlayerName( XUID playerID, char const *szPlayerNameSpeculative )
@@ -598,7 +841,7 @@ void CUIGameData::Steam_OnPersonaStateChanged( PersonaStateChange_t *pParam )
 
 CON_COMMAND_F( ui_reloadscheme, "Reloads the resource files for the active UI window", 0 )
 {
-//	g_pFullFileSystem->SyncDvdDevCache();
+	g_pFullFileSystem->SyncDvdDevCache();
 	CUIGameData::Get()->ReloadScheme();
 }
 
@@ -693,6 +936,81 @@ void CUIGameData::OnEvent( KeyValues *pEvent )
 		data.bOkButtonEnabled = true;
 
 		confirmation->SetUsageData( data );
+	}
+	else if ( !Q_stricmp( "OnInvite", szEvent ) )
+	{
+		// Check if the user just accepted invite
+		if ( !Q_stricmp( "accepted", pEvent->GetString( "action" ) ) )
+		{
+			// Check if we have an outstanding session
+			IMatchSession *pIMatchSession = g_pMatchFramework->GetMatchSession();
+			if ( !pIMatchSession )
+			{
+				Invite_Connecting();
+				return;
+			}
+
+			// User is accepting an invite and has an outstanding
+			// session, TCR requires confirmation of destructive actions
+			if ( int *pnConfirmed = ( int * ) pEvent->GetPtr( "confirmed" ) )
+			{
+				*pnConfirmed = 0;
+			}
+
+			// Show the dialog
+			Invite_Confirm();
+		}
+		else if ( !Q_stricmp( "storage", pEvent->GetString( "action" ) ) )
+		{
+			if ( !Invite_IsStorageDeviceValid() )
+			{
+				if ( int *pnConfirmed = ( int * ) pEvent->GetPtr( "confirmed" ) )
+				{
+					*pnConfirmed = 0;	// make the invite accepting code wait
+				}
+			}
+		}
+		else if ( !Q_stricmp( "error", pEvent->GetString( "action" ) ) )
+		{
+			char const *szReason = pEvent->GetString( "error", "" );
+
+			if ( XBX_GetNumGameUsers() < 2 )
+			{
+				RemapText_t arrText[] = {
+					{ "", "#InviteError_Unknown", RemapText_t::MATCH_FULL },
+					{ "NotOnline", "#InviteError_NotOnline1", RemapText_t::MATCH_FULL },
+					{ "NoMultiplayer", "#InviteError_NoMultiplayer1", RemapText_t::MATCH_FULL },
+					{ "SameConsole", "#InviteError_SameConsole1", RemapText_t::MATCH_FULL },
+					{ NULL, NULL, RemapText_t::MATCH_FULL }
+				};
+
+				szReason = RemapText_t::RemapRawText( arrText, szReason );
+			}
+			else
+			{
+				RemapText_t arrText[] = {
+					{ "", "#InviteError_Unknown", RemapText_t::MATCH_FULL },
+					{ "NotOnline", "#InviteError_NotOnline2", RemapText_t::MATCH_FULL },
+					{ "NoMultiplayer", "#InviteError_NoMultiplayer2", RemapText_t::MATCH_FULL },
+					{ "SameConsole", "#InviteError_SameConsole2", RemapText_t::MATCH_FULL },
+					{ NULL, NULL, RemapText_t::MATCH_FULL }
+				};
+
+				szReason = RemapText_t::RemapRawText( arrText, szReason );
+			}
+
+			// Show the message box
+			GenericConfirmation* confirmation = static_cast<GenericConfirmation*>( CBaseModPanel::GetSingleton().OpenWindow( WT_GENERICCONFIRMATION,
+				GetParentWindowForSystemMessageBox(), false ) );
+
+			GenericConfirmation::Data_t data;
+
+			data.pWindowTitle = "#L4D360UI_XboxLive";
+			data.pMessageText = szReason;
+			data.bOkButtonEnabled = true;
+
+			confirmation->SetUsageData(data);
+		}
 	}
 	else if ( !Q_stricmp( "OnSysStorageDevicesChanged", szEvent ) )
 	{
@@ -887,6 +1205,7 @@ void CUIGameData::OnEvent( KeyValues *pEvent )
 			g_pMatchFramework->CloseSession();
 
 			char chErrorMsgBuffer[128] = {0};
+			char chErrorTitleBuffer[128] = {0};
 			char const *szError = pEvent->GetString( "error", "" );
 			char const *szErrorTitle = "#L4D360UI_MsgBx_DisconnectedFromSession";
 
@@ -938,6 +1257,62 @@ void CUIGameData::OnEvent( KeyValues *pEvent )
 			data.pWindowTitle = szErrorTitle;
 			data.pMessageText = szError;
 			data.bOkButtonEnabled = true;
+
+			if ( !Q_stricmp( "dlcrequired", szError ) )
+			{
+				// Special case for DLC required message
+				uint64 uiDlcRequiredMask = pEvent->GetUint64( "dlcrequired" );
+				int iDlcRequired = 0;
+
+				// Find the first DLC in the reported missing mask that is required
+				for ( int k = 1; k < sizeof( uiDlcRequiredMask ); ++ k )
+				{
+					if ( uiDlcRequiredMask & ( 1ull << k ) )
+					{
+						iDlcRequired = k;
+						break;
+					}
+				}
+
+				CFmtStr strLocKey( "#SessionError_DLC_RequiredTitle_%d", iDlcRequired );
+				if ( !g_pVGuiLocalize->Find( strLocKey ) )
+					iDlcRequired = 0;
+
+				// Try to figure out if this DLC is paid/free/unknown
+				KeyValues *kvDlcDetails = new KeyValues( "" );
+				KeyValues::AutoDelete autodelete_kvDlcDetails( kvDlcDetails );
+				if ( !kvDlcDetails->LoadFromFile( g_pFullFileSystem, "resource/UI/BaseModUI/dlcdetailsinfo.res", "MOD" ) )
+					kvDlcDetails = NULL;
+
+				// Determine the DLC offer ID
+				uint64 uiDlcOfferID = 0ull;
+				if ( 1 != sscanf( kvDlcDetails->GetString( CFmtStr( "dlc%d/offerid", iDlcRequired ) ), "0x%llx", &uiDlcOfferID ) )
+					uiDlcOfferID = 0ull;
+				
+				// Format the strings
+				bool bKicked = !Q_stricmp( pEvent->GetString( "action" ), "kicked" );
+				wchar_t const *wszLine1 = g_pVGuiLocalize->Find( CFmtStr( "#SessionError_DLC_Required%s_%d", bKicked ? "Kicked" : "Join", iDlcRequired ) );
+				wchar_t const *wszLine2 = g_pVGuiLocalize->Find( CFmtStr( "#SessionError_DLC_Required%s_%d", uiDlcOfferID ? "Offer" : "Message", iDlcRequired ) );
+				
+				int numBytesTwoLines = ( Q_wcslen( wszLine1 ) + Q_wcslen( wszLine2 ) + 4 ) * sizeof( wchar_t );
+				wchar_t *pwszTwoLines = ( wchar_t * ) stackalloc( numBytesTwoLines );
+				Q_snwprintf( pwszTwoLines, numBytesTwoLines, L"%s%s", wszLine1, wszLine2 );
+				data.pMessageTextW = pwszTwoLines;
+				data.pMessageText = NULL;
+
+				Q_snprintf( chErrorTitleBuffer, sizeof( chErrorTitleBuffer ), "#SessionError_DLC_RequiredTitle_%d", iDlcRequired );
+				data.pWindowTitle = chErrorTitleBuffer;
+
+				if ( uiDlcOfferID )
+				{
+					data.bCancelButtonEnabled = true;
+					data.pfnOkCallback = GoToMarketplaceForOffer;
+					
+					g_MarketplaceEntryPoint.uiOfferID = uiDlcOfferID;
+					g_MarketplaceEntryPoint.dwEntryPoint = kvDlcDetails->GetInt( CFmtStr( "dlc%d/type", iDlcRequired ) );
+				}
+			}
+			
 			confirmation->SetUsageData(data);
 		}
 	}
@@ -991,7 +1366,31 @@ bool GameModeIsSingleChapter( char const *szGameMode )
 
 uint64 GetDlcInstalledMask()
 {
-	return 0;
+	static ConVarRef mm_dlcs_mask_fake( "mm_dlcs_mask_fake" );
+	char const *szFakeDlcsString = mm_dlcs_mask_fake.GetString();
+	if ( *szFakeDlcsString )
+		return atoi( szFakeDlcsString );
+
+	static ConVarRef mm_dlcs_mask_extras( "mm_dlcs_mask_extras" );
+	uint64 uiDLCmask = ( unsigned ) mm_dlcs_mask_extras.GetInt();
+
+	bool bSearchPath = false;
+	int numDLCs = g_pFullFileSystem->IsAnyDLCPresent( &bSearchPath );
+
+	for ( int j = 0; j < numDLCs; ++ j )
+	{
+		unsigned int uiDlcHeader = 0;
+		if ( !g_pFullFileSystem->GetAnyDLCInfo( j, &uiDlcHeader, NULL, 0 ) )
+			continue;
+
+		int idDLC = DLC_LICENSE_ID( uiDlcHeader );
+		if ( idDLC < 1 || idDLC >= 31 )
+			continue;	// unsupported DLC id
+
+		uiDLCmask |= ( 1ull << idDLC );
+	}
+
+	return uiDLCmask;
 }
 
 

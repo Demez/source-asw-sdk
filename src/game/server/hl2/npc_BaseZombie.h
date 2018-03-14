@@ -182,10 +182,16 @@ public:
 	// Headcrab releasing/breaking apart
 	void RemoveHead( void );
 	virtual void SetZombieModel( void ) { };
+#ifndef SWARM_DLL
 	virtual void SetHeadlessModel( void ) { };
+#endif
 	virtual void BecomeTorso( const Vector &vecTorsoForce, const Vector &vecLegsForce );
 	virtual bool CanBecomeLiveTorso() { return false; }
+#ifndef SWARM_DLL
+	virtual bool HeadcrabFits( CBaseAnimating *pCrab );
+#else
 	virtual bool CNPC_BaseZombie::HeadcrabFits( CBaseAnimating *pCrab );
+#endif
 	void ReleaseHeadcrab( const Vector &vecOrigin, const Vector &vecVelocity, bool fRemoveHead, bool fRagdollBody, bool fRagdollCrab = false );
 	void SetHeadcrabSpawnLocation( int iCrabAttachment, CBaseAnimating *pCrab );
 

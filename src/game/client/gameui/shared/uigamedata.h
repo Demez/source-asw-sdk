@@ -19,6 +19,12 @@
 #include "steam/steam_api.h"
 #endif // _X360
 
+#include "matchmaking/imatchframework.h"
+#include "matchmaking/imatchsystem.h"
+#include "matchmaking/iplayer.h"
+#include "matchmaking/iplayermanager.h"
+#include "matchmaking/iservermanager.h"
+
 #include "ixboxsystem.h"
 
 #include "basemodpanel.h"
@@ -128,13 +134,18 @@ public:
 
 	void RunFrame();
 	void RunFrame_Storage();
+	void RunFrame_Invite();
+
+	void Invite_Confirm();
+	void Invite_Connecting();
+	bool Invite_IsStorageDeviceValid();
 
 	void OnGameUIPostInit();
 
 	bool CanPlayer2Join();
 
-	//void OpenFriendRequestPanel(int index, uint64 playerXuid);
-	void OpenInviteUI(char const *szInviteUiType);
+	void OpenFriendRequestPanel(int index, uint64 playerXuid);
+	void OpenInviteUI( char const *szInviteUiType );
 	void ExecuteOverlayCommand( char const *szCommand );
 
 	// Listening for match events
@@ -161,7 +172,7 @@ public:
 
 	bool IsXUIOpen();
 
-	void OpenWaitScreen( const char * messageText, float minDisplayTime = 3.0f, KeyValues *pSettings = NULL );
+	void OpenWaitScreen( const char * messageText, float minDisplayTime = 3.0f, KeyValues *pSettings = NULL, float maxDisplayTime = 0.0f );
 	void UpdateWaitPanel( const char * messageText, float minDisplayTime = 3.0f );
 	void UpdateWaitPanel( const wchar_t * messageText, float minDisplayTime = 3.0f );
 	void CloseWaitScreen( vgui::Panel * callbackPanel, const char * messageName );

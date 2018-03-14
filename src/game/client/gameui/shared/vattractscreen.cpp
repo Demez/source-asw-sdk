@@ -5,6 +5,7 @@
 //=====================================================================================//
 
 #include "VAttractScreen.h"
+#include "VSignInDialog.h"
 #include "EngineInterface.h"
 #include "inputsystem/iinputsystem.h"
 #include "vgui_controls/Label.h"
@@ -47,16 +48,46 @@ void CAttractScreen::SetAttractMode( AttractMode_t eMode, int iCtrlr )
 
 	s_eAttractMode = eMode;
 	
+#ifdef _X360
+	if ( !XBX_GetNumGameUsers() )
+		return;
+
+	if ( iCtrlr >= 0 )
+	{
+		s_iAttractModeRequestCtrlr = iCtrlr;
+		s_iAttractModeRequestPriCtrlr = XBX_GetPrimaryUserId();
+		Msg( "[GAMEUI] CAttractScreen::SetAttractMode(%d) bookmarked ctrlr%d (primary %d)\n", eMode, s_iAttractModeRequestCtrlr, s_iAttractModeRequestPriCtrlr );
+	}
+#endif
 }
 
 bool IsUserSignedInProperly( int iCtrlr )
 {
+#ifdef _X360
+	XUSER_SIGNIN_INFO xsi;
+	if ( iCtrlr >= 0 && iCtrlr < XUSER_MAX_COUNT &&
+		XUserGetSigninState( iCtrlr ) != eXUserSigninState_NotSignedIn &&
+		ERROR_SUCCESS == XUserGetSigninInfo( iCtrlr, XUSER_GET_SIGNIN_INFO_ONLINE_XUID_ONLY, &xsi ) &&
+		!(xsi.dwInfoFlags & XUSER_INFO_FLAG_GUEST) )
+		return true;
+	else
+		return false;
+#else
 	return true;
+#endif
 }
 
 bool IsUserSignedInToLiveWithMultiplayer( int iCtrlr )
 {
+#ifdef _X360
+	BOOL bPriv = FALSE;
+	return IsUserSignedInProperly( iCtrlr ) &&
+		( eXUserSigninState_SignedInToLive == XUserGetSigninState( iCtrlr ) ) &&
+		( ERROR_SUCCESS == XUserCheckPrivilege( iCtrlr, XPRIVILEGE_MULTIPLAYER_SESSIONS, &bPriv ) ) &&
+		bPriv;
+#else
 	return true;
+#endif
 }
 
 static bool IsPrimaryUserSignedInProperly()
@@ -69,6 +100,19 @@ static void ChangeGamers();
 
 // safe to reset timeout to TCR 003: 120 seconds
 ConVar sys_attract_mode_timeout( "sys_attract_mode_timeout", "120", FCVAR_DEVELOPMENTONLY );
+
+#if defined( _X360 )
+CON_COMMAND_F( ui_force_attract, "", FCVAR_DEVELOPMENTONLY )
+{
+	// for development only testing, force the attract mode to beign its timeout
+	CAttractScreen* pAttractScreen = static_cast< CAttractScreen* >( CBaseModPanel::GetSingleton().GetWindow( WT_ATTRACTSCREEN ) );
+	if ( pAttractScreen )
+	{
+		// enable it, regardles of initial setup
+		pAttractScreen->ResetAttractDemoTimeout();
+	}
+}
+#endif
 
 bool CAttractScreen::IsUserIdleForAttractMode()
 {
@@ -449,9 +493,32 @@ void CAttractScreen::OnThink()
 		break;
 
 	case BLADE_WAITINGTOSHOWPROMOTEUI:
+#ifdef _X360
+		if ( !CUIGameData::Get()->IsXUIOpen() )
+		{
+			SetBladeStatus( BLADE_WAITINGFOROPEN );
+			m_eSignInUI = SIGNIN_PROMOTETOGUEST;
+			XShowSigninUI( 1, XSSUI_FLAGS_CONVERTOFFLINETOGUEST );
+		}
+#endif
 		break;
 
 	case BLADE_WAITINGTOSHOWSTORAGESELECTUI:
+#ifdef _X360
+		if ( !CUIGameData::Get()->IsXUIOpen() )
+		{
+			SetBladeStatus( BLADE_NOTWAITING );
+
+			int iSlot = m_eStorageUI - 1;
+			int iContorller = XBX_GetUserId( iSlot );
+			DWORD dwDevice = XBX_GetStorageDeviceId( iContorller );
+
+			CUIGameData::Get()->SelectStorageDevice( new CAttractScreenDeviceSelector(
+				iContorller,
+				( dwDevice == XBX_INVALID_STORAGE_ID ) ? true : false, // force the XUI to display
+				true ) );
+		}
+#endif
 		break;
 
 	case BLADE_WAITINGTOSHOWSIGNIN2:
@@ -512,17 +579,99 @@ bool CAttractScreen::BypassAttractScreen()
 	if ( !CommandLine()->FindParm( "-noattractscreen" ) )
 		return false;
 
+#ifdef _X360
+	// Check if there's a user signed in properly
+	for ( int k = 0; k < XUSER_MAX_COUNT; ++ k )
+	{
+		if ( !IsUserSignedInProperly( k ) )
+			continue;
+
+		m_bHidePressStart = true;
+		HidePressStart();
+
+		XBX_SetStorageDeviceId( k, XBX_STORAGE_DECLINED );
+
+		StartGame( k );
+		return true;
+	}
+#endif
+
 	// Couldn't find a user to be signed in
 	return false;
 }
 
 void CAttractScreen::AcceptInvite()
 {
+#ifdef _X360
+	static bool s_bAcceptedOnce = false;
+	if ( s_bAcceptedOnce )
+		return;
+	s_bAcceptedOnce = true;
+
+	int iInvitedUser = XBX_GetInvitedUserId();
+	XUID iInvitedXuid = XBX_GetInvitedUserXuid();
+	XNKID nSessionID = XBX_GetInviteSessionId();
+
+	Msg( "[GAMEUI] Invite for user %d (%llx) session id: %llx\n", iInvitedUser, iInvitedXuid, ( uint64 const & ) nSessionID );
+
+	if ( !( ( const uint64 & )( nSessionID ) ) ||
+		( iInvitedUser < 0 || iInvitedUser >= XUSER_MAX_COUNT ) ||
+		!iInvitedXuid )
+	{
+		return;
+	}
+
+	if ( !IsUserSignedInProperly( iInvitedUser ) )
+	{
+		Warning( "[GAMEUI] User no longer signed in\n" );
+		return;
+	}
+
+	XUSER_SIGNIN_INFO xsi;
+	if ( ERROR_SUCCESS != XUserGetSigninInfo( iInvitedUser, XUSER_GET_SIGNIN_INFO_ONLINE_XUID_ONLY, &xsi ) ||
+		xsi.xuid != iInvitedXuid )
+	{
+		Warning( "[GAMEUI] Failed to match user xuid with invite\n" );
+		return;
+	}
+
+	//
+	// Proceed accepting the invite
+	//
+	m_bHidePressStart = true;
+
+	// Need to fire off a game state change event to
+	// all listeners
+	XBX_SetInvitedUserId( iInvitedUser );
+	g_pMatchFramework->GetEventsSubscription()->BroadcastEvent( new KeyValues( "OnProfilesChanged", "numProfiles", (int) XBX_GetNumGameUsers() ) );
+
+	KeyValues *pSettings = KeyValues::FromString(
+		"settings",
+		" system { "
+			" network LIVE "
+		" } "
+		" options { "
+			" action joininvitesession "
+		" } "
+		);
+	pSettings->SetUint64( "options/sessionid", * ( uint64 * ) &nSessionID );
+	KeyValues::AutoDelete autodelete( pSettings );
+
+	Msg( "[GAMEUI] CAttractScreen - invite restart, invite accepted!\n" );
+	g_pMatchFramework->MatchSession( pSettings );
+#endif
 }
 
 void CAttractScreen::OnOpen()
 {
 	BaseClass::OnOpen();
+
+#ifdef _X360
+	if ( BypassAttractScreen() )
+		return;
+
+	AcceptInvite();
+#endif
 
 	if ( s_eAttractMode == ATTRACT_GAMESTART &&	!m_bHidePressStart )
 	{
@@ -559,6 +708,161 @@ void CAttractScreen::OnClose()
 
 void CAttractScreen::OnEvent( KeyValues *pEvent )
 {
+#ifdef _X360
+	if ( m_AttractDemoTimeout &&
+		!Q_stricmp( "OnSysXUIEvent", pEvent->GetName() ) )
+	{
+		// XUI blade activity resets the attract demo timeout
+		m_AttractDemoTimeout = -1;
+	}
+	else if ( m_eSignInUI == SIGNIN_NONE &&
+		!Q_stricmp( "OnSysSigninChange", pEvent->GetName() ) &&
+		!Q_stricmp( "signout", pEvent->GetString( "action", "" ) ) )
+	{
+		// Make sure that one of the committed controllers is not signing out
+		int nMask = pEvent->GetInt( "mask", 0 );
+		for ( DWORD k = 0; k < XBX_GetNumGameUsers(); ++ k )
+		{
+			int iController = XBX_GetUserId( k );
+			bool bSignedOut = !!( nMask & ( 1 << iController ) );
+			
+			if ( bSignedOut || XUserGetSigninState( iController ) == eXUserSigninState_NotSignedIn )
+			{
+				if ( UI_IsDebug() )
+				{
+					Msg( "[GAMEUI] CAttractScreen::OnEvent(OnSysSigninChange) - ctrlr %d signed out!\n", iController );
+				}
+
+				// Ooops, a committed user signed out while we were processing user settings and stuff...
+				ShowPressStart();
+				HideProgress();
+				HideMsgs();
+				return;
+			}
+		}
+	}
+
+	// We aren't expecting any more notifications if we aren't waiting for the blade
+	if ( BLADE_NOTWAITING == GetBladeStatus() )
+		return;
+
+	if ( !Q_stricmp( "OnSysSigninChange", pEvent->GetName() ) &&
+		 !Q_stricmp( "signin", pEvent->GetString( "action", "" ) ) )
+	{
+		int numUsers = pEvent->GetInt( "numUsers", 0 );
+		int nMask = pEvent->GetInt( "mask", 0 );
+
+		if ( UI_IsDebug() )
+		{
+			Msg( "[GAMEUI] AttractScreen::signin %d ctrlrs (0x%x), state=%d\n", numUsers, nMask, m_eSignInUI );
+		}
+
+		if ( numUsers > 0 )
+		{
+			for ( int k = 0; k < XUSER_MAX_COUNT; ++ k )
+			{
+				if ( ( nMask & ( 1 << k ) ) &&
+					 XUserGetSigninState( k ) == eXUserSigninState_NotSignedIn )
+				{
+					Msg( "[GAMEUI] AttractScreen::SYSTEMNOTIFY_USER_SIGNEDIN is actually a sign out, discarded!\n" );
+					return;
+				}
+			}
+
+			switch ( m_eSignInUI )
+			{
+			case SIGNIN_SINGLE:
+				{
+					// We expected a profile to sign in
+					m_eSignInUI = SIGNIN_NONE;
+					SetBladeStatus( BLADE_NOTWAITING );
+					StartGame( pEvent->GetInt( "user0", -1 ) );
+				}
+				break;
+
+			case SIGNIN_DOUBLE:
+				{
+					m_eSignInUI = SIGNIN_NONE;
+					SetBladeStatus( BLADE_NOTWAITING );
+
+					// We expected two profiles to sign in
+					if ( numUsers == 2 &&
+						 ( IsUserSignedInProperly( pEvent->GetInt( "user0", -1 ) ) ||
+						   IsUserSignedInProperly( pEvent->GetInt( "user1", -1 ) ) ) )
+					{
+						XBX_SetUserIsGuest( 0, 0 );
+						XBX_SetUserIsGuest( 1, 0 );
+
+						s_idPrimaryUser = pEvent->GetInt( "user0", -1 );
+						s_idSecondaryUser = pEvent->GetInt( "user1", -1 );
+
+						if ( !OfferPromoteToLiveGuest() )
+						{
+							StartGame( s_idPrimaryUser, s_idSecondaryUser );
+						}
+					}
+					else
+					{
+						// We need to reset all controller state to be
+						// able to dismiss the message box
+						ShowPressStart();
+
+						GenericConfirmation* confirmation = 
+							static_cast<GenericConfirmation*>( CBaseModPanel::GetSingleton().OpenWindow( WT_GENERICCONFIRMATION, this, false ) );
+
+						GenericConfirmation::Data_t data;
+
+						data.pWindowTitle = "#L4D360UI_MsgBx_NeedTwoProfilesC";
+						data.pMessageText = "#L4D360UI_MsgBx_NeedTwoProfilesTxt";
+						data.bOkButtonEnabled = true;
+
+						m_msgData = confirmation->SetUsageData(data);
+
+						HideFooter();
+					}
+				}
+				break;
+
+			case SIGNIN_PROMOTETOGUEST:
+				{
+					m_eSignInUI = SIGNIN_NONE;
+					SetBladeStatus( BLADE_NOTWAITING );
+
+					if ( UI_IsDebug() )
+					{
+						Msg( "[GAMEUI] Promoted to guest (%d:0x%x) (expected secondary %d), primary=%d\n",
+							numUsers, nMask,
+							s_idSecondaryUser, s_idPrimaryUser );
+					}
+
+					// Find the primary or secondary controller that was picked previously
+					// and mark that guy as promoted to guest
+
+					if ( !!( nMask & ( 1 << s_idSecondaryUser ) ) )
+					{
+						// Figure out which slot this controller will occupy
+						// int nSlotPrimary = (s_idPrimaryUser < s_idSecondaryUser) ? 0 : 1;
+						int nSlotSecondary = (s_idPrimaryUser < s_idSecondaryUser) ? 1 : 0;
+
+						if ( UI_IsDebug() )
+						{
+							Msg( "[GAMEUI] Marking slot%d ctrlrs%d as guest\n",
+								nSlotSecondary, s_idSecondaryUser );
+						}
+
+						// Mark the secondary slot as guest
+						s_bSecondaryUserIsGuest = 1;
+					}
+
+					// Start the game
+					StartGame( s_idPrimaryUser, s_idSecondaryUser );
+				}
+				break;
+			}
+			return;
+		}
+	}
+#endif
 }
 
 void CAttractScreen::ApplySchemeSettings( vgui::IScheme *pScheme )
@@ -635,10 +939,36 @@ void CAttractScreen::OnChangeGamersFromMainMenu()
 
 void CAttractScreen::StartWaitingForBlade1()
 {
+#ifdef _X360
+	if ( IsPrimaryUserSignedInProperly() )
+	{
+		StartGame( s_idPrimaryUser );
+		return;
+	}
+
+	m_eSignInUI = SIGNIN_SINGLE;
+
+	XEnableGuestSignin( FALSE );
+	XShowSigninUI( 1, XSSUI_FLAGS_LOCALSIGNINONLY );
+
+	SetBladeStatus( BLADE_WAITINGFOROPEN );
+#endif
 }
 
 void CAttractScreen::StartWaitingForBlade2()
 {
+#ifdef _X360
+	m_eSignInUI = SIGNIN_DOUBLE;
+
+	// Determine if the primary user is properly signed in to LIVE
+	bool bShowLiveProfiles = IsUserSignedInToLiveWithMultiplayer( s_idPrimaryUser ) &&
+		!IsUserSignedInProperly( s_idSecondaryUser );
+
+	XEnableGuestSignin( TRUE );
+	XShowSigninUI( 2, bShowLiveProfiles ? XSSUI_FLAGS_SHOWONLYONLINEENABLED : XSSUI_FLAGS_LOCALSIGNINONLY );
+
+	SetBladeStatus( BLADE_WAITINGFOROPEN );
+#endif
 }
 
 CAttractScreen::BladeStatus_t CAttractScreen::GetBladeStatus()
@@ -699,6 +1029,32 @@ void CAttractScreen::HideMsgs()
 
 void CAttractScreen::ShowPressStart()
 {
+#ifdef _X360
+	if ( UI_IsDebug() )
+	{
+		Msg( "[GAMEUI] CAttractScreen::ShowPressStart\n" );
+	}
+
+	m_pfnMsgChanged = NULL;
+
+	XBX_ResetUserIdSlots();
+	XBX_SetPrimaryUserId( XBX_INVALID_USER_ID );
+	XBX_SetPrimaryUserIsGuest( 0 );	
+	XBX_SetNumGameUsers( 0 ); // users not selected yet
+	g_pMatchFramework->GetEventsSubscription()->BroadcastEvent( new KeyValues( "OnProfilesChanged", "numProfiles", int(0) ) );
+
+	if ( m_pPressStartlbl )
+	{
+		m_pPressStartlbl->SetVisible( true );
+	}
+
+	if ( m_pPressStartShadowlbl )
+	{
+		m_pPressStartShadowlbl->SetVisible( true );
+	}
+
+	m_bHidePressStart = false;
+#endif
 }
 
 void CAttractScreen::ShowSignInDialog( int iPrimaryUser, int iSecondaryUser, BladeSignInUI_t eForceSignin )
@@ -737,6 +1093,7 @@ void CAttractScreen::ShowSignInDialog( int iPrimaryUser, int iSecondaryUser, Bla
 	else
 	{
 		CBaseModPanel::GetSingleton().SetLastActiveUserId( iPrimaryUser );
+		CBaseModPanel::GetSingleton().OpenWindow( WT_SIGNINDIALOG, this, false );
 	}
 }
 

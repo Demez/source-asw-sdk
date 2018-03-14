@@ -125,11 +125,7 @@
 #include "c_asw_generic_emitter.h"
 #endif
 
-#ifdef GAMEUI_SHARED
 #include "missionchooser/iasw_mission_chooser.h"
-#else//if defined( REVAMPED_CLIENT ) || defined ( HL2MP )
-#include "missionchooser/hl2r/ihl2r_mission_chooser.h"
-#endif
 
 #include "tier1/UtlDict.h"
 #include "keybindinglistener.h"
@@ -171,12 +167,7 @@ IAvi *avi = NULL;
 IBik *bik = NULL;
 IUploadGameStats *gamestatsuploader = NULL;
 IBlackBox *blackboxrecorder = NULL;
-
-#ifdef GAMEUI_SHARED
 IASW_Mission_Chooser *missionchooser = NULL;
-#else//if defined( REVAMPED_CLIENT ) || defined ( HL2MP )
-IHL2R_Mission_Chooser *missionchooser = NULL;
-#endif
 
 #if defined( REPLAY_ENABLED )
 IReplayHistoryManager *g_pReplayHistoryManager = NULL;

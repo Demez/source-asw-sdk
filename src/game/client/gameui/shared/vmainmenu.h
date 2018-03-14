@@ -22,9 +22,7 @@ public:
 
 #ifdef _X360
 	void Activate();
-#elif DEATHMATCH_CLIENT_DLL
-	void Activate();
-#endif
+#endif //_X360
 
 	void UpdateVisibility();
 

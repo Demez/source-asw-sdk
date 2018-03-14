@@ -6,13 +6,8 @@
 #include "nb_select_mission_entry.h"
 #include "nb_horiz_list.h"
 #include "nb_header_footer.h"
-#ifdef GAMEUI_SHARED
 #include "missionchooser/iasw_mission_chooser.h"
 #include "missionchooser/iasw_mission_chooser_source.h"
-#else//if defined( REVAMPED_CLIENT ) || defined ( HL2MP )
-#include "missionchooser/hl2r/ihl2r_mission_chooser.h"
-#include "missionchooser/hl2r/ihl2r_mission_chooser_source.h"
-#endif
 #include "nb_button.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -70,12 +65,12 @@ bool CampaignContainsMission( KeyValues *pCampaignKeys, const char *szMissionNam
 	return false;
 }
 
-int GetMissionIndex( IHL2R_Mission_Chooser_Source *pSource, const char *szMapName )
+int GetMissionIndex( IASW_Mission_Chooser_Source *pSource, const char *szMapName )
 {
 	int nMissions = pSource->GetNumMissions( true );
 	for ( int i = 0; i < nMissions; i++ )
 	{
-		HL2R_Mission_Chooser_Mission* pMission = pSource->GetMission( i, true );
+		ASW_Mission_Chooser_Mission* pMission = pSource->GetMission( i, true );
 		char pTemp[64];
 		Q_StripExtension( pMission->m_szMissionName, pTemp, sizeof(pTemp) );
 		if ( !Q_stricmp( pTemp, szMapName ) )
@@ -90,14 +85,14 @@ void CNB_Select_Mission_Panel::OnThink()
 {
 	BaseClass::OnThink();
 
-	IHL2R_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
+	IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
 
 	// TODO: If voting, then use:
-	//IHL2R_Mission_Chooser_Source *pSource = GetVotingMissionSource();
+	//IASW_Mission_Chooser_Source *pSource = GetVotingMissionSource();
 
 	if ( !pSource )
 	{
-		//Warning( "Unable to select a mission as couldn't find an IHL2R_Mission_Chooser_Source\n" );
+		//Warning( "Unable to select a mission as couldn't find an IASW_Mission_Chooser_Source\n" );
 		return;
 	}
 
@@ -148,7 +143,7 @@ void CNB_Select_Mission_Panel::OnThink()
 		for ( int i = 0; i < nMissions; i++ )
 		{
 			
-			//HL2R_Mission_Chooser_Mission* pMission = pSource->GetMission( i, true );
+			//ASW_Mission_Chooser_Mission* pMission = pSource->GetMission( i, true );
 			//if ( pMission && pCampaignKeys && !CampaignContainsMission( pCampaignKeys, pMission->m_szMissionName ) )
 				//continue;
 			if ( m_pHorizList->m_Entries.Count() < nCount + 1 )
@@ -209,7 +204,7 @@ void CNB_Select_Mission_Panel::OnCommand( const char *command )
 	BaseClass::OnCommand( command );
 }
 
-void CNB_Select_Mission_Panel::MissionSelected( HL2R_Mission_Chooser_Mission *pMission )
+void CNB_Select_Mission_Panel::MissionSelected( ASW_Mission_Chooser_Mission *pMission )
 {
 	if ( !pMission || !pMission->m_szMissionName || pMission->m_szMissionName[0] == 0 )
 		return;

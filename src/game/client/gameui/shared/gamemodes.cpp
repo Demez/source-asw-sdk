@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2008, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: l4d gamemodes carousel. FIXME: is it needed? [str]
+// Purpose: 
 //
 //=====================================================================================//
 

@@ -13,7 +13,7 @@
 #include "VDropDownMenu.h"
 #include "VFlyoutMenu.h"
 #include "UIGameData.h"
-//#include "vdownloadcampaign.h"
+#include "vdownloadcampaign.h"
 #include "gameui_util.h"
 
 #include "vgui/ISurface.h"
@@ -30,11 +30,8 @@
 #include "nb_button.h"
 #include "fmtstr.h"
 #include "smartptr.h"
-
-#ifdef SWARM_DLL
 #include "missionchooser/iasw_mission_chooser.h"
 #include "missionchooser/iasw_mission_chooser_source.h"
-#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -102,7 +99,7 @@ char const * BaseModUI::FoundGameListItem::Info::IsOtherTitle() const
 	return NULL;
 }
 
-/*bool BaseModUI::FoundGameListItem::Info::IsDownloadable() const
+bool BaseModUI::FoundGameListItem::Info::IsDownloadable() const
 {
 	if ( IsX360() )
 		return false;
@@ -123,7 +120,7 @@ char const * BaseModUI::FoundGameListItem::Info::IsOtherTitle() const
 	}
 
 	return false;
-}*/
+}
 
 const char * BaseModUI::FoundGameListItem::Info::GetJoinButtonHint() const
 {
@@ -131,10 +128,10 @@ const char * BaseModUI::FoundGameListItem::Info::GetJoinButtonHint() const
 	{
 		return "#L4D360UI_FoundGames_Join_Modded";
 	}
-	/*if ( IsDLC() || IsDownloadable() )
+	if ( IsDLC() || IsDownloadable() )
 	{
 		return "#L4D360UI_FoundGames_Join_Download";
-	}*/
+	}
 
 	if ( IsJoinable() )
 	{
@@ -479,7 +476,7 @@ void FoundGameListItem::SetGamePlayerCount( int current, int max )
 
 			const wchar_t *countText = NULL;
 
-			/*extern ConVar ui_public_lobby_filter_status;
+			extern ConVar ui_public_lobby_filter_status;
 			if ( !Q_stricmp( ui_public_lobby_filter_status.GetString(), "lobby" ) )
 			{
 				countText = ( max == 1 ) ? 
@@ -487,11 +484,11 @@ void FoundGameListItem::SetGamePlayerCount( int current, int max )
 					g_pVGuiLocalize->Find( "#L4D360UI_FoundGames_LobbyCount" );
 			}
 			else
-			{*/
+			{
 				countText = ( max == 1 ) ?
 					g_pVGuiLocalize->Find( "#L4D360UI_FoundGames_GameCount_1" ) :
 					g_pVGuiLocalize->Find( "#L4D360UI_FoundGames_GameCount" );
-			//}
+			}
 
 			if( countText  )
 			{
@@ -641,8 +638,7 @@ void FoundGameListItem::PaintBackground()
 	{
 		DrawListItemLabel( m_pLblNotJoinable, true );
 	}
-	//else if ( fi.IsJoinable() || fi.IsDownloadable() )
-	else if ( fi.IsJoinable() )
+	else if ( fi.IsJoinable() || fi.IsDownloadable() )
 	{
 		DrawListItemLabel( m_pLblDifficulty, true );
 		DrawListItemLabel( m_pLblPlayers, true );
@@ -1097,7 +1093,7 @@ void FoundGames::OnCommand( const char *command )
 			PostMessage( pSelectedItem, new KeyValues( "JoinGame" ) );
 		}
 	}
-	/*else if ( !V_strcmp( command, "DownloadSelected" ) || !V_strcmp( command, "Website" ) )
+	else if ( !V_strcmp( command, "DownloadSelected" ) || !V_strcmp( command, "Website" ) )
 	{
 		FoundGameListItem *pSelectedItem = 	static_cast< FoundGameListItem * >( m_GplGames->GetSelectedPanelItem() );
 		if ( pSelectedItem )
@@ -1111,7 +1107,7 @@ void FoundGames::OnCommand( const char *command )
 			}
 			CBaseModPanel::GetSingleton().OpenWindow( WT_DOWNLOADCAMPAIGN, this, true, pSelectedDetails );
 		}
-	}*/
+	}
 	else if ( V_strcmp( command, "PlayerDropDown" ) == 0 )
 	{
 		DropDownMenu *pDrpPlayer = dynamic_cast< DropDownMenu * > ( FindChildByName( "DrpSelectedPlayerName" ) );
@@ -2027,15 +2023,15 @@ void FoundGames::OnItemSelected( const char* panelName )
 		else if( fi.mbInGame )
 		{
 			chapterName = "";
-			//IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
+			IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
 			const char *szDetailsMissionName = fi.mpGameDetails->GetString( "game/mission", "" );
 			KeyValues *pMissionKeys = NULL;
-			/*if ( pSource && szDetailsMissionName && szDetailsMissionName[0] )
+			if ( pSource && szDetailsMissionName && szDetailsMissionName[0] )
 			{
 				pMissionKeys = pSource->GetMissionDetails( szDetailsMissionName );
-			}*/
+			}
 
-			/*if ( pMissionKeys )
+			if ( pMissionKeys )
 			{
 				if ( pMissionKeys->GetString( "image", NULL ) )
 				{
@@ -2047,11 +2043,11 @@ void FoundGames::OnItemSelected( const char* panelName )
 			}
 			else
 			{
-				campaignName = fi.mpGameDetails->GetString( "game/missioninfo/displaytitle", "#HL2MPUI_ChapterName_Unknown" );
+				campaignName = fi.mpGameDetails->GetString( "game/missioninfo/displaytitle", "#L4D360UI_CampaignName_Unknown" );
 				bDownloadableCampaign = true;
-			}*/
+			}
 
-			//campaignName = fi.mpGameDetails->GetString( "game/missioninfo/displaytitle", campaignName );
+			campaignName = fi.mpGameDetails->GetString( "game/missioninfo/displaytitle", campaignName );
 			szDownloadAuthor = fi.mpGameDetails->GetString( "game/missioninfo/author", szDownloadAuthor );
 			szDownloadWebsite = fi.mpGameDetails->GetString( "game/missioninfo/website", szDownloadWebsite );
 			bBuiltIn = fi.mpGameDetails->GetInt( "game/missioninfo/builtin", 0 );
@@ -2211,7 +2207,7 @@ void FoundGames::OnItemSelected( const char* panelName )
 		{
 			// Don't do anything below
 		}
-		/*else if ( fi.IsDownloadable() )
+		else if ( fi.IsDownloadable() )
 		{
 			if ( joinButton )
 			{
@@ -2228,17 +2224,17 @@ void FoundGames::OnItemSelected( const char* panelName )
 			{
 				downloadVersionLabel->SetVisible( !bDownloadableCampaign );
 			}
-		}*/
+		}
 		else if ( joinButton )
 		{
-			/*if ( downloadButton )
+			if ( downloadButton )
 			{
 				downloadButton->SetVisible( false );
 			}
 			if ( downloadVersionLabel )
 			{
 				downloadVersionLabel->SetVisible( false );
-			}*/
+			}
 
 			bool bGameJoinable = fi.IsJoinable();
 			if ( !playerCountText[0] )
@@ -2254,14 +2250,14 @@ void FoundGames::OnItemSelected( const char* panelName )
 		{
 			eDetails = DETAILS_NONE;
 
-			/*if ( downloadButton )
+			if ( downloadButton )
 			{
 				downloadButton->SetVisible( false );
 			}
 			if ( downloadVersionLabel )
 			{
 				downloadVersionLabel->SetVisible( false );
-			}*/
+			}
 			if ( joinButton )
 			{
 				joinButton->SetVisible( false );
@@ -2400,7 +2396,7 @@ void FoundGames::OnItemSelected( const char* panelName )
 
 #ifndef _X360
 	// Are we on the "Play Online" menus?
-	/*if ( CBaseModPanel::GetSingleton().GetWindow( WT_FOUNDPUBLICGAMES ) )
+	if ( CBaseModPanel::GetSingleton().GetWindow( WT_FOUNDPUBLICGAMES ) )
 	{
 		BaseModUI::BaseModHybridButton *m_pInstallSupportBtn = dynamic_cast< BaseModUI::BaseModHybridButton * >( FindChildByName( "BtnInstallSupport" ) );
 		vgui::Label *m_pSupportRequiredDetails = dynamic_cast< vgui::Label * >( FindChildByName( "LblSupportRequiredDetails" ) );
@@ -2428,6 +2424,7 @@ void FoundGames::OnItemSelected( const char* panelName )
 					
 					SetControlVisible( "IconForwardArrow", false );
 				}
+
 			}
 			else // The SDK is installed or is installing
 			{
@@ -2439,7 +2436,7 @@ void FoundGames::OnItemSelected( const char* panelName )
 				}
 
 				// If we are currently installing, display the install message
-				/*if ( GetLegacyData::IsInstalling() )
+				if ( GetLegacyData::IsInstalling() )
 				{
 					if ( lblInstalling && lblInstallingDetails )
 					{
@@ -2462,7 +2459,7 @@ void FoundGames::OnItemSelected( const char* panelName )
 				//joinButton->SetEnabled( true ); // comment in to force the Join Game button to only be active when the SDK is installed
 			}
 		}
-	}*/
+	}
 #endif
 
 	SetDetailsPanelVisible( eDetails != DETAILS_NONE );

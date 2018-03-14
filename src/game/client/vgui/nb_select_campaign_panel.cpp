@@ -6,13 +6,8 @@
 #include "nb_select_campaign_entry.h"
 #include "nb_horiz_list.h"
 #include "nb_header_footer.h"
-#ifdef GAMEUI_SHARED
 #include "missionchooser/iasw_mission_chooser.h"
 #include "missionchooser/iasw_mission_chooser_source.h"
-#else//if defined( REVAMPED_CLIENT ) || defined ( HL2MP )
-#include "missionchooser/hl2r/ihl2r_mission_chooser.h"
-#include "missionchooser/hl2r/ihl2r_mission_chooser_source.h"
-#endif
 #include "nb_button.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -54,14 +49,14 @@ void CNB_Select_Campaign_Panel::OnThink()
 {
 	BaseClass::OnThink();
 
-	IHL2R_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
+	IASW_Mission_Chooser_Source *pSource = missionchooser ? missionchooser->LocalMissionSource() : NULL;
 
 	// TODO: If voting, then use:
-	//IHL2R_Mission_Chooser_Source *pSource = GetVotingMissionSource();
+	//IASW_Mission_Chooser_Source *pSource = GetVotingMissionSource();
 
 	if ( !pSource )
 	{
-		//Warning( "Unable to select a mission as couldn't find an IHL2R_Mission_Chooser_Source\n" );
+		//Warning( "Unable to select a mission as couldn't find an IASW_Mission_Chooser_Source\n" );
 		return;
 	}
 
@@ -91,11 +86,6 @@ void CNB_Select_Campaign_Panel::OnThink()
 			pEntry->m_nCampaignIndex = -1;
 		}
 	}
-
-	// reactivedrop: using SwarmDirector's 2 solution to remove the popping of
-	// campaign list 
-	m_pHorizList->ChangeScrollValue(1);
-	m_pHorizList->ChangeScrollValue(-1);
 }
 
 
@@ -115,7 +105,7 @@ void CNB_Select_Campaign_Panel::OnCommand( const char *command )
 	BaseClass::OnCommand( command );
 }
 
-void CNB_Select_Campaign_Panel::CampaignSelected( HL2R_Mission_Chooser_Mission *pMission )
+void CNB_Select_Campaign_Panel::CampaignSelected( ASW_Mission_Chooser_Mission *pMission )
 {
 	if ( !pMission || !pMission->m_szMissionName || pMission->m_szMissionName[0] == 0 )
 		return;

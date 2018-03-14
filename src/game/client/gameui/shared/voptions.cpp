@@ -69,6 +69,10 @@ void Options::OnCommand(const char *command)
 	{
 		CBaseModPanel::GetSingleton().OpenWindow(WT_GAMEOPTIONS, this);
 	}
+	else if(!Q_strcmp(command, "AudioVideo"))
+	{
+		CBaseModPanel::GetSingleton().OpenWindow(WT_AUDIOVIDEO, this);
+	}
 	else if(!Q_strcmp(command, "Controller"))
 	{
 		CBaseModPanel::GetSingleton().OpenWindow(WT_CONTROLLER, this);

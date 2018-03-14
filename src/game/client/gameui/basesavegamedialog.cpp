@@ -19,15 +19,17 @@
 #include <stdlib.h>
 #include "FileSystem.h"
 #include "shared/basemodui.h"
-#include "MouseMessageForwardingPanel.h"
 #include "nb_header_footer.h"
 #include "nb_button.h"
+
+#include "MouseMessageForwardingPanel.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 using namespace vgui;
 using namespace BaseModUI;
+
 #define TGA_IMAGE_PANEL_WIDTH 180
 #define TGA_IMAGE_PANEL_HEIGHT 100
 
@@ -171,6 +173,7 @@ CBaseSaveGameDialog::CBaseSaveGameDialog( vgui::Panel *parent, const char *name 
 {
 	CreateSavedGamesList();
 	ScanSavedGames();
+
 	GameUI().PreventEngineHideGameUI();
 
 	LoadControlSettings( "resource/SaveGameDialog.res" );
@@ -178,13 +181,19 @@ CBaseSaveGameDialog::CBaseSaveGameDialog( vgui::Panel *parent, const char *name 
 	SetDeleteSelfOnClose(true);
 	SetProportional( true );
 
-//	SetUpperGarnishEnabled(true);
-//	SetLowerGarnishEnabled( true );
-//	SetOkButtonEnabled( false );
-
 	new vgui::Button( this, "loadsave", "" );
 	SetControlEnabled( "loadsave", false );
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: Creates the load game display list
+//-----------------------------------------------------------------------------
+void CBaseSaveGameDialog::CreateSavedGamesList()
+{
+	m_pGameList = new vgui::PanelListPanel( this, "listpanel_loadgame" );
+	m_pGameList->SetFirstColumnWidth( 0 );
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : *command - 
@@ -215,14 +224,6 @@ void CBaseSaveGameDialog::OnCommand( const char *command )
 	{
 		BaseClass::OnCommand( command );
 	}
-}
-//-----------------------------------------------------------------------------
-// Purpose: Creates the load game display list
-//-----------------------------------------------------------------------------
-void CBaseSaveGameDialog::CreateSavedGamesList()
-{
-	m_pGameList = new vgui::PanelListPanel( this, "listpanel_loadgame" );
-	m_pGameList->SetFirstColumnWidth( 0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -427,7 +428,7 @@ bool CBaseSaveGameDialog::ParseSaveData( char const *pszFileName, char const *ps
 //-----------------------------------------------------------------------------
 // Purpose: timestamp sort function for savegames
 //-----------------------------------------------------------------------------
-/*int /*CBaseSaveGameDialog::/SaveGameSortFunc( const void *lhs, const void *rhs )
+/*int CBaseSaveGameDialog::SaveGameSortFunc( const void *lhs, const void *rhs )
 {
 	const SaveGameDescription_t *s1 = (const SaveGameDescription_t *)lhs;
 	const SaveGameDescription_t *s2 = (const SaveGameDescription_t *)rhs;
@@ -556,36 +557,7 @@ int SaveReadNameAndComment( FileHandle_t f, char *name, char *comment )
 	
 	return 0;
 }
-/*
-void CBaseSaveGameDialog::OnNotifyChildFocus( vgui::Panel* child )
-{
-}
 
-void CBaseSaveGameDialog::OnFlyoutMenuClose( vgui::Panel* flyTo )
-{
-	UpdateFooter();
-}
-
-void CBaseSaveGameDialog::OnFlyoutMenuCancelled()
-{
-}
-
-//=============================================================================
-Panel* CBaseSaveGameDialog::NavigateBack()
-{
-	return BaseClass::NavigateBack();
-}
-void CBaseSaveGameDialog::UpdateFooter()
-{
-	CBaseModFooterPanel *footer = BaseModUI::CBaseModPanel::GetSingleton().GetFooterPanel();
-	if ( footer )
-	{
-		footer->SetButtons( FB_ABUTTON | FB_BBUTTON, FF_AB_ONLY, false );
-		footer->SetButtonText( FB_ABUTTON, "#L4D360UI_Select" );
-		footer->SetButtonText( FB_BBUTTON, "#L4D360UI_Done" );
-	}
-}
-*/
 //-----------------------------------------------------------------------------
 // Purpose: deletes an existing save game
 //-----------------------------------------------------------------------------

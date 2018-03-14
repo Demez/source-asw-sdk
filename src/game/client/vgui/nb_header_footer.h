@@ -37,30 +37,17 @@ enum NB_Background_Style
 	NB_BACKGROUND_NONE,
 };
 
-#ifdef HL2_CLIENT_DLL
-class CHL2_Background_Movie
+class CASW_Background_Movie
 {
 public:
-	CHL2_Background_Movie();
-	~CHL2_Background_Movie();
+	CASW_Background_Movie();
+	~CASW_Background_Movie();
 
 	void Update();
 	void SetCurrentMovie( const char *szFilename );
 	int SetTextureMaterial();
 	void ClearCurrentMovie();
-#elif GAMEUI_SHARED
-class C_Background_Movie
-{
-public:
-	C_Background_Movie();
-	~C_Background_Movie();
-
-	void Update();
-	void SetCurrentMovie(const char *szFilename);
-	int SetTextureMaterial();
-	void ClearCurrentMovie();
-#endif
-
+ 
 private:
 #ifdef ASW_BINK_MOVIES
 	BIKMaterial_t m_nBIKMaterial;
@@ -73,11 +60,7 @@ private:
 	int m_nLastGameState;
 };
 
-#ifdef HL2_CLIENT_DLL
-CHL2_Background_Movie* HL2BackgroundMovie();
-#elif GAMEUI_SHARED
-C_Background_Movie* BackgroundMovie();
-#endif
+CASW_Background_Movie* ASWBackgroundMovie();
 
 class CNB_Header_Footer : public vgui::EditablePanel
 {

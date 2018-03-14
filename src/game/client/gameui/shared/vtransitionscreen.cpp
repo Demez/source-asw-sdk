@@ -44,13 +44,10 @@ void CTransitionScreen::ApplySchemeSettings( vgui::IScheme *pScheme )
 	surface()->GetScreenSize( screenWide, screenTall );
 
 	char filename[MAX_PATH];
-	V_snprintf( filename, sizeof( filename ), "console/background04" ); // TODO: engine->GetStartupImage( filename, sizeof( filename ), screenWide, screenTall );
+	V_snprintf( filename, sizeof( filename ), "console/background01" ); // TODO: engine->GetStartupImage( filename, sizeof( filename ), screenWide, screenTall );
 	m_iImageID = surface()->CreateNewTextureID();
 	surface()->DrawSetTextureFile( m_iImageID, filename, true, false );
-	if ( UI_IsDebug() )
-	{
-		Msg( "[GAMEUI] CTransitionScreen::ApplySchemeSettings()...\n");
-	}
+
 	m_hFont = pScheme->GetFont( "ScreenTitle", true );
 
 	m_flTransitionStartTime = Plat_FloatTime();
@@ -78,10 +75,7 @@ void CTransitionScreen::PaintBackground()
 	surface()->DrawSetColor( 255, 255, 255, alpha );
 	surface()->DrawSetTexture( m_iImageID );
 	surface()->DrawTexturedRect( 0, 0, wide, tall );
-	if ( UI_IsDebug() )
-	{
-		Msg( "[GAMEUI] CTransitionScreen::PaintBackground()...\n");
-	}
+
 	int xPos = 0.90f * wide;
 	int yPos = 0.84f * tall;
 

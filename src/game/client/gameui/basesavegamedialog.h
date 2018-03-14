@@ -20,6 +20,7 @@
 #include "shared/VFlyoutMenu.h"
 #include "shared/vfooterpanel.h"
 
+
 #define SAVEGAME_MAPNAME_LEN 32
 #define SAVEGAME_COMMENT_LEN 80
 #define SAVEGAME_ELAPSED_LEN 32
@@ -57,16 +58,17 @@ using namespace BaseModUI;
 using namespace vgui;
 class CNB_Button;
 class CNB_Header_Footer;
+
 //-----------------------------------------------------------------------------
 // Purpose: Base class for save & load game dialogs
 //-----------------------------------------------------------------------------
-class CBaseSaveGameDialog : public vgui::Frame/*vgui::Frame*///CBaseModFrame//, public FlyoutMenuListener
+class CBaseSaveGameDialog : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( CBaseSaveGameDialog, vgui::Frame );
 
 public:
 	CBaseSaveGameDialog( vgui::Panel *parent, const char *name );
-
+	//static int __cdecl SaveGameSortFunc( const void *lhs, const void *rhs );
 	void ScanSavedGames();
 
 
@@ -81,6 +83,7 @@ public:
 	{
 		BaseClass::Activate();
 	}
+
 protected:
 	CUtlVector<SaveGameDescription_t> m_SaveGames;
 	vgui::PanelListPanel *m_pGameList;
@@ -90,9 +93,10 @@ protected:
 		BaseClass::ApplySchemeSettings( pScheme );
 	}
 	virtual void	OnCommand( const char *command );
+
 	virtual void OnScanningSaveGames() {}
-	//void UpdateFooter( void );
 	void DeleteSaveGame( const char *fileName );
+	//void ScanSavedGames();
 	void CreateSavedGamesList();
 	int GetSelectedItemSaveIndex();
 	void AddSaveGameItemToList( int saveIndex );
@@ -102,5 +106,6 @@ protected:
 private:
 	MESSAGE_FUNC( OnPanelSelected, "PanelSelected" );
 };
+
 
 #endif // BASESAVEGAMEDIALOG_H

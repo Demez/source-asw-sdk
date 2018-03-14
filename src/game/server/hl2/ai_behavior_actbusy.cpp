@@ -1184,12 +1184,11 @@ int CAI_ActBusyBehavior::SelectScheduleWhileNotBusy( int iBase )
 		{
 			if( IsCombatActBusy() )
 			{
-				//if ( m_hActBusyGoal->IsCombatActBusyTeleportAllowed() && m_iNumConsecutivePathFailures >= 2 && !AI_GetSinglePlayer()->FInViewCone(GetOuter()) ) 
 #ifdef HL2COOP
 				CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(GetOuter());
 				if ( m_hActBusyGoal->IsCombatActBusyTeleportAllowed() && m_iNumConsecutivePathFailures >= 2 && !pPlayer->FInViewCone(GetOuter()) ) 
 #else
-				if ( m_hActBusyGoal->IsCombatActBusyTeleportAllowed() && m_iNumConsecutivePathFailures >= 2 && (AI_IsSinglePlayer() && !AI_GetSinglePlayer()->FInViewCone(GetOuter())) )
+				if ( m_hActBusyGoal->IsCombatActBusyTeleportAllowed() && m_iNumConsecutivePathFailures >= 2 && !AI_GetSinglePlayer()->FInViewCone(GetOuter()) ) 
 #endif
 				{
 					// Looks like I've tried several times to find a path to a valid hint node and

@@ -123,6 +123,9 @@ public:
 
 	CAPCMissile();
 	~CAPCMissile();
+#ifdef SWARM_DLL
+	void	Precache( void );
+#endif
 	void	IgniteDelay( void );
 	void	AugerDelay( float flDelayTime );
 	void	ExplodeDelay( float flDelayTime );
@@ -204,6 +207,9 @@ public:
 	bool	WeaponLOSCondition( const Vector &ownerPos, const Vector &targetPos, bool bSetConditions );
 	int		WeaponRangeAttack1Condition( float flDot, float flDist );
 
+#ifdef SWARM_DLL
+	void	Operator_ForceNPCFire( CBaseCombatCharacter  *pOperator, bool bSecondary, CBaseEntity *pTarget = NULL );
+#endif
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 	void	StartGuiding( void );
 	void	StopGuiding( void );

@@ -3,14 +3,14 @@
 // Purpose: 
 //
 //=====================================================================================//
-#include "cbase.h"
+
 #include "basemodpanel.h"
 #include "basemodframe.h"
 #include "UIGameData.h"
 #include "EngineInterface.h"
 #include "VGenericConfirmation.h"
 #include "vgui/ILocalize.h"
-//#include "matchmaking/imatchframework.h"
+#include "matchmaking/imatchframework.h"
 #include "filesystem.h"
 #include "fmtstr.h"
 #ifndef _X360
@@ -71,14 +71,163 @@ CAsyncCtxUIOnDeviceAttached::~CAsyncCtxUIOnDeviceAttached()
 
 void CAsyncCtxUIOnDeviceAttached::ExecuteAsync()
 {
+	// Asynchronously do the tasks that don't interact with the command buffer
+	g_pFullFileSystem->DiscoverDLC( GetController() );
+
 	// Open user settings and save game container here
 	m_ContainerOpenResult = engine->OnStorageDeviceAttached( GetController() );
 	if ( m_ContainerOpenResult != ERROR_SUCCESS )
 		return;
 }
+
+ConVar ui_start_dlc_time_pump( "ui_start_dlc_time_pump", "30" );
+ConVar ui_start_dlc_time_loaded( "ui_start_dlc_time_loaded", "150" );
+ConVar ui_start_dlc_time_corrupt( "ui_start_dlc_time_corrupt", "300" );
+
+CON_COMMAND_F( ui_pump_dlc_mount_corrupt, "", FCVAR_DEVELOPMENTONLY )
+{
+	int nStage = -1;
+	if ( args.ArgC() > 1 )
+	{
+		nStage = Q_atoi( args.Arg( 1 ) );
+	}
+	DevMsg( 2, "ui_pump_dlc_mount_corrupt %d\n", nStage );
+
+	int nCorruptDLCs = g_pFullFileSystem->IsAnyCorruptDLC();
+	while ( nStage >= 0 && nStage < nCorruptDLCs )
+	{
+		static wchar_t wszDlcInfo[ 3 * MAX_PATH ] = {0};
+		if ( !g_pFullFileSystem->GetAnyCorruptDLCInfo( nStage, wszDlcInfo, sizeof( wszDlcInfo ) ) )
+		{
+			++ nStage;
+			continue;
+		}
+
+		// information text
+		if ( wchar_t *wszExplanation = g_pVGuiLocalize->Find( "#L4D360UI_MsgBx_DlcCorruptTxt" ) )
+		{
+			int wlen = Q_wcslen( wszDlcInfo );
+			Q_wcsncpy( wszDlcInfo + wlen, wszExplanation, sizeof( wszDlcInfo ) - 2 * wlen );
+		}
+
+		// We've got a corrupt DLC, put it up on the spinner
+		CUIGameData::Get()->UpdateWaitPanel( wszDlcInfo, 0.0f );
+		engine->ClientCmd( CFmtStr( "echo corruptdlc%d; wait %d; ui_pump_dlc_mount_corrupt %d;",
+			nStage + 1, ui_start_dlc_time_corrupt.GetInt(), nStage + 1 ) );
+		return;
+	}
+
+	// end of dlc mounting phases
+	CUIGameData::Get()->OnCompletedAsyncDeviceAttached( NULL );
+}
+
+CON_COMMAND_F( ui_pump_dlc_mount_content, "", FCVAR_DEVELOPMENTONLY )
+{
+	int nStage = -1;
+	if ( args.ArgC() > 1 )
+	{
+		nStage = Q_atoi( args.Arg( 1 ) );
+	}
+	DevMsg( 2, "ui_pump_dlc_mount_content %d\n", nStage );
+
+	bool bSearchPathMounted = false;
+	int numDlcsContent = g_pFullFileSystem->IsAnyDLCPresent( &bSearchPathMounted );
+
+	while ( nStage >= 0 && nStage < numDlcsContent )
+	{
+		static wchar_t wszDlcInfo[ 3 * MAX_PATH ] = {0};
+		unsigned int ulMask;
+		if ( !g_pFullFileSystem->GetAnyDLCInfo( nStage, &ulMask, wszDlcInfo, sizeof( wszDlcInfo ) ) )
+		{
+			++ nStage;
+			continue;
+		}
+
+		// information text
+		if ( wchar_t *wszExplanation = g_pVGuiLocalize->Find( "#L4D360UI_MsgBx_DlcMountedTxt" ) )
+		{
+			int wlen = Q_wcslen( wszDlcInfo );
+			Q_wcsncpy( wszDlcInfo + wlen, wszExplanation, sizeof( wszDlcInfo ) - 2 * wlen );
+		}
+
+		// We've got a corrupt DLC, put it up on the spinner
+		CUIGameData::Get()->UpdateWaitPanel( wszDlcInfo, 0.0f );
+		engine->ClientCmd( CFmtStr( "echo mounteddlc%d (0x%08X); wait %d; ui_pump_dlc_mount_content %d;",
+			nStage + 1, ulMask, ui_start_dlc_time_loaded.GetInt(), nStage + 1 ) );
+		return;
+	}
+
+	// Done displaying found content, show corrupt
+	engine->ClientCmd( "ui_pump_dlc_mount_corrupt 0" );
+}
+
+CON_COMMAND_F( ui_pump_dlc_mount_stage, "", FCVAR_DEVELOPMENTONLY )
+{
+	// execute in order
+	int nStage = -1;
+	if ( args.ArgC() > 1 )
+	{
+		nStage = Q_atoi( args.Arg( 1 ) );
+	}
+	DevMsg( 2, "ui_pump_dlc_mount_stage %d\n", nStage );
+
+	static char const *s_arrClientCmdsDlcMount[] = 
+	{
+		"net_reloadgameevents",
+		"hud_reloadscheme",
+		"gameinstructor_reload_lessons",
+		"scenefilecache_reload",
+		"cc_reload",
+		"rr_reloadresponsesystems",
+		"cl_soundemitter_reload",
+		"sv_soundemitter_reload",
+	};
+
+	if ( nStage >= 0 && nStage < ARRAYSIZE( s_arrClientCmdsDlcMount ) )
+	{
+		// execute in phases, each command deferred occurs on main thread as required
+		// adding a wait <frames> to let spinner clock a little
+		// no way to solve any one phase that blocks for too long...this is good enough
+		engine->ClientCmd( CFmtStr( "wait %d; %s; ui_pump_dlc_mount_stage %d;",
+			ui_start_dlc_time_pump.GetInt(),
+			s_arrClientCmdsDlcMount[ nStage ],
+			nStage + 1 ) );
+		return;
+	}
+	
+	// Done mounting
+	engine->ClientCmd( "ui_pump_dlc_mount_content 0" );
+}
+
 void CAsyncCtxUIOnDeviceAttached::Completed()
 {
-	return; //dlc? in SP mod? oh, cmon [str]
+	bool bDLCSearchPathMounted = false;
+	if ( GetContainerOpenResult() == ERROR_SUCCESS &&
+		 g_pFullFileSystem->IsAnyDLCPresent( &bDLCSearchPathMounted ) )
+	{
+		if ( !bDLCSearchPathMounted )
+		{
+			// add the DLC search paths if they exist
+			// this must be done on the main thread
+			// the DLC search path mount will incur a quick synchronous hit due to zip mounting
+			g_pFullFileSystem->AddDLCSearchPaths();
+
+			// new DLC data may trump prior data, so need to signal isolated system reloads
+			engine->ClientCmd( "ui_pump_dlc_mount_stage 0" );
+			return;
+		}
+	}
+
+	// No valid DLC was discovered, check if we discovered some corrupt DLC
+	if ( g_pFullFileSystem->IsAnyCorruptDLC() )
+	{
+		// need to show just corrupt DLC information
+		engine->ClientCmd( CFmtStr( "ui_pump_dlc_mount_corrupt %d", 0 ) );
+		return;
+	}
+
+	// Otherwise we are done attaching storage right now
+	CUIGameData::Get()->OnCompletedAsyncDeviceAttached( this );
 }
 
 }

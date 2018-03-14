@@ -4,57 +4,28 @@
 #include "vgui_controls/ImagePanel.h"
 #include <vgui/ISurface.h>
 #include "vgui_hudvideo.h"
-//#include "sdk_video.h"
+#include "asw_video.h"
 #include "VGUIMatSurface/IMatSystemSurface.h"
-#ifdef HL2_CLIENT_DLL
-#include "hl2_gamerules.h"
-#elif DEATHMATCH_CLIENT_DLL
-#include "dm_gamerules.h"
-#endif
-
-// UI defines. Include if you want to implement some of them [str]
-//#ifdef HL2_CLIENT_DLL
-//#include "hl2/ui_defines.h"
-//#elif GAMEUI_SHARED
-#include "shared/ui_defines.h"
-//#endif
+#include "asw_gamerules.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 using namespace vgui;
 
-#ifdef HL2_CLIENT_DLL
-CHL2_Background_Movie *g_pBackgroundMovie = NULL;
+CASW_Background_Movie *g_pBackgroundMovie = NULL;
 
-CHL2_Background_Movie* HL2BackgroundMovie()
+CASW_Background_Movie* ASWBackgroundMovie()
 {
 	if ( !g_pBackgroundMovie )
 	{
-		g_pBackgroundMovie = new CHL2_Background_Movie();
+		g_pBackgroundMovie = new CASW_Background_Movie();
 	}
 	return g_pBackgroundMovie;
 }
 
-
-CHL2_Background_Movie::CHL2_Background_Movie()
+CASW_Background_Movie::CASW_Background_Movie()
 {
-#elif GAMEUI_SHARED
-C_Background_Movie *g_pBackgroundMovie = NULL;
-
-C_Background_Movie* BackgroundMovie()
-{
-	if (!g_pBackgroundMovie)
-	{
-		g_pBackgroundMovie = new C_Background_Movie();
-	}
-	return g_pBackgroundMovie;
-}
-
-
-C_Background_Movie::C_Background_Movie()
-{
-#endif
 #ifdef ASW_BINK_MOVIES
 	m_nBIKMaterial = BIKMATERIAL_INVALID;
 #else
@@ -65,27 +36,15 @@ C_Background_Movie::C_Background_Movie()
 	m_nLastGameState = -1;
 }
 
-#ifdef HL2_CLIENT_DLL
-CHL2_Background_Movie::~CHL2_Background_Movie()
+CASW_Background_Movie::~CASW_Background_Movie()
 {
 
 }
 
-void CHL2_Background_Movie::SetCurrentMovie( const char *szFilename )
+void CASW_Background_Movie::SetCurrentMovie( const char *szFilename )
 {
 	if ( Q_strcmp( m_szCurrentMovie, szFilename ) )
 	{
-#elif GAMEUI_SHARED
-C_Background_Movie::~C_Background_Movie()
-{
-
-}
-
-void C_Background_Movie::SetCurrentMovie(const char *szFilename)
-{
-	if (Q_strcmp(m_szCurrentMovie, szFilename))
-	{
-#endif
 #ifdef ASW_BINK_MOVIES
 		if ( m_nBIKMaterial != BIKMATERIAL_INVALID )
 		{
@@ -121,11 +80,7 @@ void C_Background_Movie::SetCurrentMovie(const char *szFilename)
 	}
 }
 
-#ifdef HL2_CLIENT_DLL
-void CHL2_Background_Movie::ClearCurrentMovie()
-#elif GAMEUI_SHARED
-void C_Background_Movie::ClearCurrentMovie()
-#endif
+void CASW_Background_Movie::ClearCurrentMovie()
 {
 #ifdef ASW_BINK_MOVIES
 	if ( m_nBIKMaterial != BIKMATERIAL_INVALID )
@@ -146,11 +101,7 @@ void C_Background_Movie::ClearCurrentMovie()
 #endif
 }
 
-#ifdef HL2_CLIENT_DLL
-int CHL2_Background_Movie::SetTextureMaterial()
-#elif GAMEUI_SHARED
-int C_Background_Movie::SetTextureMaterial()
-#endif
+int CASW_Background_Movie::SetTextureMaterial()
 {
 #ifdef ASW_BINK_MOVIES
 	if ( m_nBIKMaterial == BIKMATERIAL_INVALID )
@@ -173,58 +124,62 @@ int C_Background_Movie::SetTextureMaterial()
 	return m_nTextureID;
 }
 
-#ifdef HL2_CLIENT_DLL
-void CHL2_Background_Movie::Update()
+void CASW_Background_Movie::Update()
 {
-	if ( engine->IsConnected() && HL2GameRules() )
+	if ( engine->IsConnected() && ASWGameRules() )
 	{
-		// Do something based on the gamerules...
-		int nGameState = 1;
-		if ( nGameState != m_nLastGameState )
+		int nGameState = ASWGameRules()->GetGameState();
+		if ( nGameState >= ASW_GS_DEBRIEF && ASWGameRules()->GetMissionSuccess() )
 		{
-			// todo: whats this? [str]
-
-#elif GAMEUI_SHARED
-void C_Background_Movie::Update()
-{
-#ifdef DEATHMATCH_CLIENT_DLL
-	if (engine->IsConnected() && DMGameRules())
-#elif HL2_CLIENT_DLL
-	if (engine->IsConnected() && HL2GameRules())
-#endif
-	{
-		// Do something based on the gamerules...
-		int nGameState = 1;
-		if (nGameState != m_nLastGameState)
-		{
-			// todo: whats this? [str]
-
-#endif
-
-#ifdef ASW_BINK_MOVIES
-			SetCurrentMovie( "media/BGFX_01.bik" );
-#else
-			SetCurrentMovie( "media/test.avi" );
-#endif
-			m_nLastGameState = nGameState;
+			nGameState += 10;
 		}
+		if ( nGameState != m_nLastGameState && !( nGameState == ASW_GS_LAUNCHING || nGameState == ASW_GS_INGAME ) )
+		{
+			const char *pFilename = NULL;
+#ifdef ASW_BINK_MOVIES
+			if ( ASWGameRules()->GetGameState() >= ASW_GS_DEBRIEF )
+			{
+				if ( ASWGameRules()->GetMissionSuccess() )
+				{
+					pFilename = "media/SpaceFX.bik";
+				}
+				else
+				{
+					pFilename = "media/BG_Fail.bik";
+				}
+			}
+			else
+			{
+				int nChosenMovie = RandomInt( 0, 3 );
+				switch( nChosenMovie )
+				{
+					case 0: pFilename = "media/BGFX_01.bik"; break;
+					case 1: pFilename = "media/BGFX_02.bik"; break;
+					default:
+					case 2: pFilename = "media/BGFX_03.bik"; break;
+					case 3: pFilename = "media/BG_04_FX.bik"; break;
+				}
+			}
+#else
+			pFilename = "media/test.avi";
+#endif
+			if ( pFilename )
+			{
+				SetCurrentMovie( pFilename );
+			}
+		}
+		m_nLastGameState = nGameState;
 	}
 	else
 	{
 		int nGameState = 0;
 		if ( nGameState != m_nLastGameState )
 		{
-#ifdef UI_USING_RANDOMMENUMOVIES
-			int nMovieIndex = 0;
-			nMovieIndex = random->RandomInt(0, ARRAYSIZE(g_ppszRandomMenuMovies)); 
-			SetCurrentMovie( g_ppszRandomMenuMovies[nMovieIndex] );
-#else
 #ifdef ASW_BINK_MOVIES
 			SetCurrentMovie( "media/BG_02.bik" );
 #else
 			SetCurrentMovie( "media/test.avi" );
 #endif
-#endif //UI_USING_RANDOMMENUMOVIES
 			m_nLastGameState = nGameState;
 		}
 	}
@@ -290,7 +245,7 @@ CNB_Header_Footer::~CNB_Header_Footer()
 }
 
 extern ConVar asw_force_background_movie;
-ConVar asw_background_color( "asw_background_color", "32 32 32 128", FCVAR_NONE, "Color of background tinting in briefing screens" );
+ConVar asw_background_color( "asw_background_color", "16 32 46 128", FCVAR_NONE, "Color of background tinting in briefing screens" );
 
 void CNB_Header_Footer::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
@@ -305,7 +260,7 @@ void CNB_Header_Footer::ApplySchemeSettings( vgui::IScheme *pScheme )
 	switch( m_nTitleStyle )
 	{
 		case NB_TITLE_BRIGHT: m_pTitle->SetFgColor( Color( 255, 255, 255, 255 ) ); break;
-		case NB_TITLE_MEDIUM: m_pTitle->SetFgColor( Color( UI_STYLE_NB_TITLE_MEDIUM ) ); break;
+		case NB_TITLE_MEDIUM: m_pTitle->SetFgColor( Color( 47, 79, 111, 255 ) ); break;
 	}
 
 	switch( m_nBackgroundStyle )
@@ -429,17 +384,11 @@ void CNB_Header_Footer::SetMovieEnabled( bool bMovieEnabled )
 void CNB_Header_Footer::PaintBackground()
 {
 	BaseClass::PaintBackground();
-#ifdef HL2_CLIENT_DLL
-	if ( m_bMovieEnabled && HL2BackgroundMovie() )
+
+	if ( m_bMovieEnabled && ASWBackgroundMovie() )
 	{
-		HL2BackgroundMovie()->Update();
-		if ( HL2BackgroundMovie()->SetTextureMaterial() != -1 )
-#elif GAMEUI_SHARED
-	if (m_bMovieEnabled && BackgroundMovie())
-	{
-		BackgroundMovie()->Update();
-		if (BackgroundMovie()->SetTextureMaterial() != -1)
-#endif
+		ASWBackgroundMovie()->Update();
+		if ( ASWBackgroundMovie()->SetTextureMaterial() != -1 )
 		{
 			surface()->DrawSetColor( 255, 255, 255, 255 );
 
@@ -455,7 +404,7 @@ void CNB_Header_Footer::PaintBackground()
 	}
 
 	// test of gradient header/footer
-	
+	/*
 	int nScreenWidth = GetWide();
 	int nScreenHeight = GetTall();
 	int iHalfWide = nScreenWidth * 0.5f;
@@ -467,24 +416,24 @@ void CNB_Header_Footer::PaintBackground()
 
 	if ( m_bHeaderEnabled )
 	{
-		surface()->DrawSetColor( Color( UI_STYLE_FOOTER_GRADIENT ) );
+		surface()->DrawSetColor( Color( 19, 35, 65, 255 ) );
 		surface()->DrawFilledRect( 0, 0, nScreenWidth, nBarHeight );
 
-		surface()->DrawSetColor( Color( UI_STYLE_FOOTER_GRALINE ) );
+		surface()->DrawSetColor( Color( 35, 61, 87, 255 ) );
 		surface()->DrawFilledRectFade( iHalfWide, 0, iHalfWide + YRES( 320 ), nBarHeight, 255, 0, true );
 		surface()->DrawFilledRectFade( iHalfWide - YRES( 320 ), 0, iHalfWide, nBarHeight, 0, 255, true );
 	}
 
 	if ( m_bFooterEnabled )
 	{
-		surface()->DrawSetColor( Color( UI_STYLE_FOOTER_GRADIENT ) );
+		surface()->DrawSetColor( Color( 19, 35, 65, 255 ) );
 		surface()->DrawFilledRect( 0, nScreenHeight - nBarHeight, nScreenWidth, nScreenHeight );
 
-		surface()->DrawSetColor( Color( UI_STYLE_FOOTER_GRALINE ) );
+		surface()->DrawSetColor( Color( 35, 61, 87, 255 ) );
 		surface()->DrawFilledRectFade( iHalfWide, nScreenHeight - nBarHeight, iHalfWide + YRES( 320 ), nScreenHeight, 255, 0, true );
 		surface()->DrawFilledRectFade( iHalfWide - YRES( 320 ), nScreenHeight - nBarHeight, iHalfWide, nScreenHeight, 0, 255, true );
 	}
-	
+	*/
 }
 
 // =================
@@ -507,7 +456,7 @@ void CNB_Gradient_Bar::PaintBackground()
 	vgui::surface()->DrawSetColor( Color( 0, 0, 0, 255 * flAlpha ) );
 	vgui::surface()->DrawFilledRect( 0, y, wide, y + tall );
 
-	vgui::surface()->DrawSetColor( Color( UI_STYLE_BACKGROUNDFILL * flAlpha ) );
+	vgui::surface()->DrawSetColor( Color( 53, 86, 117, 255 * flAlpha ) );
 
 	int nBarPosY = y + YRES( 4 );
 	int nBarHeight = tall - YRES( 8 );
@@ -516,7 +465,7 @@ void CNB_Gradient_Bar::PaintBackground()
 	// draw highlights
 	nBarHeight = YRES( 2 );
 	nBarPosY = y;
-	vgui::surface()->DrawSetColor( Color( UI_STYLE_HIGHLIGHTS * flAlpha ) );
+	vgui::surface()->DrawSetColor( Color( 97, 210, 255, 255 * flAlpha ) );
 	vgui::surface()->DrawFilledRectFade( iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true );
 	vgui::surface()->DrawFilledRectFade( 0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true );
 

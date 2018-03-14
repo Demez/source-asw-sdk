@@ -1,0 +1,24 @@
+"GameInfo"
+{
+	"game"		"Swarm Mod"			// Game title in Steam
+	"title"		"Swarm Mod"			// Change me!
+	"type"		"multiplayer_only"
+	"icon"		"icon"					// Icon in Steam
+
+	//GameData	"swarm.fgd"
+	SupportsDX8     0
+	
+	"FileSystem"
+	{
+		"SteamAppId"		"630"			// Alien Swarm
+		"SearchPaths"
+		{
+			"Game"	"|gameinfo_path|."
+
+			"Game"	"swarm"						// Alien Swarm Folder
+			"Game"	"swarm_base"						// Alien Swarm Folder
+			
+			"Game"	"platform"
+		}
+	}
+}

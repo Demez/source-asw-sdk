@@ -27,7 +27,7 @@
 #include "cdll_util.h"
 
 // UI defines. Include if you want to implement some of them [str]
-#include "ui_defines.h"
+#include "..\specific\ui_defines_swarm.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -900,7 +900,6 @@ void CBaseModFrame::DrawGenericBackground()
 	// draw highlights
 	nBarHeight = YRES( 2 );
 	nBarPosY = 0;
-
 	vgui::surface()->DrawSetColor( Color( UI_STYLE_HIGHLIGHTS * flAlpha ) );
 	vgui::surface()->DrawFilledRectFade( iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true );
 	vgui::surface()->DrawFilledRectFade( 0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true );

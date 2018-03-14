@@ -369,7 +369,7 @@ COptionsSubAudioThirdPartyCreditsDlg::COptionsSubAudioThirdPartyCreditsDlg( vgui
 {
 	SetProportional( true );
 
-#ifdef SDK_CLIENT_DLL
+#ifdef SWARM_DLL
 	// parent is ignored, since we want look like we're steal focus from the parent (we'll become modal below)
 	SetScheme( "SwarmFrameScheme" );
 #endif

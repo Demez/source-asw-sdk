@@ -62,6 +62,8 @@ protected:
 	void UpdateEnhanceStereo( void );
 
 private:
+	void		StartTestMicrophone();
+	void		EndTestMicrophone();
 	void		UpdateFooter( bool bEnableCloud );
 
 	void OpenThirdPartySoundCreditsDialog();
@@ -76,11 +78,22 @@ private:
 
 	SliderControl	*m_sldGameVolume;
 	SliderControl	*m_sldMusicVolume;
-
+	SliderControl	*m_sldVoiceThreshold;
 	DropDownMenu	*m_drpSpeakerConfiguration;
 	DropDownMenu	*m_drpSoundQuality;
 	DropDownMenu	*m_drpLanguage;
 	DropDownMenu	*m_drpCaptioning;
+
+	DropDownMenu	*m_drpVoiceCommunication;
+	DropDownMenu	*m_drpVoiceCommunicationStyle;
+	SliderControl	*m_sldTransmitVolume;
+	SliderControl	*m_sldRecieveVolume;
+	DropDownMenu	*m_drpBoostMicrophoneGain;
+	BaseModHybridButton	*m_btnTestMicrophone;
+
+	vgui::ImagePanel	*m_pMicMeter;
+	vgui::ImagePanel	*m_pMicMeter2;
+	vgui::ImagePanel	*m_pMicMeterIndicator;
 
 	BaseModHybridButton	*m_btnCancel;
 

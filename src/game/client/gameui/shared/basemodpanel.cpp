@@ -1,8 +1,8 @@
-//========= Copyright 2013-2014, Strider[RUS] aka nickname, All rights reserved. ============//
+//========= Copyright  1996-2008, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Main UI panel, that holds EVERYTHIIING!!!
+// Purpose: 
 //
-//===========================================================================================//
+//=====================================================================================//
 
 #include "cbase.h"
 #include "basemodpanel.h"
@@ -20,37 +20,46 @@
 #include "filesystem/IXboxInstaller.h"
 #include "tier2/renderutils.h"
 
+#ifdef _X360
+	#include "xbox/xbox_launch.h"
+#endif
+
 // BaseModUI High-level windows
 #include "VTransitionScreen.h"
 #include "VAchievements.h"
+#include "vaddonassociation.h"
+#include "VAddons.h"
 #include "VAttractScreen.h"
 #include "VAudio.h"
+#include "VAudioVideo.h"
+#include "VCloud.h"
 #include "VControllerOptions.h"
 #include "VControllerOptionsButtons.h"
 #include "VControllerOptionsSticks.h"
+#include "VDownloads.h"
 #include "VGameOptions.h"
+#include "VGameSettings.h"
 #include "VGenericConfirmation.h"
 #include "VGenericWaitScreen.h"
+#include "vgetlegacydata.h"
+#include "VInGameDifficultySelect.h"
 #include "VInGameMainMenu.h"
+#include "VInGameChapterSelect.h"
 #include "VKeyboardMouse.h"
 #include "vkeyboard.h"
 #include "vmouse.h"
 #include "VLoadingProgress.h"
 #include "VMainMenu.h"
 #include "VOptions.h"
+#include "VSignInDialog.h"
 #include "VFooterPanel.h"
+#include "VPasswordEntry.h"
 #include "VVideo.h"
-// SP
-#include "VSingleplayer.h"
-#include "VGameplaySettings.h"
-#include "VLoadGameDialog.h"
-#include "VSaveGameDialog.h"
-// Online
-#include "VGameLobby.h"
-#include "VGameSettings.h"
-//idk
-//#include "VMultiplayer.h"
-//---
+#include "VSteamCloudConfirmation.h"
+#include "vcustomcampaigns.h"
+#include "vdownloadcampaign.h"
+#include "vjukebox.h"
+#include "vleaderboard.h"
 #include "gameconsole.h"
 #include "vgui/ISystem.h"
 #include "vgui/ISurface.h"
@@ -64,9 +73,22 @@
 #include "fmtstr.h"
 #include "smartptr.h"
 #include "nb_header_footer.h"
+// SP
+#include "VSingleplayer.h"
+#include "VGameplaySettings.h"
+#include "VLoadGameDialog.h"
+#include "VSaveGameDialog.h"
+// MP
+#include "VMultiplayer.h"
+#include "VVoteOptions.h"
+#include "VInGameKickPlayerList.h"
+#include "VFoundGames.h"
+#include "VFoundGroupGames.h"
+#include "vfoundpublicgames.h"
+#include "VGameLobby.h"
 
 // UI defines. Include if you want to implement some of them [str]
-#include "ui_defines.h"
+#include "..\specific\ui_defines_swarm.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -75,20 +97,39 @@ using namespace BaseModUI;
 using namespace vgui;
 
 //setup in GameUI_Interface.cpp
-//extern class IMatchSystem *matchsystem;
+extern class IMatchSystem *matchsystem;
 extern const char *COM_GetModDirectory( void );
 extern IGameConsole *IGameConsole();
 
-
+//=============================================================================
 CBaseModPanel* CBaseModPanel::m_CFactoryBasePanel = 0;
 
 #ifndef _CERT
+#ifdef _X360
+ConVar ui_gameui_debug( "ui_gameui_debug", "1" );
+#else
 ConVar ui_gameui_debug( "ui_gameui_debug", "0", FCVAR_RELEASE );
+#endif
 int UI_IsDebug()
 {
 	return (*(int *)(&ui_gameui_debug)) ? ui_gameui_debug.GetInt() : 0;
 }
 #endif
+
+#if defined( _X360 )
+static void InstallStatusChanged( IConVar *pConVar, const char *pOldValue, float flOldValue )
+{
+	// spew out status
+	if ( ((ConVar *)pConVar)->GetBool() && g_pXboxInstaller )
+	{
+		g_pXboxInstaller->SpewStatus();
+	}
+}
+ConVar xbox_install_status( "xbox_install_status", "0", 0, "Show install status", InstallStatusChanged );
+#endif
+
+// Use for show demos to force the correct campaign poster
+ConVar demo_campaign_name( "demo_campaign_name", "L4D2C5", FCVAR_DEVELOPMENTONLY, "Short name of campaign (i.e. L4D2C5), used to show correct poster in demo mode." );
 
 ConVar ui_lobby_noresults_create_msg_time( "ui_lobby_noresults_create_msg_time", "2.5", FCVAR_DEVELOPMENTONLY );
 
@@ -103,6 +144,30 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 	{
 		steamapicontext->SteamUtils()->SetOverlayNotificationPosition( k_EPositionTopRight );
 	}
+
+	// Set special DLC parameters mask
+	static ConVarRef mm_dlcs_mask_extras( "mm_dlcs_mask_extras" );
+	if ( mm_dlcs_mask_extras.IsValid() && steamapicontext && steamapicontext->SteamUtils() )
+	{
+		int iDLCmask = mm_dlcs_mask_extras.GetInt();
+
+		// Low Violence and Germany (or bordering countries) = CS.GUNS
+		char const *cc = steamapicontext->SteamUtils()->GetIPCountry();
+		char const *ccGuns = ":DE:DK:PL:CZ:AT:CH:FR:LU:BE:NL:";
+		if ( engine->IsLowViolence() && Q_stristr( ccGuns, CFmtStr( ":%s:", cc ) ) )
+		{
+			// iDLCmask |= ( 1 << ? );
+		}
+
+		// PreOrder DLC AppId Ownership = BAT
+		if ( steamapicontext->SteamApps()->BIsSubscribedApp( 565 ) )
+		{
+			// iDLCmask |= ( 1 << ? );
+		}
+
+		mm_dlcs_mask_extras.SetValue( iDLCmask );
+	}
+
 #endif
 
 	MakePopup( false );
@@ -110,6 +175,11 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 	Assert(m_CFactoryBasePanel == 0);
 	m_CFactoryBasePanel = this;
 
+#ifdef SWARM_DLL
+	g_pVGuiLocalize->AddFile("Resource/swarm_%language%.txt");
+#else
+	g_pVGuiLocalize->AddFile("Resource/mod_%language%.txt");
+#endif
 	g_pVGuiLocalize->AddFile( "Resource/basemodui_%language%.txt");
 
 	m_LevelLoading = false;
@@ -121,16 +191,24 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 
 	//pause fix
 	ConVarRef sv_pausable( "sv_pausable" );
-	sv_pausable.SetValue( 1 ); // thats forced, but anyway. [str]
+	sv_pausable.SetValue( 
+#if ( defined SWARM_DLL )
+		0
+#else
+		1
+#endif
+		); // thats forced, but anyway. [str]
 
 	// delay 3 frames before doing activation on initialization
 	// needed to allow engine to exec startup commands (background map signal is 1 frame behind) 
 	m_DelayActivation = 3;
 
-#ifdef HL2_CLIENT_DLL
-	m_UIScheme = vgui::scheme()->LoadSchemeFromFileEx( 0, "resource/HL2PortScheme.res", "HL2PortScheme" );
-#elif GAMEUI_SHARED
-	m_UIScheme = vgui::scheme()->LoadSchemeFromFileEx(0, "resource/GameScheme.res", "GameScheme");
+#ifdef SWARM_DLL
+	m_UIScheme = vgui::scheme()->LoadSchemeFromFileEx( 0, "resource/SwarmSchemeNew.res", "SwarmScheme" );
+#elif HL2_DLL
+	m_UIScheme = vgui::scheme()->LoadSchemeFromFileEx( 0, "resource/HL2SchemeNew.res", "HL2Scheme" );
+#else
+	m_UIScheme = vgui::scheme()->LoadSchemeFromFileEx( 0, "resource/GameSchemeNew.res", "GameScheme" );
 #endif
 	SetScheme( m_UIScheme );
 
@@ -144,6 +222,10 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 	vgui::surface()->PrecacheFontCharacters( pScheme->GetFont( "DefaultBold", true ), NULL );
 	vgui::surface()->PrecacheFontCharacters( pScheme->GetFont( "DefaultLarge", true ), NULL );
 	vgui::surface()->PrecacheFontCharacters( pScheme->GetFont( "FrameTitle", true ), NULL );
+
+#ifdef _X360
+	x360_audio_english.SetValue( XboxLaunch()->GetForceEnglish() );
+#endif
 
 	m_FooterPanel = new CBaseModFooterPanel( this, "FooterPanel" );
 	m_hOptionsDialog = NULL;
@@ -160,7 +242,6 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 #ifdef UI_USING_MAINMENUMUSIC
 	m_backgroundMusic = "Misc.MainUI";
 #endif
-
 	m_nBackgroundMusicGUID = 0;
 
 	m_nProductImageWide = 0;
@@ -168,12 +249,18 @@ CBaseModPanel::CBaseModPanel(): BaseClass(0, "CBaseModPanel"),
 	m_flMovieFadeInTime = 0.0f;
 	m_pBackgroundMaterial = NULL;
 	m_pBackgroundTexture = NULL;
+
+	// Subscribe to event notifications
+	g_pMatchFramework->GetEventsSubscription()->Subscribe( this );
 }
 
 //=============================================================================
 CBaseModPanel::~CBaseModPanel()
 {
 	ReleaseStartupGraphic();
+
+	// Unsubscribe from event notifications
+	g_pMatchFramework->GetEventsSubscription()->Unsubscribe( this );
 
 	if ( m_FooterPanel )
 	{
@@ -225,17 +312,27 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 
 	switch ( wt )
 	{
+	case WT_PASSWORDENTRY:
+		setActiveWindow = false;
+		break;
+	}
+
+	switch ( wt )
+	{
 	case WT_GENERICWAITSCREEN:
 		nWindowPriority = WPRI_WAITSCREEN;
 		break;
 	case WT_GENERICCONFIRMATION:
 		nWindowPriority = WPRI_MESSAGE;
 		break;
-	//case WT_LOADINGPROGRESSBKGND:
-	//	nWindowPriority = WPRI_BKGNDSCREEN;
-	//	break;
+	case WT_LOADINGPROGRESSBKGND:
+		nWindowPriority = WPRI_BKGNDSCREEN;
+		break;
 	case WT_LOADINGPROGRESS:
 		nWindowPriority = WPRI_LOADINGPLAQUE;
+		break;
+	case WT_PASSWORDENTRY:
+		nWindowPriority = WPRI_TOPMOST;
 		break;
 	case WT_TRANSITIONSCREEN:
 		nWindowPriority = WPRI_TOPMOST;
@@ -250,12 +347,22 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[wt] = new Achievements(this, "Achievements");
 			break;
 
-		case WT_ATTRACTSCREEN:
-			m_Frames[ wt ] = new CAttractScreen( this, "AttractScreen" );
-			break;
-
 		case WT_AUDIO:
 			m_Frames[wt] = new Audio(this, "Audio");
+			break;
+
+		case WT_AUDIOVIDEO:
+			m_Frames[wt] = new AudioVideo(this, "AudioVideo");
+			break;
+
+		case WT_CLOUD:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new Cloud(this, "Cloud");
+#endif
 			break;
 
 		case WT_CONTROLLER:
@@ -270,6 +377,16 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[wt] = new ControllerOptionsButtons(this, "ControllerOptionsButtons");
 			break;
 
+		case WT_DOWNLOADS:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new Downloads(this, "Downloads");
+#endif
+			break;
+
 		case WT_GAMELOBBY:
 			m_Frames[wt] = new GameLobby(this, "GameLobby");
 			break;
@@ -278,12 +395,32 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[wt] = new GameOptions(this, "GameOptions");
 			break;
 
+		case WT_GAMESETTINGS:
+			m_Frames[wt] = new GameSettings(this, "GameSettings");
+			break;
+
 		case WT_GENERICCONFIRMATION:
 			m_Frames[wt] = new GenericConfirmation(this, "GenericConfirmation");
 			break;
 
+		case WT_INGAMEDIFFICULTYSELECT:
+			m_Frames[wt] = new InGameDifficultySelect(this, "InGameDifficultySelect");
+			break;
+
 		case WT_INGAMEMAINMENU:
 			m_Frames[wt] = new InGameMainMenu(this, "InGameMainMenu");
+			break;
+
+		case WT_INGAMECHAPTERSELECT:
+			m_Frames[wt] = new InGameChapterSelect(this, "InGameChapterSelect");
+			break;
+
+		case WT_INGAMEKICKPLAYERLIST:
+			m_Frames[wt] = new InGameKickPlayerList(this, "InGameKickPlayerList");
+			break;
+
+		case WT_VOTEOPTIONS:
+			m_Frames[wt] = new VoteOptions(this, "VoteOptions");
 			break;
 
 		case WT_KEYBOARDMOUSE:
@@ -296,20 +433,48 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 #endif
 			break;
 
+		case WT_LOADINGPROGRESSBKGND:
+			m_Frames[wt] = new LoadingProgress( this, "LoadingProgress", LoadingProgress::LWT_BKGNDSCREEN );
+			break;
+
 		case WT_LOADINGPROGRESS:
 			m_Frames[wt] = new LoadingProgress( this, "LoadingProgress", LoadingProgress::LWT_LOADINGPLAQUE );
 			break;
-			
+
 		case WT_MAINMENU:
 			m_Frames[wt] = new MainMenu(this, "MainMenu");
+			break;
+
+		case WT_MULTIPLAYER:
+			m_Frames[wt] = new Multiplayer(this, "Multiplayer");
 			break;
 
 		case WT_OPTIONS:
 			m_Frames[wt] = new Options(this, "Options");
 			break;
 
+		case WT_SIGNINDIALOG:
+			m_Frames[wt] = new SignInDialog(this, "SignInDialog");
+			break;
+
 		case WT_GENERICWAITSCREEN:
 			m_Frames[ wt ] = new GenericWaitScreen( this, "GenericWaitScreen" );
+			break;
+
+		case WT_PASSWORDENTRY:
+			m_Frames[ wt ] = new PasswordEntry( this, "PasswordEntry" );
+			break;
+
+		case WT_ATTRACTSCREEN:
+			m_Frames[ wt ] = new CAttractScreen( this, "AttractScreen" );
+			break;
+
+		case WT_ALLGAMESEARCHRESULTS:
+			m_Frames[ wt ] = new FoundGames( this, "FoundGames" );
+			break;
+
+		case WT_FOUNDPUBLICGAMES:
+			m_Frames[ wt ] = new FoundPublicGames( this, "FoundPublicGames" );
 			break;
 
 		case WT_TRANSITIONSCREEN:
@@ -319,8 +484,84 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 		case WT_VIDEO:
 			m_Frames[wt] = new Video(this, "Video");
 			break;
-			
-// Solo---------------------------------------------------------------------------------
+
+		case WT_STEAMCLOUDCONFIRM:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new SteamCloudConfirmation(this, "SteamCloudConfirmation");
+#endif
+			break;
+
+		case WT_STEAMGROUPSERVERS:
+			m_Frames[ wt ] = new FoundGroupGames( this, "FoundGames" );
+			break;
+
+		case WT_CUSTOMCAMPAIGNS:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[ wt ] = new CustomCampaigns( this, "CustomCampaigns" );
+#endif
+			break;
+
+		case WT_DOWNLOADCAMPAIGN:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[ wt ] = new DownloadCampaign( this, "DownloadCampaign" );
+#endif
+			break;
+
+		case WT_LEADERBOARD:
+			m_Frames[ wt ] = new Leaderboard( this );
+			break;
+
+		case WT_ADDONS:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new Addons( this, "Addons" );
+#endif
+			break;
+
+		case WT_JUKEBOX:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new VJukebox( this, "Jukebox" );
+#endif
+			break;
+
+		case WT_ADDONASSOCIATION:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new AddonAssociation( this, "AddonAssociation" );
+#endif
+			break;
+
+		case WT_GETLEGACYDATA:
+#if defined( _X360 )
+			// not for xbox
+			Assert( 0 );
+			break;
+#else
+			m_Frames[wt] = new GetLegacyData( this, "GetLegacyData" );
+#endif
+			break;
 
 		case WT_LOADGAME:
 			m_Frames[wt] = new CLoadGameDialog(this, "LoadGame");
@@ -342,11 +583,6 @@ CBaseModFrame* CBaseModPanel::OpenWindow(const WINDOW_TYPE & wt, CBaseModFrame *
 			m_Frames[wt] = new CNewGameDialog(this, "NewGameDialog", true);
 			break;
 
-// Online--------------------------------------------------------------------------------
-
-		case WT_GAMESETTINGS:
-			m_Frames[wt] = new GameSettings(this, "GameSettings");
-			break;
 
 		default:
 			Assert( false );	// unknown window type
@@ -527,6 +763,8 @@ void CBaseModPanel::OnFrameClosed( WINDOW_PRIORITY pri, WINDOW_TYPE wt )
 		if ( m_ActiveWindow[k] == wt )
 			m_ActiveWindow[k] = WT_NONE;
 	}
+
+	
 
 	//
 	// We only care to resurrect windows of lower priority when
@@ -709,7 +947,41 @@ void CBaseModPanel::OnGameUIActivated()
 
 	COM_TimestampedLog( "CBaseModPanel::OnGameUIActivated()" );
 
+#if defined( _X360 )
+	if ( !engine->IsInGame() && !engine->IsConnected() && !engine->IsDrawingLoadingImage() )
+	{
+#if defined( _DEMO )
+		if ( engine->IsDemoExiting() )
+		{
+			// just got activated, maybe from a disconnect
+			// exit is terminal and unstoppable
+			SetVisible( true );
+			StartExitingProcess( false );
+			return;
+		}
+#endif
+		if ( !GameUI().IsInLevel() && !GameUI().IsInBackgroundLevel() )
+		{
+			// not using a background map
+			// start the menu movie and music now, as the main menu is about to open
+			// these are very large i/o operations on the xbox
+			// they must occur before the installer takes over the DVD
+			// otherwise the transfer rate is so slow and we sync stall for 10-15 seconds
+			ActivateBackgroundEffects();
+		}
+		// the installer runs in the background during the main menu
+		g_pXboxInstaller->Start();
+
+#if defined( _DEMO )
+		// ui valid can now adhere to demo timeout rules
+		engine->EnableDemoTimeout( true );
+#endif
+	}
+#endif
+
 	SetVisible( true );
+
+	// This is terrible, why are we directing the window that we open when we are only trying to activate the UI?
 	if ( WT_GAMELOBBY == GetActiveWindowType() )
 	{
 		return;
@@ -760,6 +1032,11 @@ void CBaseModPanel::OnGameUIHidden()
 		Msg( "[GAMEUI] CBaseModPanel::OnGameUIHidden()\n" );
 	}
 
+#if defined( _X360 )
+	// signal the installer to stop
+	g_pXboxInstaller->Stop();
+#endif
+
 // 	// We want to check here if we have any pending message boxes and
 // 	// if so, then we cannot just simply destroy all the UI elements
 // 	for ( int k = WPRI_NORMAL + 1; k < WPRI_LOADINGPLAQUE; ++ k )
@@ -798,7 +1075,37 @@ void CBaseModPanel::OnGameUIHidden()
 void CBaseModPanel::OpenFrontScreen()
 {
 	WINDOW_TYPE frontWindow = WT_NONE;
+#ifdef _X360
+	// make sure we are in the startup menu.
+	if ( !GameUI().IsInBackgroundLevel() )
+	{
+		engine->ClientCmd( "startupmenu" );
+	}
+
+	if ( g_pMatchFramework->GetMatchSession() )
+	{
+		Warning( "CBaseModPanel::OpenFrontScreen during active game ignored!\n" );
+		return;
+	}
+
+	if( XBX_GetNumGameUsers() > 0 )
+	{
+		if ( CBaseModFrame *pAttractScreen = GetWindow( WT_ATTRACTSCREEN ) )
+		{
+			frontWindow = WT_ATTRACTSCREEN;
+		}
+		else
+		{
+			frontWindow = WT_MAINMENU;
+		}
+	}
+	else
+	{
+		frontWindow = WT_ATTRACTSCREEN;
+	}
+#else
 	frontWindow = WT_MAINMENU;
+#endif // _X360
 
 	if( frontWindow != WT_NONE )
 	{
@@ -843,7 +1150,9 @@ void CBaseModPanel::RunFrame()
 	{
 	case WT_NONE:
 	case WT_MAINMENU:
+	case WT_LOADINGPROGRESSBKGND:
 	case WT_LOADINGPROGRESS:
+	case WT_AUDIOVIDEO:
 		bDoBlur = false;
 		break;
 	}
@@ -867,6 +1176,32 @@ void CBaseModPanel::RunFrame()
 		m_flBlurScale = clamp( m_flBlurScale, 0, 0.85f );
 		engine->SetBlurFade( m_flBlurScale );
 	}
+
+	if ( IsX360() && m_ExitingFrameCount )
+	{
+		CTransitionScreen *pTransitionScreen = static_cast< CTransitionScreen* >( GetWindow( WT_TRANSITIONSCREEN ) );
+		if ( pTransitionScreen && pTransitionScreen->IsTransitionComplete() )
+		{
+			if ( m_ExitingFrameCount > 1 )
+			{
+				m_ExitingFrameCount--;
+				if ( m_ExitingFrameCount == 1 )
+				{
+					// enough frames have transpired, send the single shot quit command
+					if ( m_bWarmRestartMode )
+					{
+						// restarts self, skips any intros
+						engine->ClientCmd_Unrestricted( "quit_x360 restart\n" );
+					}
+					else
+					{
+						// cold restart, quits to any startup app
+						engine->ClientCmd_Unrestricted( "quit_x360\n" );
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -874,6 +1209,21 @@ void CBaseModPanel::RunFrame()
 void CBaseModPanel::OnLevelLoadingStarted( char const *levelName, bool bShowProgressDialog )
 {
 	Assert( !m_LevelLoading );
+
+#if defined( _X360 )
+	// stop the installer
+	g_pXboxInstaller->Stop();
+	g_pXboxInstaller->SpewStatus();
+
+	// If the installer has finished while we are in the menus, then this is the ONLY place we
+	// know that there is no open files and we can redirect the search paths
+	if ( g_pXboxInstaller->ForceCachePaths() )
+	{
+		// the search paths got changed
+		// notify other systems who may have hooked absolute paths
+		engine->SearchPathsChangedAfterInstall();
+	}
+#endif
 
 	CloseAllWindows();
 
@@ -887,6 +1237,64 @@ void CBaseModPanel::OnLevelLoadingStarted( char const *levelName, bool bShowProg
 
 	KeyValues *pMissionInfo = NULL;
 	KeyValues *pChapterInfo = NULL;
+	
+	bool bShowPoster = false;
+	char chGameMode[64] = {0};
+
+	//
+	// If playing on listen server then "levelName" is set to the map being loaded,
+	// so it is authoritative - it might be a background map or a real level.
+	//
+	if ( levelName )
+	{
+		// Derive the mission info from the server game details
+		KeyValues *pGameSettings = g_pMatchFramework->GetMatchNetworkMsgController()->GetActiveServerGameDetails( NULL );
+		if ( !pGameSettings )
+		{
+			// In this particular case we need to speculate about game details
+			// this happens when user types "map c5m2 versus easy" from console, so there's no
+			// active server spawned yet, nor is the local client connected to any server.
+			// We have to force server DLL to apply the map command line to the settings and then
+			// speculatively construct the settings key.
+			if ( IServerGameDLL *pServerDLL = ( IServerGameDLL * ) g_pMatchFramework->GetMatchExtensions()->GetRegisteredExtensionInterface( INTERFACEVERSION_SERVERGAMEDLL ) )
+			{
+				KeyValues *pApplyServerSettings = new KeyValues( "::ExecGameTypeCfg" );
+				KeyValues::AutoDelete autodelete_pApplyServerSettings( pApplyServerSettings );
+
+				pApplyServerSettings->SetString( "map/mapname", levelName );
+
+				pServerDLL->ApplyGameSettings( pApplyServerSettings );
+			}
+
+			static ConVarRef r_mp_gamemode( "mp_gamemode" );
+			if ( r_mp_gamemode.IsValid() )
+			{
+				pGameSettings = new KeyValues( "CmdLineSettings" );
+				pGameSettings->SetString( "game/mode", r_mp_gamemode.GetString() );
+			}
+		}
+		
+		KeyValues::AutoDelete autodelete_pGameSettings( pGameSettings );
+		if ( pGameSettings )
+		{
+			// It is critical to get map info by the actual levelname that is being loaded, because
+			// for level transitions the server is still in the old map and the game settings returned
+			// will reflect the old state of the server.
+			pChapterInfo = g_pMatchExtSwarm->GetMapInfoByBspName( pGameSettings, levelName, &pMissionInfo );
+			Q_strncpy( chGameMode, pGameSettings->GetString( "game/mode", "" ), ARRAYSIZE( chGameMode ) );
+		}
+	}
+	
+	IMatchSession *pSession = g_pMatchFramework->GetMatchSession();
+	if ( !pChapterInfo && pSession  )
+	{
+		if ( KeyValues *pSettings = pSession->GetSessionSettings() )
+		{
+			pChapterInfo = g_pMatchExtSwarm->GetMapInfo( pSettings, &pMissionInfo );
+			Q_strncpy( chGameMode, pSettings->GetString( "game/mode", "" ), ARRAYSIZE( chGameMode ) );
+		}
+	}
+
 	//
 	// If we are just loading into some unknown map, then fake chapter information
 	// (static lifetime of fake keyvalues so that we didn't worry about ownership)
@@ -909,9 +1317,67 @@ void CBaseModPanel::OnLevelLoadingStarted( char const *levelName, bool bShowProg
 	// If we are transitioning maps from a real level then we don't want poster.
 	// We always want the poster when loading the first chapter of a campaign (vote for restart)
 	//
+	bShowPoster = true; //( !GameUI().IsInLevel() ||
+					//GameModeIsSingleChapter( chGameMode ) ||
+					//( pChapterInfo && pChapterInfo->GetInt( "chapter" ) == 1 ) ) &&
+		//pLoadingProgress->ShouldShowPosterForLevel( pMissionInfo, pChapterInfo );
 
 	LoadingProgress::LoadingType type;
-	if ( GameUI().IsInLevel() && !GameUI().IsInBackgroundLevel() )
+//#ifdef SWARM_DLL
+	if ( bShowPoster )
+	{
+		type = LoadingProgress::LT_POSTER;
+
+		// These names match the order of the enum Avatar_t in imatchmaking.h
+
+		const char *pPlayerNames[NUM_LOADING_CHARACTERS] = { NULL, NULL, NULL, NULL };
+		const char *pAvatarNames[NUM_LOADING_CHARACTERS] = { "", "", "", "" };
+
+		unsigned char botFlags = 0xFF;
+
+		if ( IMatchSession *pSession = g_pMatchFramework->GetMatchSession() )
+		{
+			KeyValues *pSettings = pSession->GetSessionSettings();
+			if ( pSettings )
+				pSettings = pSettings->FindKey( "members" );
+
+			int numMachines = pSettings->GetInt( "numMachines", 0 );
+			for ( int iMachine = 0; iMachine < numMachines; ++ iMachine )
+			{
+				char chMachine[32];
+				sprintf( chMachine, "machine%d", iMachine );
+				KeyValues *pMachine = pSettings->FindKey( chMachine );
+
+				int numPlayers = pMachine->GetInt( "numPlayers", 0 );
+				for ( int iPlayer = 0; iPlayer < numPlayers; ++ iPlayer )
+				{
+					char chPlayer[32];
+					sprintf( chPlayer, "player%d", iPlayer );
+					KeyValues *pPlayer = pMachine->FindKey( chPlayer );
+
+					XUID xuidPlayer = pPlayer->GetUint64( "xuid", 0ull );
+					char const *szPlayerName = pPlayer->GetString( "name", "" );
+					szPlayerName = CUIGameData::Get()->GetPlayerName( xuidPlayer, szPlayerName );
+					char const *szAvatar = pPlayer->GetString( "game/avatar", "" );
+
+					// Find the avatar
+					int iAvatar;
+					for ( iAvatar = 0; iAvatar < ARRAYSIZE( pAvatarNames ); ++ iAvatar )
+					{
+						if ( !Q_stricmp( pAvatarNames[iAvatar], szAvatar ) )
+							break;
+					}
+					if ( iAvatar < ARRAYSIZE( pPlayerNames ) )
+					{
+						pPlayerNames[ iAvatar ] = szPlayerName;
+						botFlags &= ~(1 << iAvatar);
+					}
+				}
+			}
+		}
+		pLoadingProgress->SetPosterData( pMissionInfo, pChapterInfo, pPlayerNames, botFlags, chGameMode );
+	}
+	else if ( GameUI().IsInLevel() && !GameUI().IsInBackgroundLevel() )
 	{
 		// Transitions between levels 
 		type = LoadingProgress::LT_TRANSITION;
@@ -919,13 +1385,14 @@ void CBaseModPanel::OnLevelLoadingStarted( char const *levelName, bool bShowProg
 	else
 	{
 		// Loading the menu the first time
-		type = LoadingProgress::LT_POSTER;
+		type = LoadingProgress::LT_MAINMENU;
 	}
 
 	if ( UI_IsDebug() )
 	{
 		Msg( "[GAMEUI] Loading Map with %i...\n", type);
 	}
+
 	pLoadingProgress->SetLoadingType( type );
 	pLoadingProgress->SetProgress( 0.0f );
 
@@ -934,6 +1401,7 @@ void CBaseModPanel::OnLevelLoadingStarted( char const *levelName, bool bShowProg
 		GameUI().ActivateGameUI();
 		// thx, Ken [str]
 	}
+
 	m_LevelLoading = true;
 }
 
@@ -948,14 +1416,15 @@ void CBaseModPanel::OnEngineLevelLoadingSession( KeyValues *pEvent )
 		pLoadingProgress->Close();
 		m_Frames[ WT_LOADINGPROGRESS ] = NULL;
 	}
-
 	CloseAllWindows( CLOSE_POLICY_DEFAULT );
 
-	if ( LoadingProgress *pLoadingProgress = static_cast<LoadingProgress*>( OpenWindow( WT_LOADINGPROGRESS, NULL ) ) )
+	// Pop up a fake bkgnd poster
+	if ( LoadingProgress *pLoadingProgress = static_cast<LoadingProgress*>( OpenWindow( WT_LOADINGPROGRESSBKGND, NULL ) ) )
 	{
+		pLoadingProgress->SetLoadingType( LoadingProgress::LT_POSTER );
 		pLoadingProgress->SetProgress( flProgress );
 	}
-	
+
 	if ( UI_IsDebug() )
 	{
 		Msg( "[GAMEUI] CBaseModPanel::OnEngineLevelLoadingSession...\n");
@@ -974,6 +1443,14 @@ void CBaseModPanel::OnLevelLoadingFinished( KeyValues *kvEvent )
 	{
 		Msg( "[GAMEUI] CBaseModPanel::OnLevelLoadingFinished( %s, %s )\n", bError ? "Had Error" : "No Error", failureReason );
 	}
+
+#if defined( _X360 )
+	if ( GameUI().IsInBackgroundLevel() )
+	{
+		// start the installer when running the background map has finished
+		g_pXboxInstaller->Start();
+	}
+#endif
 
 	LoadingProgress *pLoadingProgress = static_cast<LoadingProgress*>( GetWindow( WT_LOADINGPROGRESS ) );
 	if ( pLoadingProgress )
@@ -1054,7 +1531,204 @@ void CBaseModPanel::OnEvent( KeyValues *pEvent )
 {
 	char const *szEvent = pEvent->GetName();
 
-	if ( !Q_stricmp( "OnEngineLevelLoadingSession", szEvent ) )
+	if ( !Q_stricmp( "OnMatchSessionUpdate", szEvent ) )
+	{
+		char const *szState = pEvent->GetString( "state", "" );
+		if ( !Q_stricmp( "ready", szState ) )
+		{
+			// Session has finished creating:
+			IMatchSession *pSession = g_pMatchFramework->GetMatchSession();
+			if ( !pSession )
+				return;
+
+			KeyValues *pSettings = pSession->GetSessionSettings();
+			if ( !pSettings )
+				return;
+
+			char const *szNetwork = pSettings->GetString( "system/network", "" );
+			int numLocalPlayers = pSettings->GetInt( "members/numPlayers", 1 );
+			
+			WINDOW_TYPE wtGameLobby = WT_GAMELOBBY;
+			if ( !Q_stricmp( "offline", szNetwork ) &&
+				 numLocalPlayers <= 1 )
+			{
+				// We have a single-player offline session
+				wtGameLobby = WT_GAMESETTINGS;
+			}
+			else
+			{
+				// Automatically start the map, no configuration required
+				pSession->Command( KeyValues::AutoDeleteInline( new KeyValues( "Start" ) ) );
+				return;
+			}
+
+			// We have created a session
+			CloseAllWindows();
+
+			// Special case when we are creating a public session after empty search
+			if ( !Q_stricmp( pSettings->GetString( "options/createreason" ), "searchempty" ) &&
+				 !Q_stricmp( pSettings->GetString( "system/access" ), "public" ) )
+			{
+				// We are creating a public lobby after our search turned out empty
+				char const *szWaitScreenText = "#Matchmaking_NoResultsCreating";
+				CUIGameData::Get()->OpenWaitScreen( szWaitScreenText, ui_lobby_noresults_create_msg_time.GetFloat() );
+				CUIGameData::Get()->CloseWaitScreen( NULL, NULL );
+
+				// Delete the "createreason" key from the session settings
+				pSession->UpdateSessionSettings( KeyValues::AutoDeleteInline( KeyValues::FromString( "delete",
+					" delete { options { createreason delete } } " ) ) );
+			}
+
+			CBaseModFrame *pLobbyWindow = OpenWindow( wtGameLobby, NULL, true, pSettings ); // derive from session
+			if ( CBaseModFrame *pWaitScreen = GetWindow( WT_GENERICWAITSCREEN ) )
+			{
+				// Normally "CloseAllWindows" above would take down the waitscreen, but
+				// we could pop it up for the special case of empty search results
+				pWaitScreen->SetNavBack( pLobbyWindow );
+			}
+
+			// Check for a special case when we lost connection to host and that's why we are going to lobby
+			if ( KeyValues *pOnEngineDisconnectReason = g_pMatchFramework->GetEventsSubscription()->GetEventData( "OnEngineDisconnectReason" ) )
+			{
+				if ( !Q_stricmp( "lobby", pOnEngineDisconnectReason->GetString( "disconnecthdlr" ) ) )
+				{
+					CUIGameData::Get()->OpenWaitScreen( "#L4D360UI_MsgBx_DisconnectedFromServer" );
+					CUIGameData::Get()->CloseWaitScreen( NULL, NULL );
+				}
+			}
+		}
+		else if ( !Q_stricmp( "created", szState ) )
+		{
+			//
+			// This section of code catches when we just connected to a lobby that
+			// is playing a campaign that we do not have installed.
+			// In this case we abort loading, forcefully close all windows including
+			// loading poster and game lobby and display the download info msg.
+			//
+
+			IMatchSession *pSession = g_pMatchFramework->GetMatchSession();
+			if ( !pSession )
+				return;
+
+			KeyValues *pSettings = pSession->GetSessionSettings();
+
+			KeyValues *pInfoMission = NULL;
+			// TODO:
+			KeyValues *pInfoChapter = NULL;//GetMapInfoRespectingAnyChapter( pSettings, &pInfoMission );
+
+			bool bValidMission = true;
+
+			// TODO: Check if we have the map installed by querying local mission chooser source
+
+			if ( bValidMission )
+				return;
+
+			// If we do not have a valid chapter/mission, then we need to quit
+			if ( pInfoChapter && pInfoMission &&
+				( !*pInfoMission->GetName() || pInfoMission->GetInt( "version" ) == pSettings->GetInt( "game/missioninfo/version", -1 ) ) )
+				return;
+
+			if ( pSettings )
+				pSettings = pSettings->MakeCopy();
+
+			engine->ExecuteClientCmd( "disconnect" );
+			g_pMatchFramework->CloseSession();
+
+			CloseAllWindows( CLOSE_POLICY_EVEN_MSGS | CLOSE_POLICY_EVEN_LOADING );
+			OpenFrontScreen();
+
+			const char *szCampaignWebsite = pSettings->GetString( "game/missioninfo/website", NULL );
+			if ( szCampaignWebsite && *szCampaignWebsite )
+			{
+				OpenWindow( WT_DOWNLOADCAMPAIGN,
+					GetWindow( CBaseModPanel::GetSingleton().GetActiveWindowType() ),
+					true, pSettings );
+			}
+			else
+			{
+				GenericConfirmation::Data_t data;
+
+				data.pWindowTitle = "#L4D360UI_Lobby_MissingContent";
+				data.pMessageText = "#L4D360UI_Lobby_MissingContent_Message";
+				data.bOkButtonEnabled = true;
+
+				GenericConfirmation* confirmation = 
+					static_cast< GenericConfirmation* >( OpenWindow( WT_GENERICCONFIRMATION, NULL, true ) );
+
+				confirmation->SetUsageData(data);
+			}
+		}
+		else if ( !Q_stricmp( "progress", szState ) )
+		{
+			struct WaitText_t
+			{
+				char const *m_szProgress;
+				char const *m_szText;
+				int m_eCloseAllWindowsFlags;
+			};
+
+			int eDefaultFlags = CLOSE_POLICY_EVEN_MSGS | CLOSE_POLICY_KEEP_BKGND;
+			WaitText_t arrWaits[] = {
+				{ "creating",	"#Matchmaking_creating",	eDefaultFlags },
+				{ "joining",	"#Matchmaking_joining",		eDefaultFlags },
+				{ "searching",	"#Matchmaking_searching",	eDefaultFlags },
+			};
+
+			char const *szProgress = pEvent->GetString( "progress", "" );
+			WaitText_t const *pWaitText = NULL;
+			for ( int k = 0; k < ARRAYSIZE( arrWaits ); ++ k )
+			{
+				if ( !Q_stricmp( arrWaits[k].m_szProgress, szProgress ) )
+				{
+					pWaitText = &arrWaits[k];
+					break;
+				}
+			}
+
+			// Wait screen options to cancel async process
+			KeyValues *pSettings = new KeyValues( "WaitScreen" );
+			KeyValues::AutoDelete autodelete_pSettings( pSettings );
+			pSettings->SetPtr( "options/asyncoperation", g_MatchSessionCreationAsyncOperation.Prepare() );
+
+			// For PC we don't want to cancel lobby creation
+			if ( IsPC() && !Q_stricmp( "creating", szProgress ) )
+				pSettings = NULL;
+
+			// Put up a wait screen
+			if ( pWaitText )
+			{
+				if ( pWaitText->m_eCloseAllWindowsFlags != -1 )
+					CloseAllWindows( pWaitText->m_eCloseAllWindowsFlags );
+
+				char const *szWaitScreenText = pWaitText->m_szText;
+				float flMinDisplayTime = 0.0f;
+				
+				if ( IMatchSession *pMatchSession = g_pMatchFramework->GetMatchSession() )
+				{
+					KeyValues *pMatchSettings = pMatchSession->GetSessionSettings();
+					if ( !Q_stricmp( szProgress, "creating" ) &&
+						 !Q_stricmp( pMatchSettings->GetString( "options/createreason" ), "searchempty" ) &&
+						 !Q_stricmp( pMatchSettings->GetString( "system/access" ), "public" ) )
+					{
+						// We are creating a public lobby after our search turned out empty
+						szWaitScreenText = "#Matchmaking_NoResultsCreating";
+					}
+				}
+
+				CUIGameData::Get()->OpenWaitScreen( szWaitScreenText, flMinDisplayTime, pSettings, 7.0f );
+			}
+			else if ( !Q_stricmp( "searchresult", szProgress ) )
+			{
+				char const *arrText[] = { "#Matchmaking_SearchResults",
+					"#Matchmaking_SearchResults1", "#Matchmaking_SearchResults2", "#Matchmaking_SearchResults3" };
+				int numResults = pEvent->GetInt( "numResults", 0 );
+				if ( numResults < 0 || numResults >= ARRAYSIZE( arrText ) )
+					numResults = 0;
+				CUIGameData::Get()->OpenWaitScreen( arrText[numResults], 0.0f, pSettings );
+			}
+		}
+	}
+	else if ( !Q_stricmp( "OnEngineLevelLoadingSession", szEvent ) )
 	{
 		OnEngineLevelLoadingSession( pEvent );
 	}
@@ -1074,11 +1748,7 @@ bool CBaseModPanel::UpdateProgressBar( float progress, const char *statusText )
 		return false;
 	}
 
-	LoadingProgress *loadingProgress = static_cast<LoadingProgress*>( GetWindow( WT_LOADINGPROGRESS ) );
-	if ( !loadingProgress )
-	{
-		loadingProgress = static_cast<LoadingProgress*>( OpenWindow( WT_LOADINGPROGRESS, 0 ) );
-	}
+	LoadingProgress *loadingProgress = static_cast<LoadingProgress*>( OpenWindow( WT_LOADINGPROGRESS, 0 ) );
 
 	// Even if the progress hasn't advanced, we want to go ahead and refresh if it has been more than 1/10 seconds since last refresh to keep the spinny thing going.
 	static float s_LastEngineTime = -1.0f;
@@ -1192,6 +1862,7 @@ void CBaseModPanel::OpenOptionsDialog( Panel *parent )
 }
 
 //=============================================================================
+
 void CBaseModPanel::OpenOptionsMouseDialog(Panel *parent)
 {
 	if (IsPC())
@@ -1244,14 +1915,12 @@ void CBaseModPanel::ApplySchemeSettings(IScheme *pScheme)
 	surface()->GetScreenSize( screenWide, screenTall );
 
 	char filename[MAX_PATH];
-	V_snprintf(filename, sizeof(filename), "console/background01_widescreen"); // make an actual loading screen texture
-	// TODO: engine->GetStartupImage( filename, sizeof( filename ), screenWide, screenTall );
-	// GetStartupImage is undefined
+	V_snprintf( filename, sizeof( filename ), "VGUI/swarm/loading/BGFX01" ); // TODO: engine->GetStartupImage( filename, sizeof( filename ), screenWide, screenTall );
 	m_iBackgroundImageID = surface()->CreateNewTextureID();
 	surface()->DrawSetTextureFile( m_iBackgroundImageID, filename, true, false );
 
 	m_iProductImageID = surface()->CreateNewTextureID();
-	surface()->DrawSetTextureFile( m_iProductImageID, "vgui/logo", true, false );
+	surface()->DrawSetTextureFile( m_iProductImageID, "console/startup_loading", true, false );
 
 	// need these to be anchored now, can't come into existence during load
 	PrecacheLoadingTipIcons();
@@ -1273,6 +1942,7 @@ void CBaseModPanel::ApplySchemeSettings(IScheme *pScheme)
 		logoW = 320;
 		logoH = 160;
 	}
+
 	m_nProductImageX = vgui::scheme()->GetProportionalScaledValue( atoi( pScheme->GetResourceString( "Logo.X" ) ) );
 	m_nProductImageY = vgui::scheme()->GetProportionalScaledValue( atoi( pScheme->GetResourceString( "Logo.Y" ) ) );
 	m_nProductImageWide = vgui::scheme()->GetProportionalScaledValue( logoW );
@@ -1426,17 +2096,10 @@ void CBaseModPanel::PaintBackground()
 		{
 			ActivateBackgroundEffects();
 
-#ifdef HL2_CLIENT_DLL
-			if ( HL2BackgroundMovie() )
+			if ( ASWBackgroundMovie() )
 			{
-				HL2BackgroundMovie()->Update();
-				if ( HL2BackgroundMovie()->SetTextureMaterial() != -1 )
-#elif GAMEUI_SHARED
-			if ( BackgroundMovie() )
-			{
-				BackgroundMovie()->Update();
-				if (BackgroundMovie()->SetTextureMaterial() != -1)
-#endif
+				ASWBackgroundMovie()->Update();
+				if ( ASWBackgroundMovie()->SetTextureMaterial() != -1 )
 				{
 					surface()->DrawSetColor( 255, 255, 255, 255 );
 					int x, y, w, h;
@@ -1466,7 +2129,7 @@ void CBaseModPanel::PaintBackground()
 					}
 				}
 			}
-#ifdef UI_USING_LOGO
+			#ifdef UI_USING_LOGO
 			// place the product logo
 			int iLogoX = wide/2 - m_nProductImageWide/2;	// centering [str]
 			int iLogoTexture = m_iProductImageID;
@@ -1487,6 +2150,13 @@ void CBaseModPanel::PaintBackground()
 		surface()->DrawSetColor( 255, 255, 255, 128 );	// todo? alpha change
 		surface()->DrawSetTexture( iLogoTexture );
 		surface()->DrawTexturedRect( iLogoX, m_nProductImageY, iLogoX + m_nProductImageWide, m_nProductImageY + m_nProductImageTall/2 );	
+	}
+#endif
+
+#if defined( _X360 )
+	if ( !m_LevelLoading && !GameUI().IsInLevel() && xbox_install_status.GetBool() )
+	{
+		DrawCopyStats();
 	}
 #endif
 }
@@ -1707,7 +2377,14 @@ void CBaseModPanel::DrawStartupGraphic( float flNormalizedAlpha )
 
 void CBaseModPanel::OnCommand(const char *command)
 {
-	if ( !Q_stricmp( command, "RestartWithNewLanguage" ) )
+	if ( !Q_stricmp( command, "QuitRestartNoConfirm" ) )
+	{
+		if ( IsX360() )
+		{
+			StartExitingProcess( false );
+		}
+	}
+	else if ( !Q_stricmp( command, "RestartWithNewLanguage" ) )
 	{
 		if ( !IsX360() )
 		{

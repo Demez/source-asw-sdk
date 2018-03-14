@@ -13,7 +13,7 @@ class CNB_Horiz_List;
 class vgui::Button;
 // == MANAGED_CLASS_DECLARATIONS_END ==
 class CNB_Button;
-struct HL2R_Mission_Chooser_Mission;
+struct ASW_Mission_Chooser_Mission;
 
 class CNB_Select_Campaign_Panel : public vgui::EditablePanel
 {
@@ -28,7 +28,7 @@ public:
 	virtual void OnCommand( const char *command );
 
 	void InitList();
-	void CampaignSelected( HL2R_Mission_Chooser_Mission *pMission );
+	void CampaignSelected( ASW_Mission_Chooser_Mission *pMission );
 	
 	// == MANAGED_MEMBER_POINTERS_START: Do not edit by hand ==
 	CNB_Header_Footer	*m_pHeaderFooter;

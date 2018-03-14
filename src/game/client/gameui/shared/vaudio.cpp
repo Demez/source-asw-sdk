@@ -52,12 +52,18 @@ BaseClass(parent, panelName)
 		GameUI().PreventEngineHideGameUI();
 	}
 
+#if !defined( NO_VOICE )
+	m_pVoiceTweak = engine->GetVoiceTweakAPI();
+#else
+	m_pVoiceTweak = NULL;
+#endif
+
 	m_pHeaderFooter = new CNB_Header_Footer( this, "HeaderFooter" );
 	m_pHeaderFooter->SetTitle( "" );
 	m_pHeaderFooter->SetHeaderEnabled( false );
 	m_pHeaderFooter->SetFooterEnabled( true );
 	m_pHeaderFooter->SetGradientBarEnabled( true );
-	m_pHeaderFooter->SetGradientBarPos( 170, 170 );
+	m_pHeaderFooter->SetGradientBarPos( 60, 340 );
 
 	SetDeleteSelfOnClose(true);
 
@@ -72,6 +78,17 @@ BaseClass(parent, panelName)
 	m_drpSoundQuality = NULL;
 	m_drpLanguage = NULL;
 	m_drpCaptioning = NULL;
+	m_drpVoiceCommunication = NULL;
+	m_sldTransmitVolume = NULL;
+	m_sldRecieveVolume = NULL;
+	m_drpBoostMicrophoneGain = NULL;
+	m_btnTestMicrophone = NULL;
+	m_sldVoiceThreshold = NULL;
+	m_drpVoiceCommunicationStyle = NULL;
+
+	m_pMicMeter = NULL;
+	m_pMicMeter2 = NULL;
+	m_pMicMeterIndicator = NULL;
 
 	m_btnCancel = NULL;
 
@@ -88,6 +105,7 @@ Audio::~Audio()
 {
 	GameUI().AllowEngineHideGameUI();
 
+	EndTestMicrophone();
 
 	UpdateFooter( false );
 
@@ -110,6 +128,11 @@ void Audio::Activate()
 	if ( m_sldMusicVolume )
 	{
 		m_sldMusicVolume->Reset();
+	}
+
+	if ( m_sldVoiceThreshold )
+	{
+		m_sldVoiceThreshold->Reset();
 	}
 
 	if ( m_drpSpeakerConfiguration )
@@ -282,7 +305,119 @@ void Audio::Activate()
 		m_drpLanguage->SetVisible( m_nNumAudioLanguages > 1 );
 	}
 
+	if ( !m_pVoiceTweak )
+	{
+		SetControlVisible( "DrpVoiceCommunication", false );
+		SetControlVisible( "SldVoiceTransmitVolume", false );
+		SetControlVisible( "SldVoiceReceiveVolume", false );
+		SetControlVisible( "DrpBoostMicrophone", false );
+		SetControlVisible( "BtnTestMicrophone", false );
+		SetControlVisible( "MicMeter", false );
+		SetControlVisible( "MicMeter2", false );
+	}
+	else
+	{
+		CGameUIConVarRef voice_modenable("voice_modenable");
+		CGameUIConVarRef voice_enable("voice_enable");
 
+		bool bVoiceEnabled = voice_enable.GetBool() && voice_modenable.GetBool();
+
+		if ( m_drpVoiceCommunication )
+		{
+			if ( bVoiceEnabled )
+			{
+				m_drpVoiceCommunication->SetCurrentSelection( "#L4D360UI_Enabled" );
+			}
+			else
+			{
+				m_drpVoiceCommunication->SetCurrentSelection( "#L4D360UI_Disabled" );
+			}
+
+			FlyoutMenu *pFlyout = m_drpVoiceCommunication->GetCurrentFlyout();
+			if ( pFlyout )
+			{
+				pFlyout->SetListener( this );
+			}
+		}
+
+		CGameUIConVarRef voice_vox("voice_vox");
+
+		if ( m_drpVoiceCommunicationStyle )
+		{
+			m_drpVoiceCommunicationStyle->SetEnabled( bVoiceEnabled );
+
+			if ( voice_vox.GetBool() )
+			{
+				m_drpVoiceCommunicationStyle->SetCurrentSelection( "#L4D360UI_OpenMic" );
+				SetControlEnabled( "SldVoiceVoxThreshold", bVoiceEnabled );
+			}
+			else
+			{
+				m_drpVoiceCommunicationStyle->SetCurrentSelection( "#L4D360UI_PushToTalk" );
+				SetControlEnabled( "SldVoiceVoxThreshold", false );
+			}
+
+			FlyoutMenu *pFlyout = m_drpVoiceCommunicationStyle->GetCurrentFlyout();
+			if ( pFlyout )
+			{
+				pFlyout->SetListener( this );
+			}
+		}
+
+		if ( m_sldTransmitVolume )
+		{
+			bool bMicVolumeFound = m_pVoiceTweak->IsControlFound( MicrophoneVolume );
+			float micVolume = m_pVoiceTweak->GetControlFloat( MicrophoneVolume );
+			m_sldTransmitVolume->SetCurrentValue( (int)( 100.0f * micVolume ) );
+			m_sldTransmitVolume->ResetSliderPosAndDefaultMarkers();
+			m_sldTransmitVolume->SetEnabled( bVoiceEnabled && bMicVolumeFound );
+		}
+
+		if ( m_sldRecieveVolume )
+		{
+			float flRecVolume = m_pVoiceTweak->GetControlFloat( OtherSpeakerScale );
+			m_sldRecieveVolume->Reset();
+			m_sldRecieveVolume->SetCurrentValue( flRecVolume );
+			m_sldRecieveVolume->SetEnabled( bVoiceEnabled );
+		}
+
+		if ( m_drpBoostMicrophoneGain )
+		{
+			float fMicBoost = m_pVoiceTweak->GetControlFloat( MicBoost );
+
+			if ( fMicBoost != 0.0f )
+			{
+				m_drpBoostMicrophoneGain->SetCurrentSelection( "#L4D360UI_Enabled" );
+			}
+			else
+			{
+				m_drpBoostMicrophoneGain->SetCurrentSelection( "#L4D360UI_Disabled" );
+			}
+
+			m_drpBoostMicrophoneGain->SetEnabled( bVoiceEnabled );
+
+			FlyoutMenu *pFlyout = m_drpBoostMicrophoneGain->GetCurrentFlyout();
+			if ( pFlyout )
+			{
+				pFlyout->SetListener( this );
+			}
+		}
+
+		if ( m_pMicMeter )
+		{
+			m_pMicMeter->SetVisible( bVoiceEnabled );
+		}
+
+		if ( m_pMicMeter2 )
+		{
+			m_pMicMeter2->SetVisible( false );
+		}
+
+		if ( m_pMicMeterIndicator )
+		{
+			m_pMicMeterIndicator->SetVisible( false );
+		}
+	}
 
 	UpdateFooter( true );
 
@@ -313,6 +448,12 @@ void Audio::OnThink()
 		needsActivate = true;
 	}
 
+	if( !m_sldVoiceThreshold )
+	{
+		m_sldVoiceThreshold = dynamic_cast< SliderControl* >( FindChildByName( "SldVoiceVoxThreshold" ) );
+		needsActivate = true;
+	}
+
 	if( !m_drpSpeakerConfiguration )
 	{
 		m_drpSpeakerConfiguration = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpSpeakerConfiguration" ) );
@@ -337,6 +478,60 @@ void Audio::OnThink()
 		needsActivate = true;
 	}
 
+	if( !m_drpVoiceCommunication )
+	{
+		m_drpVoiceCommunication = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpVoiceCommunication" ) );
+		needsActivate = true;
+	}
+
+	if( !m_drpVoiceCommunicationStyle )
+	{
+		m_drpVoiceCommunicationStyle = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpVoiceCommunicationStyle" ) );
+		needsActivate = true;
+	}
+
+	if( !m_sldTransmitVolume )
+	{
+		m_sldTransmitVolume = dynamic_cast< SliderControl* >( FindChildByName( "SldVoiceTransmitVolume" ) );
+		needsActivate = true;
+	}
+
+	if( !m_sldRecieveVolume )
+	{
+		m_sldRecieveVolume = dynamic_cast< SliderControl* >( FindChildByName( "SldVoiceReceiveVolume" ) );
+		needsActivate = true;
+	}
+
+	if( !m_drpBoostMicrophoneGain )
+	{
+		m_drpBoostMicrophoneGain = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpBoostMicrophone" ) );
+		needsActivate = true;
+	}
+
+	if( !m_btnTestMicrophone )
+	{
+		m_btnTestMicrophone = dynamic_cast< BaseModHybridButton* >( FindChildByName( "BtnTestMicrophone" ) );
+		needsActivate = true;
+	}
+
+	if( !m_pMicMeter )
+	{
+		m_pMicMeter = dynamic_cast< ImagePanel* >( FindChildByName( "MicMeter" ) );
+		needsActivate = true;
+	}
+
+	if( !m_pMicMeter2 )
+	{
+		m_pMicMeter2 = dynamic_cast< ImagePanel* >( FindChildByName( "MicMeter2" ) );
+		needsActivate = true;
+	}
+
+	if( !m_pMicMeterIndicator )
+	{
+		m_pMicMeterIndicator = dynamic_cast< ImagePanel* >( FindChildByName( "MicMeterIndicator" ) );
+		needsActivate = true;
+	}
+
 // 	if( !m_btnCancel )
 // 	{
 // 		m_btnCancel = dynamic_cast< BaseModHybridButton* >( FindChildByName( "BtnCancel" ) );
@@ -354,6 +549,33 @@ void Audio::OnThink()
 		Activate();
 	}
 
+	if ( m_pVoiceTweak && m_pMicMeter && m_pMicMeter2 && m_pMicMeterIndicator && m_pMicMeter2->IsVisible() )
+	{
+		if ( !m_pVoiceTweak->IsStillTweaking() )
+		{
+			DevMsg( 1, "Lost Voice Tweak channels, resetting\n" );
+			EndTestMicrophone();
+		}
+		else
+		{
+			int wide, tall;
+			m_pMicMeter->GetSize(wide, tall);
+
+			int indicatorWide, indicatorTall;
+			m_pMicMeterIndicator->GetSize(indicatorWide, indicatorTall);
+
+			int iXPos, iYPos;
+			m_pMicMeter2->GetPos( iXPos, iYPos );
+
+			int iFinalPos = iXPos - ( indicatorWide / 2 ) + static_cast<float>( wide ) * m_pVoiceTweak->GetControlFloat( SpeakingVolume );
+
+			m_pMicMeterIndicator->GetPos( iXPos, iYPos );
+
+			iFinalPos = Approach( iFinalPos, iXPos, vgui::scheme()->GetProportionalScaledValue( 4 ) );
+
+			m_pMicMeterIndicator->SetPos( iFinalPos, iYPos );
+		}
+	}
 }
 
 void Audio::PerformLayout()
@@ -520,12 +742,123 @@ void Audio::OnCommand(const char *command)
 
 		m_nSelectedAudioLanguage = m_nAudioLanguages[ iSelectedLanguage ].languageCode;
 	}
+	else if( Q_stricmp( "VoiceCommunicationEnabled", command ) == 0 )
+	{
+		CGameUIConVarRef voice_modenable("voice_modenable");
+		CGameUIConVarRef voice_vox("voice_vox");
+		CGameUIConVarRef voice_enable("voice_enable");
+		voice_modenable.SetValue( 1 );
+		voice_enable.SetValue( 1 );
+
+		bool bMicVolumeFound = m_pVoiceTweak->IsControlFound( MicrophoneVolume );
+
+		if ( voice_vox.GetBool() )
+		{
+			voice_vox.SetValue( 0 );
+			voice_vox.SetValue( 1 );
+		}
+
+		SetControlEnabled( "SldVoiceTransmitVolume", bMicVolumeFound );
+		SetControlEnabled( "SldVoiceReceiveVolume", true );
+		SetControlEnabled( "DrpBoostMicrophone", true );
+		SetControlVisible( "MicMeter", true );
+		SetControlVisible( "MicMeter2", false );
+		SetControlEnabled( "BtnTestMicrophone", true );
+		SetControlEnabled( "DrpVoiceCommunicationStyle", true );
+		SetControlEnabled( "SldVoiceVoxThreshold", voice_vox.GetBool() );
+	}
+	else if( Q_stricmp( "VoiceCommunicationDisabled", command ) == 0 )
+	{
+		CGameUIConVarRef voice_modenable("voice_modenable");
+		CGameUIConVarRef voice_enable("voice_enable");
+		voice_modenable.SetValue( 0 );
+		voice_enable.SetValue( 0 );
+
+		SetControlEnabled( "SldVoiceTransmitVolume", false );
+		SetControlEnabled( "SldVoiceReceiveVolume", false );
+		SetControlEnabled( "DrpBoostMicrophone", false );
+		SetControlVisible( "MicMeter", false );
+		SetControlVisible( "MicMeter2", false );
+		SetControlEnabled( "BtnTestMicrophone", false );
+		SetControlEnabled( "DrpVoiceCommunicationStyle", false );
+		SetControlEnabled( "SldVoiceVoxThreshold", false);
+	
+		if ( m_drpBoostMicrophoneGain )
+		{
+			m_drpBoostMicrophoneGain->CloseDropDown();
+			m_drpBoostMicrophoneGain->SetEnabled( false );
+		}
+	}
+	else if( Q_stricmp( "VoiceCommunicationPushToTalk", command ) == 0 )
+	{
+		CGameUIConVarRef voice_vox("voice_vox");
+		voice_vox.SetValue( 0 );
+
+		SetControlEnabled( "SldVoiceVoxThreshold", false );
+	}
+	else if( Q_stricmp( "VoiceCommunicationOpenMic", command ) == 0 )
+	{
+		CGameUIConVarRef voice_vox("voice_vox");
+		voice_vox.SetValue( 1 );
+
+		SetControlEnabled( "SldVoiceVoxThreshold", true );
+	}
+	else if( Q_stricmp( "BoostMicrophoneEnabled", command ) == 0 )
+	{
+		if ( m_pVoiceTweak )
+		{
+			m_pVoiceTweak->SetControlFloat( MicBoost, 1.0f );
+		}
+	}
+	else if( Q_stricmp( "BoostMicrophoneDisabled", command ) == 0 )
+	{
+		if ( m_pVoiceTweak )
+		{
+			m_pVoiceTweak->SetControlFloat( MicBoost, 0.0f );
+		}
+	}
+	else if( Q_stricmp( "TestMicrophone", command ) == 0 )
+	{
+		FlyoutMenu::CloseActiveMenu();
+		if ( m_pVoiceTweak && m_pMicMeter2 )
+		{
+			if ( !m_pMicMeter2->IsVisible() )
+			{
+				StartTestMicrophone();
+			}
+			else
+			{
+				EndTestMicrophone();
+			}
+		}
+	}
+	else if( !Q_strcmp( command, "Jukebox" ) )
+	{
+		if ( m_pVoiceTweak && m_pMicMeter2 )
+		{
+			if ( m_pMicMeter2->IsVisible() )
+			{
+				EndTestMicrophone();
+			}
+		}
+
+		CBaseModPanel::GetSingleton().OpenWindow( WT_JUKEBOX, this, true );
+	}
 	else if( Q_stricmp( "Back", command ) == 0 )
 	{
 		OnKeyCodePressed( ButtonCodeToJoystickButtonCode( KEY_XBUTTON_B, CBaseModPanel::GetSingleton().GetLastActiveUserId() ) );
 	}
 	else if( Q_stricmp( "3rdPartyCredits", command ) == 0 )
 	{
+		if ( m_pVoiceTweak && m_pMicMeter2 )
+		{
+			if ( m_pMicMeter2->IsVisible() )
+			{
+				EndTestMicrophone();
+			}
+		}
+
+		EndTestMicrophone();
 		OpenThirdPartySoundCreditsDialog();
 		FlyoutMenu::CloseActiveMenu();
 	}
@@ -585,6 +918,19 @@ void Audio::OnFlyoutMenuCancelled()
 //=============================================================================
 Panel* Audio::NavigateBack()
 {
+	if ( m_pVoiceTweak && m_sldTransmitVolume )
+	{
+		int nVal = m_sldTransmitVolume->GetCurrentValue();
+		float val = static_cast<float>( nVal ) / 100.0f;
+		m_pVoiceTweak->SetControlFloat( MicrophoneVolume, val );
+	}
+
+	if ( m_pVoiceTweak && m_sldRecieveVolume )
+	{
+		float flVal = m_sldRecieveVolume->GetCurrentValue();
+		m_pVoiceTweak->SetControlFloat( OtherSpeakerScale, flVal );
+	}
+
 	engine->ClientCmd_Unrestricted( VarArgs( "host_writeconfig_ss %d", XBX_GetPrimaryUserId() ) );
 
 	return BaseClass::NavigateBack();
@@ -599,6 +945,90 @@ void Audio::ResetLanguage()
 {
 	m_pchUpdatedAudioLanguage = "";
 }
+
+void Audio::StartTestMicrophone()
+{
+	if ( m_pVoiceTweak && m_sldTransmitVolume )
+	{
+		int nVal = m_sldTransmitVolume->GetCurrentValue();
+		float val = static_cast<float>( nVal ) / 100.0f;
+		m_pVoiceTweak->SetControlFloat( MicrophoneVolume, val );
+	}
+
+	if ( m_pVoiceTweak && m_pVoiceTweak->StartVoiceTweakMode() )
+	{
+		if ( m_pMicMeter )
+		{
+			m_pMicMeter->SetVisible( false );
+		}
+
+		if ( m_pMicMeter2 )
+		{
+			m_pMicMeter2->SetVisible( true );
+		}
+
+		if ( m_pMicMeterIndicator )
+		{
+			m_pMicMeterIndicator->SetVisible( true );
+		}
+
+		SetControlEnabled( "SldVoiceTransmitVolume", false );
+		SetControlEnabled( "SldVoiceReceiveVolume", false );
+
+		if ( m_drpVoiceCommunication )
+		{
+			m_drpVoiceCommunication->CloseDropDown();
+			m_drpVoiceCommunication->SetEnabled( false );
+		}
+
+		if ( m_drpBoostMicrophoneGain )
+		{
+			m_drpBoostMicrophoneGain->CloseDropDown();
+			m_drpBoostMicrophoneGain->SetEnabled( false );
+		}
+	}
+}
+
+void Audio::EndTestMicrophone()
+{
+	if ( m_pVoiceTweak && m_pVoiceTweak->IsStillTweaking() )
+	{
+		m_pVoiceTweak->EndVoiceTweakMode();
+
+		CGameUIConVarRef voice_vox("voice_vox");
+
+		if ( voice_vox.GetBool() )
+		{
+			voice_vox.SetValue( 0 );
+			voice_vox.SetValue( 1 );
+		}
+	}
+
+	if ( m_pMicMeter )
+	{
+		CGameUIConVarRef voice_modenable("voice_modenable");
+		CGameUIConVarRef voice_enable("voice_enable");
+		m_pMicMeter->SetVisible( voice_enable.GetBool() && voice_modenable.GetBool() );
+	}
+
+	if ( m_pMicMeter2 )
+	{
+		m_pMicMeter2->SetVisible( false );
+	}
+
+	if ( m_pMicMeterIndicator )
+	{
+		m_pMicMeterIndicator->SetVisible( false );
+	}
+
+	bool bMicVolumeFound = m_pVoiceTweak->IsControlFound( MicrophoneVolume );
+
+	SetControlEnabled( "DrpVoiceCommunication", true );
+	SetControlEnabled( "SldVoiceTransmitVolume", bMicVolumeFound );
+	SetControlEnabled( "SldVoiceReceiveVolume", true );
+	SetControlEnabled( "DrpBoostMicrophone", true );
+}
+
 void Audio::OpenThirdPartySoundCreditsDialog()
 {
 	if (!m_OptionsSubAudioThirdPartyCreditsDlg.Get())
