@@ -290,8 +290,8 @@ void CDODSniperWeapon::ZoomIn( void )
 	m_bDoViewAnim = !m_bDoViewAnim;
 #endif
 
-	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
-	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
+	m_flNextPrimaryAttack = MAX( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
+	m_flNextSecondaryAttack = MAX( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
 	m_flTimeWeaponIdle = gpGlobals->curtime + m_pWeaponInfo->m_flTimeToIdleAfterFire;
 
 	m_flZoomChangeTime = gpGlobals->curtime;
@@ -309,8 +309,8 @@ void CDODSniperWeapon::ZoomOut( void )
 	m_bDoViewAnim = !m_bDoViewAnim;
 #endif	
 
-	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
-	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
+	m_flNextPrimaryAttack = MAX( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
+	m_flNextSecondaryAttack = MAX( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
 	m_flTimeWeaponIdle = gpGlobals->curtime + m_pWeaponInfo->m_flTimeToIdleAfterFire;
 
 	m_flZoomChangeTime = gpGlobals->curtime;

@@ -94,12 +94,12 @@ public:
 	virtual bool			GetShadowCastDirection( Vector *pDirection, ShadowType_t shadowType ) const;
 
 	virtual int				DrawModel( int flags );
-	virtual void Simulate();
+	virtual bool Simulate();
 
 	virtual float GetMinFOV() const { return 20; }
 	virtual bool SetFOV( CBaseEntity *pRequester, int FOV, float zoomRate = 0.0f );
 
-	virtual void CreateLightEffects( void ) {}	//no dimlight effects
+	virtual bool CreateLightEffects(void) { return true; }	//no dimlight effects
 
 	virtual const QAngle& EyeAngles();
 	virtual const Vector& GetRenderOrigin();  // return ragdoll origin if dead

@@ -102,7 +102,7 @@ void CDODViewRender::PerformStunEffect( const CViewSetup &view )
 
 		pPlayer->m_flStunAlpha += 45;
 
-		pPlayer->m_flStunAlpha = min( pPlayer->m_flStunAlpha, pPlayer->m_flStunMaxAlpha );
+		pPlayer->m_flStunAlpha = MIN( pPlayer->m_flStunAlpha, pPlayer->m_flStunMaxAlpha );
 
 		overlaycolor[3] = pPlayer->m_flStunAlpha;
 
@@ -220,7 +220,7 @@ void CDODViewRender::SetupColorCorrection( )
 		}
 		else if ( nObsMode != OBS_MODE_NONE )
 		{
-			flEffectAlpha = min( 1.0f, ( gpGlobals->curtime - pPlayer->GetDeathTime() ) / ( 2.0f ) );
+			flEffectAlpha = MIN( 1.0f, ( gpGlobals->curtime - pPlayer->GetDeathTime() ) / ( 2.0f ) );
 		}
 		else
 		{
@@ -233,11 +233,11 @@ void CDODViewRender::SetupColorCorrection( )
 			else if ( roundstate == STATE_RND_RUNNING )
 			{
 				// fade out of effect at last event: spawn or unfreeze at round start
-				float flFadeOutStartTime = max( DODGameRules()->m_flLastRoundStateChangeTime, pPlayer->m_flLastRespawnTime );
+				float flFadeOutStartTime = MAX( DODGameRules()->m_flLastRoundStateChangeTime, pPlayer->m_flLastRespawnTime );
 
 				// fade in from round start time
 				flEffectAlpha = 1.0 - ( gpGlobals->curtime - flFadeOutStartTime ) / ( 2.0f );
-				flEffectAlpha = max( 0.0f, flEffectAlpha );				
+				flEffectAlpha = MAX( 0.0f, flEffectAlpha );				
 			}
 		}
 

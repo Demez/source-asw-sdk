@@ -130,9 +130,9 @@ void FX_HitEffectSmoke(
 
 		float colorRamp = random->RandomFloat( 0.5f, 1.25f );
 
-		newParticle.m_uchColor[0] = min( 1.0f, colorRamp ) * 255.0f;
-		newParticle.m_uchColor[1] = min( 1.0f, colorRamp ) * 255.0f;
-		newParticle.m_uchColor[2] = min( 1.0f, colorRamp ) * 255.0f;
+		newParticle.m_uchColor[0] = MIN( 1.0f, colorRamp ) * 255.0f;
+		newParticle.m_uchColor[1] = MIN( 1.0f, colorRamp ) * 255.0f;
+		newParticle.m_uchColor[2] = MIN( 1.0f, colorRamp ) * 255.0f;
 	}	
 }
 
@@ -212,9 +212,9 @@ void FX_HitEffectBloodSpray(
 
 			float colorRamp = random->RandomFloat( 0.5f, 0.75f ) + flLODDistance;
 			
-			pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[1]	= min( 1.0f, whiteness * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[2]	= min( 1.0f, whiteness * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[1]	= MIN( 1.0f, whiteness * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[2]	= MIN( 1.0f, whiteness * colorRamp ) * 255.0f;
 			
 			pParticle->m_uchStartSize	= random->RandomFloat( interpolatedRamp.m_flMinSize, interpolatedRamp.m_flMaxSize ) * flDistanceScale;
 			pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4 * flDistanceScale;
@@ -373,9 +373,9 @@ void FX_DOD_BloodSpray( const Vector &origin, const Vector &normal, float flDama
 
 		colorRamp = random->RandomFloat( 0.75f, 2.0f );
 
-		pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 		
 		pParticle->m_uchStartSize	= 8;
 		pParticle->m_uchEndSize		= 32;
@@ -405,9 +405,9 @@ void FX_DOD_BloodSpray( const Vector &origin, const Vector &normal, float flDama
 
 			colorRamp = random->RandomFloat( 0.75f, 2.0f );
 
-			pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 			
 			pParticle->m_uchStartSize	= scale * random->RandomInt( 4, 8 );
 			pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4;
@@ -488,9 +488,9 @@ void FX_DOD_BloodSpray( const Vector &origin, const Vector &normal, float flDama
 
 			colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-			pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 
 			// scaled
 			pParticle->m_uchStartSize	= random->RandomInt( 2, 3 ) * (i+1);

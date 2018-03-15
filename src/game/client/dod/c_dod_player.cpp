@@ -394,8 +394,8 @@ void C_DODRagdoll::CreateLowViolenceRagdoll()
 		if ( LookupSequence( str ) == -1 )
 			break;
 		
-		iMinDeathAnim = min( iMinDeathAnim, iAnim );
-		iMaxDeathAnim = max( iMaxDeathAnim, iAnim );
+		iMinDeathAnim = MIN( iMinDeathAnim, iAnim );
+		iMaxDeathAnim = MAX( iMaxDeathAnim, iAnim );
 	}
 
 	if ( iMinDeathAnim == 9999 )
@@ -589,7 +589,7 @@ void C_DODRagdoll::ClientThink( void )
 		int iAlpha = GetRenderColor().a;
 		int iFadeSpeed = 600.0f;
 
-		iAlpha = max( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
+		iAlpha = MAX( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
 
 		SetRenderMode( kRenderTransAlpha );
 		SetRenderColorA( iAlpha );
@@ -784,7 +784,7 @@ void C_DODPlayer::DoRecoil( int iWpnID, float flWpnRecoil )
 	float flYawRecoil = flPitchRecoil / 4;
 
 	if( iWpnID == WEAPON_BAR )
-		flYawRecoil = min( flYawRecoil, 1.3 );
+		flYawRecoil = MIN( flYawRecoil, 1.3 );
 
 	if ( m_Shared.IsInMGDeploy() )
 	{
@@ -833,7 +833,7 @@ void C_DODPlayer::GetRecoilToAddThisFrame( float &flPitchRecoil, float &flYawRec
 		return;
 	}
 
-	float flRemaining = min( m_flRecoilTimeRemaining, gpGlobals->frametime );
+	float flRemaining = MIN( m_flRecoilTimeRemaining, gpGlobals->frametime );
 
 	float flRecoilProportion = ( flRemaining / RECOIL_DURATION );
 
@@ -2466,7 +2466,7 @@ void C_DODPlayer::AvoidPlayers( CUserCmd *pCmd )
 		flSideScale = fabs( cl_sidespeed.GetFloat() ) / fabs( pCmd->sidemove );
 	}
 
-	float flScale = min( flForwardScale, flSideScale );
+	float flScale = MIN( flForwardScale, flSideScale );
 	pCmd->forwardmove *= flScale;
 	pCmd->sidemove *= flScale;
 

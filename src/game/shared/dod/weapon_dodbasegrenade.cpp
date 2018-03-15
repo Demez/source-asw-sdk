@@ -405,7 +405,7 @@ enum
 		float flTimeLeft;
 
 		if ( IsArmed() )
-			flTimeLeft = max( 0, m_flDetonateTime - gpGlobals->curtime );
+			flTimeLeft = MAX( 0, m_flDetonateTime - gpGlobals->curtime );
 		else
 			flTimeLeft = GetDetonateTimerLength();
 

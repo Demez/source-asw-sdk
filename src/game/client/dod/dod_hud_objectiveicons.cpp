@@ -795,7 +795,7 @@ void CHudObjectiveIcons::Paint()
 
 			if ( requiredPlayers > 1 )
 			{
-				numPlayers = min( numPlayers, requiredPlayers );
+				numPlayers = MIN( numPlayers, requiredPlayers );
 
 				wchar_t wText[6];
 				_snwprintf( wText, sizeof(wText)/sizeof(wchar_t), L"%d/%d", numPlayers, requiredPlayers );

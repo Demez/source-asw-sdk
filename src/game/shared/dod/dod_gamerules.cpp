@@ -2269,7 +2269,7 @@ int CDODGameRules::GetReinforcementTimerSeconds( int team, float flSpawnEligible
 		return -1;
 	}
 
-	return max( 0, (int)( flWaveTime - gpGlobals->curtime ) );
+	return MAX( 0, (int)( flWaveTime - gpGlobals->curtime ) );
 }
 
 const CViewVectors* CDODGameRules::GetViewVectors() const
@@ -2832,7 +2832,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	//ALLIES WIN
 	void CDODGameRules::State_Enter_ALLIES_WIN( void )
 	{
-		float flTime = max( 5, dod_bonusroundtime.GetFloat() );
+		float flTime = MAX( 5, dod_bonusroundtime.GetFloat() );
 
 		m_flStateTransitionTime = gpGlobals->curtime + flTime * dod_enableroundwaittime.GetFloat();
 
@@ -2853,7 +2853,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	//AXIS WIN
 	void CDODGameRules::State_Enter_AXIS_WIN( void )
 	{
-		float flTime = max( 5, dod_bonusroundtime.GetFloat() );
+		float flTime = MAX( 5, dod_bonusroundtime.GetFloat() );
 
 		m_flStateTransitionTime = gpGlobals->curtime + flTime * dod_enableroundwaittime.GetFloat();
 

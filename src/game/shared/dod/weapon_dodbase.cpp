@@ -228,7 +228,7 @@ void CWeaponDODBase::ItemPostFrame()
 	if ((m_bInReload) && (pPlayer->m_flNextAttack <= gpGlobals->curtime))
 	{
 		// complete the reload. 
-		int j = min( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );	
+		int j = MIN( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );	
 
 		// Add them to the clip
 		m_iClip1 += j;
@@ -736,7 +736,7 @@ bool CWeaponDODBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivit
 	if ( UsesClipsForAmmo1() )
 	{
 		// need to reload primary clip?
-		int primary	= min(iClipSize1 - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+		int primary	= MIN(iClipSize1 - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
 		if ( primary != 0 )
 		{
 			bReload = true;
@@ -746,7 +746,7 @@ bool CWeaponDODBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivit
 	if ( UsesClipsForAmmo2() )
 	{
 		// need to reload secondary clip?
-		int secondary = min(iClipSize2 - m_iClip2, pOwner->GetAmmoCount(m_iSecondaryAmmoType));
+		int secondary = MIN(iClipSize2 - m_iClip2, pOwner->GetAmmoCount(m_iSecondaryAmmoType));
 		if ( secondary != 0 )
 		{
 			bReload = true;
@@ -1129,7 +1129,7 @@ void CWeaponDODBase::Smack()
 
 		//Find the speed of the player
 		float speed = player->GetLocalVelocity().Length2D();
-		float flmaxSpeedDelta = max( 0, (gpGlobals->curtime - lastbobtime) * 320.0f );
+		float flmaxSpeedDelta = MAX( 0, (gpGlobals->curtime - lastbobtime) * 320.0f );
 
 		// don't allow too big speed changes
 		speed = clamp( speed, lastspeed-flmaxSpeedDelta, lastspeed+flmaxSpeedDelta );

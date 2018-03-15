@@ -11,9 +11,7 @@
 #if defined( CLIENT_DLL )
 #include "iprediction.h"
 #include "prediction.h"
-#ifndef SDK_DLL
-#include "c_basehlplayer.h"
-#endif // !SDK_DLL
+#include "c_baseplayer.h"
 #else
 #include "vguiscreen.h"
 #endif

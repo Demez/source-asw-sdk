@@ -48,7 +48,7 @@ class CAchievementDODThrowBackGren : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODThrowBackGren, ACHIEVEMENT_DOD_THROW_BACK_GREN, "ACHIEVEMENT_DOD_THROW_BACK_GREN", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODThrowBackGren, ACHIEVEMENT_DOD_THROW_BACK_GREN, "ACHIEVEMENT_DOD_THROW_BACK_GREN", 1, 10 );
 
 
 class CAchievementDODConsecutiveHeadshots : public CBaseAchievement
@@ -61,8 +61,7 @@ class CAchievementDODConsecutiveHeadshots : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODConsecutiveHeadshots, ACHIEVEMENT_DOD_CONSECUTIVE_HEADSHOTS, "ACHIEVEMENT_DOD_CONSECUTIVE_HEADSHOTS", 1 );
-
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODConsecutiveHeadshots, ACHIEVEMENT_DOD_CONSECUTIVE_HEADSHOTS, "ACHIEVEMENT_DOD_CONSECUTIVE_HEADSHOTS", 1, 20 );
 
 class CAchievementDODMGPositionStreak : public CBaseAchievement
 {
@@ -74,7 +73,7 @@ class CAchievementDODMGPositionStreak : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODMGPositionStreak, ACHIEVEMENT_DOD_MG_POSITION_STREAK, "ACHIEVEMENT_DOD_MG_POSITION_STREAK", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODMGPositionStreak, ACHIEVEMENT_DOD_MG_POSITION_STREAK, "ACHIEVEMENT_DOD_MG_POSITION_STREAK", 1, 30 );
 
 
 class CAchievementDODWinKnifeFight : public CBaseAchievement
@@ -111,7 +110,7 @@ class CAchievementDODWinKnifeFight : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODWinKnifeFight, ACHIEVEMENT_DOD_WIN_KNIFE_FIGHT, "ACHIEVEMENT_DOD_WIN_KNIFE_FIGHT", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODWinKnifeFight, ACHIEVEMENT_DOD_WIN_KNIFE_FIGHT, "ACHIEVEMENT_DOD_WIN_KNIFE_FIGHT", 1, 40 );
 
 const char *pszOfficialMaps[] =
 {
@@ -197,7 +196,7 @@ class CAchievementDODCustomMaps : public CBaseAchievement
 	bool m_bCheckedCurrentMap;
 
 };
-DECLARE_ACHIEVEMENT( CAchievementDODCustomMaps, ACHIEVEMENT_DOD_PLAY_CUSTOM_MAPS, "ACHIEVEMENT_DOD_PLAY_CUSTOM_MAPS", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODCustomMaps, ACHIEVEMENT_DOD_PLAY_CUSTOM_MAPS, "ACHIEVEMENT_DOD_PLAY_CUSTOM_MAPS", 1, 50 );
 
 
 class CAchievementDODKillsWithGrenade : public CBaseAchievement
@@ -248,7 +247,7 @@ private:
 	float m_flLastKillTime;
 	int m_iKillCount;
 };
-DECLARE_ACHIEVEMENT( CAchievementDODKillsWithGrenade, ACHIEVEMENT_DOD_KILLS_WITH_GRENADE, "ACHIEVEMENT_DOD_KILLS_WITH_GRENADE", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODKillsWithGrenade, ACHIEVEMENT_DOD_KILLS_WITH_GRENADE, "ACHIEVEMENT_DOD_KILLS_WITH_GRENADE", 1, 60 );
 
 
 class CAchievementDODLongRangeRocket : public CBaseAchievement
@@ -261,7 +260,7 @@ class CAchievementDODLongRangeRocket : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODLongRangeRocket, ACHIEVEMENT_DOD_LONG_RANGE_ROCKET, "ACHIEVEMENT_DOD_LONG_RANGE_ROCKET", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODLongRangeRocket, ACHIEVEMENT_DOD_LONG_RANGE_ROCKET, "ACHIEVEMENT_DOD_LONG_RANGE_ROCKET", 1, 70 );
 
 
 class CAchievementDODEndRoundKills : public CBaseAchievement
@@ -316,7 +315,7 @@ class CAchievementDODEndRoundKills : public CBaseAchievement
 
 	int m_iKillCount;
 };
-DECLARE_ACHIEVEMENT( CAchievementDODEndRoundKills, ACHIEVEMENT_DOD_END_ROUND_KILLS, "ACHIEVEMENT_DOD_END_ROUND_KILLS", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODEndRoundKills, ACHIEVEMENT_DOD_END_ROUND_KILLS, "ACHIEVEMENT_DOD_END_ROUND_KILLS", 1, 80 );
 
 
 class CAchievementDODCapLastFlag : public CBaseAchievement
@@ -329,7 +328,7 @@ class CAchievementDODCapLastFlag : public CBaseAchievement
 		// handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODCapLastFlag, ACHIEVEMENT_DOD_CAP_LAST_FLAG, "ACHIEVEMENT_DOD_CAP_LAST_FLAG", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODCapLastFlag, ACHIEVEMENT_DOD_CAP_LAST_FLAG, "ACHIEVEMENT_DOD_CAP_LAST_FLAG", 1, 90 );
 
 
 class CAchievementDODUseEnemyWeapons : public CBaseAchievement
@@ -342,7 +341,7 @@ class CAchievementDODUseEnemyWeapons : public CBaseAchievement
 
 	// Handled on server
 };
-DECLARE_ACHIEVEMENT( CAchievementDODUseEnemyWeapons, ACHIEVEMENT_DOD_USE_ENEMY_WEAPONS, "ACHIEVEMENT_DOD_USE_ENEMY_WEAPONS", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODUseEnemyWeapons, ACHIEVEMENT_DOD_USE_ENEMY_WEAPONS, "ACHIEVEMENT_DOD_USE_ENEMY_WEAPONS", 1, 100 );
 
 
 class CAchievementDODKillDominatingMG : public CBaseAchievement
@@ -355,7 +354,7 @@ class CAchievementDODKillDominatingMG : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODKillDominatingMG, ACHIEVEMENT_DOD_KILL_DOMINATING_MG, "ACHIEVEMENT_DOD_KILL_DOMINATING_MG", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODKillDominatingMG, ACHIEVEMENT_DOD_KILL_DOMINATING_MG, "ACHIEVEMENT_DOD_KILL_DOMINATING_MG", 1, 110 );
 
 
 class CAchievementDODColmarDefense : public CBaseAchievement
@@ -368,7 +367,7 @@ class CAchievementDODColmarDefense : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODColmarDefense, ACHIEVEMENT_DOD_COLMAR_DEFENSE, "ACHIEVEMENT_DOD_COLMAR_DEFENSE", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODColmarDefense, ACHIEVEMENT_DOD_COLMAR_DEFENSE, "ACHIEVEMENT_DOD_COLMAR_DEFENSE", 1, 120 );
 
 
 class CAchievementDODJagdOvertimeCap : public CBaseAchievement
@@ -381,7 +380,7 @@ class CAchievementDODJagdOvertimeCap : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODJagdOvertimeCap, ACHIEVEMENT_DOD_JAGD_OVERTIME_CAP, "ACHIEVEMENT_DOD_JAGD_OVERTIME_CAP", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODJagdOvertimeCap, ACHIEVEMENT_DOD_JAGD_OVERTIME_CAP, "ACHIEVEMENT_DOD_JAGD_OVERTIME_CAP", 1, 130 );
 
 
 class CAchievementDODWeaponMastery : public CBaseAchievement
@@ -394,7 +393,7 @@ class CAchievementDODWeaponMastery : public CBaseAchievement
 		// Handled on server
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODWeaponMastery, ACHIEVEMENT_DOD_WEAPON_MASTERY, "ACHIEVEMENT_DOD_WEAPON_MASTERY", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODWeaponMastery, ACHIEVEMENT_DOD_WEAPON_MASTERY, "ACHIEVEMENT_DOD_WEAPON_MASTERY", 1, 140 );
 
 
 class CAchievementDODBlockCaptures : public CBaseAchievement
@@ -422,7 +421,7 @@ class CAchievementDODBlockCaptures : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementDODBlockCaptures, ACHIEVEMENT_DOD_BLOCK_CAPTURES, "ACHIEVEMENT_DOD_BLOCK_CAPTURES", 1 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementDODBlockCaptures, ACHIEVEMENT_DOD_BLOCK_CAPTURES, "ACHIEVEMENT_DOD_BLOCK_CAPTURES", 1, 150 );
 
 
 #endif // CLIENT_DLL

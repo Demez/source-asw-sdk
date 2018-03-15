@@ -1893,11 +1893,11 @@ bool Leaderboard::HandleQuery_StatsGlobalPage( void )
 			// assume we're only throwing away the min or the max page
 			if ( iPageToDiscard == m_iMinPageLoaded )
 			{
-				m_iMinPageLoaded = min( m_iMinPageLoaded + 1, m_iMaxPageLoaded );
+				m_iMinPageLoaded = MIN( m_iMinPageLoaded + 1, m_iMaxPageLoaded );
 			}
 			else if ( iPageToDiscard == m_iMaxPageLoaded )
 			{
-				m_iMaxPageLoaded = max( m_iMaxPageLoaded - 1, m_iMinPageLoaded );
+				m_iMaxPageLoaded = MAX( m_iMaxPageLoaded - 1, m_iMinPageLoaded );
 			}
 		}
 

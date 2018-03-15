@@ -259,7 +259,7 @@ void C_GrenadeTrail::Update( float fTimeDelta )
 		pParticle->m_vecVelocity[2] += 15;
 
 		offsetColor = m_StartColor;
-		float flMaxVal = max( m_StartColor[0], m_StartColor[1] );
+		float flMaxVal = MAX( m_StartColor[0], m_StartColor[1] );
 		if ( flMaxVal < m_StartColor[2] )
 		{
 			flMaxVal = m_StartColor[2];

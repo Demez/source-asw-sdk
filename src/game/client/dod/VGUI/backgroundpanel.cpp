@@ -54,9 +54,9 @@ void DrawRoundedBackground( Color bgColor, int wide, int tall )
 	int y = 0;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		y2 = y + coord[NumSegments];
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 
@@ -75,9 +75,9 @@ void DrawRoundedBackground( Color bgColor, int wide, int tall )
 	yMult = 1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		y2 = y + coord[NumSegments];
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
@@ -95,10 +95,10 @@ void DrawRoundedBackground( Color bgColor, int wide, int tall )
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
 		y1 = y - coord[NumSegments];
-		y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -115,10 +115,10 @@ void DrawRoundedBackground( Color bgColor, int wide, int tall )
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
 		y1 = y - coord[NumSegments];
-		y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -166,10 +166,10 @@ void DrawRoundedBorder( Color borderColor, int wide, int tall )
 	int y = 0;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 
 		xIndex += xDir;
@@ -187,10 +187,10 @@ void DrawRoundedBorder( Color borderColor, int wide, int tall )
 	yMult = 1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -207,10 +207,10 @@ void DrawRoundedBorder( Color borderColor, int wide, int tall )
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -227,10 +227,10 @@ void DrawRoundedBorder( Color borderColor, int wide, int tall )
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -574,14 +574,14 @@ void ResizeWindowControls( EditablePanel *pWindow, int tall, int wide, int offse
 
 	// Resize to account for 1.25 aspect ratio (1280x1024) screens
 	{
-		for ( int i = 0; i < panelList->Size(); ++i )
+		for ( int i = 0; i < panelList->Count(); ++i )
 		{
 			PHandle handle = (*panelList)[i];
 
 			Panel *panel = handle.Get();
 
 			bool found = false;
-			for ( int j = 0; j < resizedPanels.Size(); ++j )
+			for ( int j = 0; j < resizedPanels.Count(); ++j )
 			{
 				if (panel == resizedPanels[j])
 					found = true;
@@ -602,14 +602,14 @@ void ResizeWindowControls( EditablePanel *pWindow, int tall, int wide, int offse
 	}
 
 	// and now re-center them.  Woohoo!
-	for ( int i = 0; i < panelList->Size(); ++i )
+	for ( int i = 0; i < panelList->Count(); ++i )
 	{
 		PHandle handle = (*panelList)[i];
 
 		Panel *panel = handle.Get();
 
 		bool found = false;
-		for ( int j = 0; j < movedPanels.Size(); ++j )
+		for ( int j = 0; j < movedPanels.Count(); ++j )
 		{
 			if (panel == movedPanels[j])
 				found = true;
