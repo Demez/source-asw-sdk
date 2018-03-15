@@ -7704,9 +7704,9 @@ void CStripWeapons::StripWeapons(inputdata_t &data, bool stripSuit)
 	else if ( !g_pGameRules->IsDeathmatch() )
 	{
 #ifdef HL2COOP
-		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+		pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 #else
-		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		pPlayer = UTIL_GetLocalPlayer();
 #endif
 	}
 

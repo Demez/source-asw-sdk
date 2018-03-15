@@ -1916,8 +1916,8 @@ bool C_BasePlayer::ShouldDrawLocalPlayer()
 		return !LocalPlayerInFirstPersonView() || cl_first_person_uses_world_model.GetBool();
 	}*/
 #endif
-
-	int nSlot = GetSplitScreenPlayerSlot();
+	
+	int nSlot = GetLocalPlayer()->GetSplitScreenPlayerSlot();
 
 	ACTIVE_SPLITSCREEN_PLAYER_GUARD( nSlot );
 	return input->CAM_IsThirdPerson() || ( ToolsEnabled() && ToolFramework_IsThirdPersonCamera() );

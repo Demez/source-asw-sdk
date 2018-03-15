@@ -87,6 +87,8 @@ public:
 
 	CTFGameRules();
 
+	virtual	bool	Init();
+
 	// Damage Queries.
 	virtual bool	Damage_IsTimeBased( int iDmgType );			// Damage types that are time-based.
 	virtual bool	Damage_ShowOnHUD( int iDmgType );				// Damage types that have client HUD art.
@@ -109,6 +111,14 @@ public:
 
 #ifdef GAME_DLL
 public:
+
+	//response rules
+	struct ResponseRules_t
+	{
+		CUtlVector<IResponseSystem*> m_ResponseSystems;
+	};
+	CUtlVector<ResponseRules_t>	m_ResponseRules;
+
 	// Override this to prevent removal of game specific entities that need to persist
 	virtual bool	RoundCleanupShouldIgnore( CBaseEntity *pEnt );
 	virtual bool	ShouldCreateEntity( const char *pszClassName );

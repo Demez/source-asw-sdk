@@ -431,6 +431,18 @@ CTFGameRules::CTFGameRules()
 	m_pszTeamGoalStringBlue.GetForModify()[0] = '\0';
 }
 
+bool CTFGameRules::Init()
+{
+#ifdef GAME_DLL
+
+	// Initialize the custom response rule dictionaries.
+	InitCustomResponseRulesDicts();
+
+#endif
+
+	return BaseClass::Init();
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

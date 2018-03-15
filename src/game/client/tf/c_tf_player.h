@@ -144,7 +144,7 @@ public:
 	void CreateSaveMeEffect( void );
 	
 	virtual bool	IsOverridingViewmodel( void );
-	virtual int		DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags );
+	virtual int		DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags, const RenderableInstance_t &instance );
 
 	void			SetHealer( C_TFPlayer *pHealer, float flChargeLevel );
 	void			GetHealer( C_TFPlayer **pHealer, float *flChargeLevel ) { *pHealer = m_hHealer; *flChargeLevel = m_flHealerChargeLevel; }

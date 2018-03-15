@@ -335,3 +335,8 @@ int ClientModeTFNormal::HandleSpectatorKeyInput( int down, ButtonCode_t keynum, 
 
 	return BaseClass::HandleSpectatorKeyInput( down, keynum, pszCurrentBinding );
 }
+
+void ClientModeTFNormal::DoPostScreenSpaceEffects(const CViewSetup * pSetup)
+{
+	BaseClass::DoPostScreenSpaceEffects(pSetup);
+}

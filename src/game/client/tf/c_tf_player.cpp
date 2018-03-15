@@ -3023,7 +3023,7 @@ bool C_TFPlayer::IsOverridingViewmodel( void )
 //-----------------------------------------------------------------------------
 // Purpose: Draw my viewmodel in some special way
 //-----------------------------------------------------------------------------
-int	C_TFPlayer::DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags )
+int	C_TFPlayer::DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags, const RenderableInstance_t &instance )
 {
 	int ret = 0;
 
@@ -3040,8 +3040,8 @@ int	C_TFPlayer::DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags 
 		// Force the invulnerable material
 		modelrender->ForcedMaterialOverride( *pPlayer->GetInvulnMaterialRef() );
 
-		ret = pViewmodel->DrawOverriddenViewmodel( this, flags );
-
+		ret = pViewmodel->DrawOverriddenViewmodel( flags, instance );
+		
 		modelrender->ForcedMaterialOverride( NULL );
 	}
 
@@ -3462,7 +3462,7 @@ void SetupHeadLabelMaterials( void )
 void C_TFPlayer::ComputeFxBlend( void )
 {
 	BaseClass::ComputeFxBlend();
-
+	
 	if ( GetPlayerClass()->IsClass( TF_CLASS_SPY ) )
 	{
 		float flInvisible = GetPercentInvisible();

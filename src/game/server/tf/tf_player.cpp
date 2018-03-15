@@ -1337,7 +1337,7 @@ void CTFPlayer::HandleCommand_JoinTeam( const char *pTeamName )
 
 		// if this join would unbalance the teams, refuse
 		// come up with a better way to tell the player they tried to join a full team!
-		if ( TFGameRules()->WouldChangeUnbalanceTeams( iTeam, GetTeamNumber() ) )
+		if ( TFGameRules()->WouldChangeUnbalanceTeams( 1, iTeam, GetTeamNumber() ) )
 		{
 			ShowViewPortPanel( PANEL_TEAM );
 			return;
@@ -5206,7 +5206,7 @@ CBaseEntity *CTFPlayer::FindNearestObservableTarget( Vector vecOrigin, float flM
 	{
 		// let's spectate our sentry instead, we didn't find any other engineers to spec
 		int iNumObjects = GetObjectCount();
-		for ( i=0;i<iNumObjects;i++ )
+		for ( int i=0;i<iNumObjects;i++ )
 		{
 			CBaseObject *pObj = GetObject(i);
 
@@ -5669,8 +5669,8 @@ bool CTFPlayer::SpeakConceptIfAllowed( int iConcept, const char *modifiers, char
 		}
 
 		m_bSpeakingConceptAsDisguisedSpy = true;
-
-		bool bPlayedDisguised = SpeakIfAllowed( g_pszMPConcepts[iConcept], buf, pszOutResponseChosen, bufsize, &disguisedFilter );
+		
+		bool bPlayedDisguised = SpeakIfAllowed( g_pszMPConcepts[iConcept], SPEECH_PRIORITY_NORMAL, buf, pszOutResponseChosen, bufsize, &disguisedFilter );
 
 		m_bSpeakingConceptAsDisguisedSpy = false;
 
@@ -5680,7 +5680,7 @@ bool CTFPlayer::SpeakConceptIfAllowed( int iConcept, const char *modifiers, char
 		undisguisedFilter.RemoveRecipient( this );
 
 		// play normal concept to teammates
-		bool bPlayedNormally = SpeakIfAllowed( g_pszMPConcepts[iConcept], modifiers, pszOutResponseChosen, bufsize, &undisguisedFilter );
+		bool bPlayedNormally = SpeakIfAllowed( g_pszMPConcepts[iConcept], SPEECH_PRIORITY_NORMAL, modifiers, pszOutResponseChosen, bufsize, &undisguisedFilter );
 
 		pExpresser->DisallowMultipleScenes();
 
@@ -5689,7 +5689,7 @@ bool CTFPlayer::SpeakConceptIfAllowed( int iConcept, const char *modifiers, char
 	else
 	{
 		// play normally
-		bReturn = SpeakIfAllowed( g_pszMPConcepts[iConcept], modifiers, pszOutResponseChosen, bufsize, filter );
+		bReturn = SpeakIfAllowed( g_pszMPConcepts[iConcept], SPEECH_PRIORITY_NORMAL, modifiers, pszOutResponseChosen, bufsize, filter );
 	}
 
 	//Add bubble on top of a player calling for medic.

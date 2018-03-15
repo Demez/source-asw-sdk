@@ -219,7 +219,7 @@ void CTF_Presence::LevelInitPreEntity( void )
 	const char *pMapName = MapName();
 	if ( pMapName )
 	{
-		UserSetContext( XBX_GetPrimaryUserId(), CONTEXT_SCENARIO, GetMapID( pMapName ), true );
+		UserSetContext( XBX_GetActiveUserId(), CONTEXT_SCENARIO, GetMapID( pMapName ), true );
 	}
 }
 
@@ -324,15 +324,15 @@ void CTF_Presence::FireGameEvent( IGameEvent *event )
 		{
 			if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CP )
 			{
-				UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CP, true );
+				UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CP, true );
 			}
 			else if ( TFGameRules()->GetGameType() == TF_GAMETYPE_CTF )
 			{
 				// ctf games start tied
 				int zeroscore = 0;
-				UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_PLAYER_TEAM_SCORE, sizeof(int), &zeroscore, true );
-				UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_OPPONENT_TEAM_SCORE, sizeof(int), &zeroscore, true );
-				UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_TIED, true );
+				UserSetProperty( XBX_GetActiveUserId(), PROPERTY_PLAYER_TEAM_SCORE, sizeof(int), &zeroscore, true );
+				UserSetProperty( XBX_GetActiveUserId(), PROPERTY_OPPONENT_TEAM_SCORE, sizeof(int), &zeroscore, true );
+				UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_TIED, true );
 			}
 		}
 #endif
@@ -342,13 +342,13 @@ void CTF_Presence::FireGameEvent( IGameEvent *event )
 		int nPoints = ObjectiveResource()->GetNumControlPoints();
 		int nOwned = ObjectiveResource()->GetNumControlPointsOwned();
 
-		UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_CAPS_TOTAL, sizeof(int), &nPoints, true );
-		UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_CAPS_OWNED, sizeof(int), &nOwned, true );
+		UserSetProperty( XBX_GetActiveUserId(), PROPERTY_CAPS_TOTAL, sizeof(int), &nPoints, true );
+		UserSetProperty( XBX_GetActiveUserId(), PROPERTY_CAPS_OWNED, sizeof(int), &nOwned, true );
 	}
 	else if ( !Q_stricmp( "controlpoint_updateowner", eventname ) )
 	{
 		int nOwned = ObjectiveResource()->GetNumControlPointsOwned();
-		UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_CAPS_OWNED, sizeof(int), &nOwned, true );
+		UserSetProperty( XBX_GetActiveUserId(), PROPERTY_CAPS_OWNED, sizeof(int), &nOwned, true );
 	}
 	else if ( !Q_stricmp( "ctf_flag_captured", eventname ) )
 	{
@@ -393,22 +393,22 @@ void CTF_Presence::FireGameEvent( IGameEvent *event )
 				}
 			}
 
-			UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_PLAYER_TEAM_SCORE, sizeof(int), &iTeamScore, true );
-			UserSetProperty( XBX_GetPrimaryUserId(), PROPERTY_OPPONENT_TEAM_SCORE, sizeof(int), &iOtherScore, true );
+			UserSetProperty( XBX_GetActiveUserId(), PROPERTY_PLAYER_TEAM_SCORE, sizeof(int), &iTeamScore, true );
+			UserSetProperty( XBX_GetActiveUserId(), PROPERTY_OPPONENT_TEAM_SCORE, sizeof(int), &iOtherScore, true );
 #if defined ( _X360 )
 			if ( !m_bIsInCommentary )
 			{
 				if ( iTeamScore > iOtherScore )
 				{
-					UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_WINNING, true );
+					UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_WINNING, true );
 				}
 				else if ( iOtherScore > iTeamScore )
 				{
-					UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_LOSING, true );
+					UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_LOSING, true );
 				}
 				else
 				{
-					UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_TIED, true );
+					UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_TF_CTF_TIED, true );
 				}
 			}
 #endif 
@@ -418,8 +418,8 @@ void CTF_Presence::FireGameEvent( IGameEvent *event )
 	{
 		m_bIsInCommentary = true;
 #if defined ( _X360 )
-		UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_COMMENTARY, true );
-		UserSetContext( XBX_GetPrimaryUserId(), X_CONTEXT_GAME_MODE, CONTEXT_GAME_MODE_SINGLEPLAYER, true );
+		UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_PRESENCE, CONTEXT_PRESENCE_COMMENTARY, true );
+		UserSetContext( XBX_GetActiveUserId(), X_CONTEXT_GAME_MODE, CONTEXT_GAME_MODE_SINGLEPLAYER, true );
 #endif 
 	}
 }

@@ -54,6 +54,7 @@ public:
 	virtual int		HudElementKeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding );
 	virtual int		HandleSpectatorKeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding );
 	
+	virtual void	DoPostScreenSpaceEffects(const CViewSetup *pSetup);
 private:
 	
 	//	void	UpdateSpectatorMode( void );

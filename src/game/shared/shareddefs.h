@@ -423,7 +423,9 @@ enum {
 	OBS_ALLOW_ALL = 0,	// allow all modes, all targets
 	OBS_ALLOW_TEAM,		// allow only own team & first person, no PIP
 	OBS_ALLOW_NONE,		// don't allow any spectating after death (fixed & fade to black)
-
+#ifdef TF_DLL
+	OBS_ALLOW_TEAM_ALL,
+#endif
 	OBS_ALLOW_NUM_MODES,
 };
 

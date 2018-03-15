@@ -611,7 +611,7 @@ CTFEventLog g_TFEventLog;
 //-----------------------------------------------------------------------------
 // Singleton access
 //-----------------------------------------------------------------------------
-IGameSystem* GameLogSystem()
+CEventLog* GameLogSystem()
 {
 	return &g_TFEventLog;
 }
