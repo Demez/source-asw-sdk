@@ -19,6 +19,10 @@
 			"Game"	"|gameinfo_path|."
 			
 			"Game"	"..\Half-Life 2/hl2"			// This is temporary workaround for ep2 maps mounting
+			"Game"  "..\hl2_content"				// get hl2's content
+			
+			// TEMP (For Content)
+			"Game"  "D:\sourceengine\projects-community\Half-Life-2-Revamped\game\hl2-revamped"
 
 			// if i use reactive drop for the few engine fixes
 			"Game"	"reactivedrop"						// Reactive Drop Folder

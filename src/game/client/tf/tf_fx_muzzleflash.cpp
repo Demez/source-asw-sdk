@@ -216,7 +216,7 @@ C_MuzzleFlashModel *C_MuzzleFlashModel::CreateMuzzleFlashModel( const char *pszM
 bool C_MuzzleFlashModel::InitializeMuzzleFlash( const char *pszModelName, C_BaseEntity *pParent, int iAttachment, float flLifetime )
 {
 	AddEffects( EF_NORECEIVESHADOW | EF_NOSHADOW );
-	if ( InitializeAsClientEntity( pszModelName, RENDER_GROUP_OPAQUE_ENTITY ) == false )
+	if ( InitializeAsClientEntity( pszModelName, RENDER_GROUP_OPAQUE ) == false )
 	{
 		Release();
 		return false;
@@ -278,7 +278,7 @@ void C_MuzzleFlashModel::SetIs3rdPersonFlash( bool bEnable )
 }
 
 					   
-bool C_MuzzleFlashModel::SetupBones( matrix3x4_t *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime )
+bool C_MuzzleFlashModel::SetupBones( matrix3x4a_t *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime )
 {
 	// FIXME: This is an incredibly brutal hack to get muzzle flashes positioned correctly for recording
 	// NOTE: The correct, long-term solution, is to make weapon models

@@ -344,6 +344,8 @@ public:
 	virtual int 					GetRenderFlags( void );
 	virtual const model_t			*GetModel( void ) const;
 	virtual int						DrawModel( int flags, const RenderableInstance_t &instance );
+	//virtual void					ComputeFxBlend( void );
+	//virtual int						GetFxBlend( void );
 	virtual bool					LODTest() { return true; }   // NOTE: UNUSED
 	virtual void					GetRenderBounds( Vector& mins, Vector& maxs );
 	virtual IPVSNotify*				GetPVSNotifyInterface();

@@ -804,7 +804,7 @@ void CWeaponMedigun::PrimaryAttack( void )
 
 #if !defined (CLIENT_DLL)
 	if ( tf_medigun_lagcomp.GetBool() )
-		lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
+		//lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
 #endif
 
 	if ( FindAndHealTargets() )

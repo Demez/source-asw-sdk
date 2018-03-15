@@ -143,7 +143,7 @@ void CASW_Background_Movie::Update()
 		ASWGameRules()
 #elif HL2_CLIENT_DLL
 		HL2GameRules()
-#elif TF_DLL
+#elif TF_CLIENT_DLL
 		TFGameRules()
 //#elif CSTRIKE_DLL
 //		CSGameRules()

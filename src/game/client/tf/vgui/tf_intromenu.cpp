@@ -34,7 +34,7 @@ enum
 
 using namespace vgui;
 
-char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
+//char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
 
 // sort function for the list of captions that we're going to show
 int CaptionsSort( CVideoCaption* const *p1, CVideoCaption* const *p2 )

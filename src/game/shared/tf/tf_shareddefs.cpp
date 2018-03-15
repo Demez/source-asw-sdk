@@ -433,7 +433,7 @@ int GetBuildableId( const char *pszBuildableName )
 	return OBJ_LAST;
 }
 
-char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL )
+/*char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL )
 {
 	const char *pValue = pSub->GetString( pName, NULL );
 	if ( !pValue )
@@ -450,7 +450,7 @@ char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *p
 	Assert( pAlloced );
 	Q_strncpy( pAlloced, pValue, len );
 	return pAlloced;
-}
+}*/
 
 
 bool AreObjectInfosLoaded()

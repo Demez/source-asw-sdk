@@ -34,7 +34,7 @@
 bool UseHWMorphModels();
 
 
-char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
+//char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
 
 using namespace vgui;
 
@@ -303,7 +303,7 @@ void CModelPanel::SetupModel( void )
 	if ( !pEnt )
 		return;
 
-	if ( pEnt->InitializeAsClientEntity( GetModelName(), RENDER_GROUP_OPAQUE_ENTITY ) == false )
+	if ( pEnt->InitializeAsClientEntity( GetModelName(), RENDER_GROUP_OPAQUE ) == false )
 	{
 		// we failed to initialize this entity so just return gracefully
 		pEnt->Remove();
@@ -354,7 +354,7 @@ void CModelPanel::SetupModel( void )
 
 		if ( pTemp )
 		{
-			if ( pTemp->InitializeAsClientEntity( pInfo->m_pszModelName, RENDER_GROUP_OPAQUE_ENTITY ) == false )
+			if ( pTemp->InitializeAsClientEntity( pInfo->m_pszModelName, RENDER_GROUP_OPAQUE ) == false )
 			{	
 				// we failed to initialize this model so just skip it
 				pTemp->Remove();

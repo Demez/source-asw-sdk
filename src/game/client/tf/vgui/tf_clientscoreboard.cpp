@@ -220,7 +220,7 @@ void CTFClientScoreBoardDialog::Update()
 	UpdatePlayerList();
 	UpdateSpectatorList();
 	UpdatePlayerDetails();
-	MoveToCenterOfScreen();
+	PositionScoreboard();
 
 	// update every second
 	m_fNextUpdateTime = gpGlobals->curtime + 1.0f; 

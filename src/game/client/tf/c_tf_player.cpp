@@ -460,7 +460,7 @@ void C_TFRagdoll::CreateTFRagdoll()
 	}
 	else
 	{
-		ClientLeafSystem()->SetRenderGroup( GetRenderHandle(), RENDER_GROUP_TRANSLUCENT_ENTITY );
+		ClientLeafSystem()->SetRenderGroup( GetRenderHandle(), RENDER_GROUP_TRANSLUCENT );
 	}		
 
 	if ( m_bBurning )
@@ -817,11 +817,11 @@ public:
 			}
 		}
 
-		if ( ToolsEnabled() )
+		/*if ( ToolsEnabled() )
 		{
 			
 			ToolFramework_RecordMaterialParams( GetMaterial() );
-		}
+		}*/
 	}
 };
 
@@ -891,10 +891,10 @@ public:
 
 		m_pResult->SetFloatValue( flResult );
 
-		if ( ToolsEnabled() )
+		/*if ( ToolsEnabled() )
 		{
 			ToolFramework_RecordMaterialParams( GetMaterial() );
-		}
+		}*/
 	}
 };
 
@@ -3040,7 +3040,7 @@ int	C_TFPlayer::DrawOverriddenViewmodel( C_BaseViewModel *pViewmodel, int flags 
 		// Force the invulnerable material
 		modelrender->ForcedMaterialOverride( *pPlayer->GetInvulnMaterialRef() );
 
-		ret = pViewmodel->DrawOverriddenViewmodel( this, flags, instance );
+		ret = pViewmodel->DrawOverriddenViewmodel( this, flags );
 
 		modelrender->ForcedMaterialOverride( NULL );
 	}

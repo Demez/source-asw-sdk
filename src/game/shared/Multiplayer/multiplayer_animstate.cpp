@@ -409,8 +409,8 @@ void CMultiPlayerAnimState::RunGestureSlotAnimEventsToCompletion( GestureSlot_t 
 	mstudioseqdesc_t &seqdesc = pStudioHdr->pSeqdesc( pGesture->m_pAnimLayer->GetSequence() );
 	if ( seqdesc.numevents > 0 )
 	{
-		
-		mstudioevent_t *pevent = seqdesc.pEvent( 0 );
+		//mstudioevent_t *pevent = seqdesc.pEvent( 0 );
+		mstudioevent_for_client_server_t *pevent = seqdesc.pEvent( 0 );
 
 		for (int i = 0; i < (int)seqdesc.numevents; i++)
 		{

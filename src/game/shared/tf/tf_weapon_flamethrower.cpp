@@ -323,7 +323,7 @@ void CTFFlameThrower::PrimaryAttack()
 	CTF_GameStats.Event_PlayerFiredWeapon( pOwner, m_bCritFire );
 
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
+	//lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
 #endif
 
 	float flFiringInterval = m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay;

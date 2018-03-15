@@ -194,7 +194,7 @@ void CTFGameMovement::ProcessMovement( CBasePlayer *pBasePlayer, CMoveData *pMov
 		return;
 
 	// Reset point contents for water check.
-	ResetGetPointContentsCache();
+	ResetGetWaterContentsForPointCache();
 
 	// Cropping movement speed scales mv->m_fForwardSpeed etc. globally
 	// Once we crop, we don't want to recursively crop again, so we set the crop
@@ -366,7 +366,7 @@ bool CTFGameMovement::CheckJumpButton()
 	}
 
 	// Cannot jump while in the unduck transition.
-	if ( ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) ) || ( player->m_Local.m_flDuckJumpTime > 0.0f ) )
+	if ( ( player->m_Local.m_bDucking && (  player->GetFlags() & FL_DUCKING ) ) || ( player->m_Local.m_nDuckJumpTimeMsecs > 0.0f ) )
 		return false;
 
 	// Cannot jump again until the jump button has been released.
@@ -462,7 +462,7 @@ bool CTFGameMovement::CheckWater( void )
 	int wt = CONTENTS_EMPTY;
 
 	// Check to see if our feet are underwater.
-	int nContents = GetPointContentsCached( vecPoint, 0 );	
+	int nContents = GetWaterContentsForPointCached( vecPoint, 0 );	
 	if ( nContents & MASK_WATER )
 	{
 		// Clear our jump flag, because we have landed in water.
@@ -476,7 +476,7 @@ bool CTFGameMovement::CheckWater( void )
 
 		// Now check eyes
 		vecPoint.z = mv->GetAbsOrigin().z + player->GetViewOffset()[2];
-		nContents = GetPointContentsCached( vecPoint, 1 );
+		nContents = GetWaterContentsForPointCached( vecPoint, 1 );
 		if ( nContents & MASK_WATER )
 		{
 			// In over our eyes
@@ -488,7 +488,7 @@ bool CTFGameMovement::CheckWater( void )
 		{
 			// Now check a point that is at the player hull midpoint (waist) and see if that is underwater.
 			vecPoint.z = flWaistZ;
-			nContents = GetPointContentsCached( vecPoint, 2 );
+			nContents = GetWaterContentsForPointCached( vecPoint, 2 );
 			if ( nContents & MASK_WATER )
 			{
 				// Set the water level at our waist.

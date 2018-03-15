@@ -1235,7 +1235,7 @@ progress_segment_t Segments[8] =
 //-----------------------------------------------------------------------------
 RenderGroup_t CCaptureFlagReturnIcon::GetRenderGroup( void ) 
 {	
-	return RENDER_GROUP_TRANSLUCENT_ENTITY;	
+	return RENDER_GROUP_TRANSLUCENT;//_ENTITY;	
 }
 
 void CCaptureFlagReturnIcon::GetRenderBounds( Vector& theMins, Vector& theMaxs )

@@ -193,11 +193,13 @@ void ClientModeTFNormal::InitViewport()
 	m_pViewport->Start( gameuifuncs, gameeventmanager );
 }
 
-ClientModeTFNormal g_ClientModeNormal;
+ClientModeTFNormal g_ClientModeNormal[ MAX_SPLITSCREEN_PLAYERS ];
 
 IClientMode *GetClientModeNormal()
 {
-	return &g_ClientModeNormal;
+	//return &g_ClientModeNormal;
+	Assert( engine->IsLocalPlayerResolvable() );
+	return &g_ClientModeNormal[ engine->GetActiveSplitScreenPlayerSlot() ];
 }
 
 

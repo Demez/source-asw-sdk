@@ -2520,7 +2520,8 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 				data.m_nEntIndex = 0;
 
 				CSingleUserRecipientFilter filter( (CBasePlayer*)info.GetAttacker() );
-				te->DispatchEffect( filter, 0.0, data.m_vOrigin, "ParticleEffect", data );
+				DispatchEffect( "ParticleEffect", data );
+				//te->DispatchEffect( filter, 0.0, data.m_vOrigin, "ParticleEffect", data );
 
 				EmitSound_t params;
 				params.m_flSoundTime = 0;

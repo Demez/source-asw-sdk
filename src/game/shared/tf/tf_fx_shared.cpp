@@ -180,7 +180,7 @@ void FX_FireBullets( int iPlayer, const Vector &vecOrigin, const QAngle &vecAngl
 
 #if !defined (CLIENT_DLL)
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
+	//lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
 #endif
 
 	// Get the shooting angles.

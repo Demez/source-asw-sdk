@@ -344,9 +344,9 @@ void CTFStatPanel::WriteStats( void )
 
 	// get Steam ID.  If not logged into Steam, use 0
 	int iSteamID = 0;
-	if ( SteamUser() )
+	if ( steamapicontext->SteamUser() )
 	{
-		CSteamID steamID = SteamUser()->GetSteamID();
+		CSteamID steamID = steamapicontext->SteamUser()->GetSteamID();
 		iSteamID = steamID.GetAccountID();
 	}	
 	// Calc CRC of all data to make the local data file somewhat tamper-resistant
@@ -412,11 +412,12 @@ void CTFStatPanel::WriteStats( void )
 
 	CleanupDMX( pPlayerStats );
 
+#ifdef _X360
 	if ( IsX360() )
 	{
-		xboxsystem->FinishContainerWrites( iController );
+		xboxsystem->FinishContainerWrites();
 	}
-
+#endif
 	m_bStatsChanged = false;
 }
 
@@ -489,10 +490,10 @@ bool CTFStatPanel::ReadStats( void )
 	// check file CRC and steam ID to see if we think this file has not been tampered with
 	int iCRC = CalcCRC( iSteamID );
 	// does file CRC match CRC generated from file data, and is there a Steam ID in the file
-	if ( ( iCRC == iCRCFile ) && ( iSteamID > 0 ) && SteamUser() ) 
+	if ( ( iCRC == iCRCFile ) && ( iSteamID > 0 ) && steamapicontext->SteamUser() ) 
 	{		
 		// does the file Steam ID match current Steam ID (so you can't hand around files)
-		CSteamID steamID = SteamUser()->GetSteamID();
+		CSteamID steamID = steamapicontext->SteamUser()->GetSteamID();
 		if ( steamID.GetAccountID() == (uint32) iSteamID )
 		{
 			m_bLocalFileTrusted = true;

@@ -90,8 +90,8 @@ void CTFSteamStats::FireGameEvent( IGameEvent *event )
 	}
 	else if ( 0 == Q_strcmp( pEventName, "user_data_downloaded" ) )
 	{
-		Assert( SteamUserStats() );
-		if ( !SteamUserStats() )
+		Assert( steamapicontext->SteamUserStats() );
+		if ( !steamapicontext->SteamUserStats() )
 			return; 
 		CTFStatPanel *pStatPanel = GET_HUDELEMENT( CTFStatPanel );
 		Assert( pStatPanel );
@@ -107,7 +107,7 @@ void CTFSteamStats::FireGameEvent( IGameEvent *event )
 				int iData;
 
 				Q_snprintf( szStatName, ARRAYSIZE( szStatName ), "%s.accum.%s", g_aPlayerClassNames_NonLocalized[iClass], g_SteamStats[iStat].pszName );
-				if ( SteamUserStats()->GetStat( gameID, szStatName, &iData ) )
+				if ( steamapicontext->SteamUserStats()->GetStat( szStatName, &iData ) )
 				{
 					if ( pStatPanel->IsLocalFileTrusted() )
 					{
@@ -121,7 +121,7 @@ void CTFSteamStats::FireGameEvent( IGameEvent *event )
 					}					
 				}
 				Q_snprintf( szStatName, ARRAYSIZE( szStatName ), "%s.max.%s", g_aPlayerClassNames_NonLocalized[iClass], g_SteamStats[iStat].pszName );
-				if ( SteamUserStats()->GetStat( gameID, szStatName, &iData ) )
+				if ( steamapicontext->SteamUserStats()->GetStat( szStatName, &iData ) )
 				{
 					if ( pStatPanel->IsLocalFileTrusted() )
 					{
@@ -162,7 +162,7 @@ void CTFSteamStats::UploadStats()
 	}
 
 	// only upload if Steam is running
-	if ( !SteamUserStats() )
+	if ( !steamapicontext->SteamUserStats() )
 		return; 
 
 	CGameID gameID( engine->GetAppID() );
@@ -176,10 +176,10 @@ void CTFSteamStats::UploadStats()
 
 			// set the stats locally in Steam client
 			Q_snprintf( szStatName, ARRAYSIZE( szStatName ), "%s.accum.%s", g_aPlayerClassNames_NonLocalized[iClass], g_SteamStats[iStat].pszName );
-			SteamUserStats()->SetStat( gameID, szStatName, classStats.accumulated.m_iStat[g_SteamStats[iStat].iStat] );
+			steamapicontext->SteamUserStats()->SetStat( szStatName, classStats.accumulated.m_iStat[g_SteamStats[iStat].iStat] );
 
 			Q_snprintf( szStatName, ARRAYSIZE( szStatName ), "%s.max.%s", g_aPlayerClassNames_NonLocalized[iClass], g_SteamStats[iStat].pszName );
-			SteamUserStats()->SetStat( gameID, szStatName, classStats.max.m_iStat[g_SteamStats[iStat].iStat] );
+			steamapicontext->SteamUserStats()->SetStat( szStatName, classStats.max.m_iStat[g_SteamStats[iStat].iStat] );
 		}
 	}
 

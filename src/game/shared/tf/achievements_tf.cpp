@@ -98,7 +98,8 @@ class CAchievementTFPlayGameEveryClass : public CTFAchievementFullRound
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFPlayGameEveryClass, ACHIEVEMENT_TF_PLAY_GAME_EVERYCLASS, "TF_PLAY_GAME_EVERYCLASS", 5 );
+//DECLARE_ACHIEVEMENT( CAchievementTFPlayGameEveryClass, ACHIEVEMENT_TF_PLAY_GAME_EVERYCLASS, "TF_PLAY_GAME_EVERYCLASS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFPlayGameEveryClass, ACHIEVEMENT_TF_PLAY_GAME_EVERYCLASS, "TF_PLAY_GAME_EVERYCLASS", 5, 10 );
 
 class CAchievementTFPlayGameEveryMap : public CTFAchievementFullRound
 {
@@ -135,7 +136,7 @@ class CAchievementTFPlayGameEveryMap : public CTFAchievementFullRound
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFPlayGameEveryMap, ACHIEVEMENT_TF_PLAY_GAME_EVERYMAP, "TF_PLAY_GAME_EVERYMAP", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFPlayGameEveryMap, ACHIEVEMENT_TF_PLAY_GAME_EVERYMAP, "TF_PLAY_GAME_EVERYMAP", 5, 20 );
 
 class CAchievementTFGetHealPoints : public CBaseAchievement
 {
@@ -161,7 +162,7 @@ class CAchievementTFGetHealPoints : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetHealPoints, ACHIEVEMENT_TF_GET_HEALPOINTS, "TF_GET_HEALPOINTS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetHealPoints, ACHIEVEMENT_TF_GET_HEALPOINTS, "TF_GET_HEALPOINTS", 5, 30 );
 
 class CAchievementTFBurnPlayersInMinimumTime : public CBaseAchievement
 {
@@ -172,7 +173,7 @@ class CAchievementTFBurnPlayersInMinimumTime : public CBaseAchievement
 	}
 	// server fires an event for this achievement, no other code within achievement necessary
 };
-DECLARE_ACHIEVEMENT( CAchievementTFBurnPlayersInMinimumTime, ACHIEVEMENT_TF_BURN_PLAYERSINMINIMIMTIME, "TF_BURN_PLAYERSINMINIMUMTIME", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFBurnPlayersInMinimumTime, ACHIEVEMENT_TF_BURN_PLAYERSINMINIMIMTIME, "TF_BURN_PLAYERSINMINIMUMTIME", 5, 40 );
 
 class CAchievementTFGetTurretKills : public CBaseAchievement
 {
@@ -183,7 +184,7 @@ class CAchievementTFGetTurretKills : public CBaseAchievement
 	}
 	// server fires an event for this achievement, no other code within achievement necessary
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetTurretKills, ACHIEVEMENT_TF_GET_TURRETKILLS, "TF_GET_TURRETKILLS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetTurretKills, ACHIEVEMENT_TF_GET_TURRETKILLS, "TF_GET_TURRETKILLS", 5, 50 );
 
 class CAchievementTFGetHeadshots: public CBaseAchievement
 {
@@ -221,7 +222,7 @@ class CAchievementTFGetHeadshots: public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetHeadshots, ACHIEVEMENT_TF_GET_HEADSHOTS, "TF_GET_HEADSHOTS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetHeadshots, ACHIEVEMENT_TF_GET_HEADSHOTS, "TF_GET_HEADSHOTS", 5, 60 );
 
 class CAchievementTFKillNemesis : public CBaseAchievement
 {
@@ -253,7 +254,7 @@ class CAchievementTFKillNemesis : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFKillNemesis, ACHIEVEMENT_TF_KILL_NEMESIS, "TF_KILL_NEMESIS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFKillNemesis, ACHIEVEMENT_TF_KILL_NEMESIS, "TF_KILL_NEMESIS", 5, 70 );
 
 class CAchievementTFGetConsecutiveKillsNoDeaths : public CBaseAchievement
 {
@@ -282,7 +283,7 @@ class CAchievementTFGetConsecutiveKillsNoDeaths : public CBaseAchievement
 	}
 	int m_iConsecutiveKills;
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetConsecutiveKillsNoDeaths, ACHIEVEMENT_TF_GET_CONSECUTIVEKILLS_NODEATHS, "TF_GET_CONSECUTIVEKILLS_NODEATHS", 10 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetConsecutiveKillsNoDeaths, ACHIEVEMENT_TF_GET_CONSECUTIVEKILLS_NODEATHS, "TF_GET_CONSECUTIVEKILLS_NODEATHS", 10, 80 );
 
 class CAchievementTFGetHealedByEnemy: public CBaseAchievement
 {
@@ -293,7 +294,7 @@ class CAchievementTFGetHealedByEnemy: public CBaseAchievement
 	}
 	// server fires an event for this achievement, no other code within achievement necessary
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetHealedByEnemy, ACHIEVEMENT_TF_GET_HEALED_BYENEMY, "TF_GET_HEALED_BYENEMY", 15 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetHealedByEnemy, ACHIEVEMENT_TF_GET_HEALED_BYENEMY, "TF_GET_HEALED_BYENEMY", 15, 90 );
 
 class CAchievementTFPlayGameFriendsOnly : public CBaseAchievement
 {
@@ -320,7 +321,7 @@ class CAchievementTFPlayGameFriendsOnly : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFPlayGameFriendsOnly, ACHIEVEMENT_TF_PLAY_GAME_FRIENDSONLY, "TF_PLAY_GAME_FRIENDSONLY", 10 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFPlayGameFriendsOnly, ACHIEVEMENT_TF_PLAY_GAME_FRIENDSONLY, "TF_PLAY_GAME_FRIENDSONLY", 10, 100 );
 
 class CAchievementTFWinMultipleGames : public CTFAchievementFullRound
 {
@@ -347,7 +348,7 @@ class CAchievementTFWinMultipleGames : public CTFAchievementFullRound
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWinMultipleGames, ACHIEVEMENT_TF_WIN_MULTIPLEGAMES, "TF_WIN_MULTIPLEGAMES", 10 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWinMultipleGames, ACHIEVEMENT_TF_WIN_MULTIPLEGAMES, "TF_WIN_MULTIPLEGAMES", 10, 110 );
 
 class CAchievementTFGetMultipleKills : public CBaseAchievement
 {
@@ -380,7 +381,7 @@ class CAchievementTFGetMultipleKills : public CBaseAchievement
 		EvaluateNewAchievement();
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFGetMultipleKills, ACHIEVEMENT_TF_GET_MULTIPLEKILLS, "TF_GET_MULTIPLEKILLS", 15 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFGetMultipleKills, ACHIEVEMENT_TF_GET_MULTIPLEKILLS, "TF_GET_MULTIPLEKILLS", 15, 120 );
 
 class CAchievementTFWin2FortNoEnemyCaps : public CBaseAchievement
 {
@@ -415,7 +416,7 @@ class CAchievementTFWin2FortNoEnemyCaps : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWin2FortNoEnemyCaps, ACHIEVEMENT_TF_WIN_2FORT_NOENEMYCAPS, "TF_WIN_2FORT_NOENEMYCAPS", 5 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWin2FortNoEnemyCaps, ACHIEVEMENT_TF_WIN_2FORT_NOENEMYCAPS, "TF_WIN_2FORT_NOENEMYCAPS", 5, 130 );
 
 class CAchievementTFWinWellMinimumTime : public CBaseAchievement
 {
@@ -446,7 +447,7 @@ class CAchievementTFWinWellMinimumTime : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWinWellMinimumTime, ACHIEVEMENT_TF_WIN_WELL_MINIMUMTIME, "TF_WIN_WELL_MINIMUMTIME", 10 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWinWellMinimumTime, ACHIEVEMENT_TF_WIN_WELL_MINIMUMTIME, "TF_WIN_WELL_MINIMUMTIME", 10, 140 );
 
 class CAchievementTFWinHydroNoEnemyCaps : public CBaseAchievement
 {
@@ -472,7 +473,7 @@ class CAchievementTFWinHydroNoEnemyCaps : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWinHydroNoEnemyCaps, ACHIEVEMENT_TF_WIN_HYDRO_NOENEMYCAPS, "TF_WIN_HYDRO_NOENEMYCAPS", 20 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWinHydroNoEnemyCaps, ACHIEVEMENT_TF_WIN_HYDRO_NOENEMYCAPS, "TF_WIN_HYDRO_NOENEMYCAPS", 20, 150 );
 
 class CAchievementTFWinDustbowlNoEnemyCaps : public CBaseAchievement
 {
@@ -498,7 +499,7 @@ class CAchievementTFWinDustbowlNoEnemyCaps : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWinDustbowlNoEnemyCaps, ACHIEVEMENT_TF_WIN_DUSTBOWL_NOENEMYCAPS, "TF_WIN_DUSTBOWL_NOENEMYCAPS", 10 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWinDustbowlNoEnemyCaps, ACHIEVEMENT_TF_WIN_DUSTBOWL_NOENEMYCAPS, "TF_WIN_DUSTBOWL_NOENEMYCAPS", 10, 160 );
 
 class CAchievementTFWinGravelPitNoEnemyCaps : public CBaseAchievement
 {
@@ -523,7 +524,7 @@ class CAchievementTFWinGravelPitNoEnemyCaps : public CBaseAchievement
 		}
 	}
 };
-DECLARE_ACHIEVEMENT( CAchievementTFWinGravelPitNoEnemyCaps, ACHIEVEMENT_TF_WIN_GRAVELPIT_NOENEMYCAPS, "TF_WIN_GRAVELPIT_NOENEMYCAPS", 30 );
+DECLARE_ACHIEVEMENT_ORDER( CAchievementTFWinGravelPitNoEnemyCaps, ACHIEVEMENT_TF_WIN_GRAVELPIT_NOENEMYCAPS, "TF_WIN_GRAVELPIT_NOENEMYCAPS", 30, 170 );
 
 //-----------------------------------------------------------------------------
 // Purpose: see if a round win was a win for the local player with no enemy caps

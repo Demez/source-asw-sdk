@@ -20,7 +20,7 @@
 // TF Syringe Projectile functions (Server specific).
 //
 #define SYRINGE_MODEL				"models/weapons/w_models/w_syringe_proj.mdl"
-#define SYRINGE_DISPATCH_EFFECT		"ClientProjectile_Syringe"
+//#define SYRINGE_DISPATCH_EFFECT		ClientProjectile_Syringe
 #define SYRINGE_GRAVITY	0.3f
 
 LINK_ENTITY_TO_CLASS( tf_projectile_syringe, CTFProjectile_Syringe );
@@ -47,7 +47,7 @@ CTFProjectile_Syringe::~CTFProjectile_Syringe()
 //-----------------------------------------------------------------------------
 CTFProjectile_Syringe *CTFProjectile_Syringe::Create( const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer, bool bCritical )
 {
-	return static_cast<CTFProjectile_Syringe*>( CTFBaseProjectile::Create( "tf_projectile_syringe", vecOrigin, vecAngles, pOwner, CTFProjectile_Syringe::GetInitialVelocity(), g_sModelIndexSyringe, SYRINGE_DISPATCH_EFFECT, pScorer, bCritical ) );
+	return static_cast<CTFProjectile_Syringe*>( CTFBaseProjectile::Create( "tf_projectile_syringe", vecOrigin, vecAngles, pOwner, CTFProjectile_Syringe::GetInitialVelocity(), g_sModelIndexSyringe, "ClientProjectile_Syringe", pScorer, bCritical ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -105,6 +105,7 @@ void ClientsideProjectileSyringeCallback( const CEffectData &data )
 	}
 }
 
-DECLARE_CLIENT_EFFECT( SYRINGE_DISPATCH_EFFECT, ClientsideProjectileSyringeCallback );
+//DECLARE_CLIENT_EFFECT( SYRINGE_DISPATCH_EFFECT, ClientsideProjectileSyringeCallback );
+DECLARE_CLIENT_EFFECT( ClientProjectile_Syringe, ClientsideProjectileSyringeCallback );
 
 #endif

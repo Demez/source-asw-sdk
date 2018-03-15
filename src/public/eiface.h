@@ -360,6 +360,10 @@ public:
 	virtual char const *GetMostRecentlyLoadedFileName() = 0;
 	virtual char const *GetSaveFileName() = 0;
 
+	// Matchmaking
+	virtual void MultiplayerEndGame() = 0;
+	virtual void ChangeTeam( const char *pTeamName ) = 0;
+
 	// Cleans up the cluster list
 	virtual void CleanUpEntityClusterList( PVSInfo_t *pPVSInfo ) = 0;
 

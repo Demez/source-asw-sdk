@@ -1093,6 +1093,7 @@ public:
 	virtual void				ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat ) = 0;
 
 	// Sets lighting
+	virtual void				SetAmbientLight( float r, float g, float b ) = 0;
 	virtual void				SetLightingState( const MaterialLightingState_t& state ) = 0;
 	virtual void				SetLights( int nCount, const LightDesc_t *pLights ) = 0;
 

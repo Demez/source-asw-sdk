@@ -278,7 +278,7 @@ void CTFWeaponBaseMelee::Smack( void )
 
 #if !defined (CLIENT_DLL)
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
+	//lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
 #endif
 
 	// We hit, setup the smack.

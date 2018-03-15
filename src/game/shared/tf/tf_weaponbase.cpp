@@ -1330,7 +1330,7 @@ int	CTFWeaponBase::InternalDrawModel( int flags, const RenderableInstance_t& ins
 		modelrender->ForcedMaterialOverride( *pOwner->GetInvulnMaterialRef() );
 	}
 
-	int ret = BaseClass::InternalDrawModel( flags|extraFlags, instance );
+	int ret = BaseClass::InternalDrawModel( flags, instance );
 
 	if ( bUseInvulnMaterial )
 	{

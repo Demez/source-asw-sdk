@@ -185,7 +185,7 @@ int CTFViewModel::DrawModel( int flags, const RenderableInstance_t& instance )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CTFViewModel::StandardBlendingRules( CStudioHdr *hdr, Vector pos[], Quaternion q[], float currentTime, int boneMask )
+void CTFViewModel::StandardBlendingRules( CStudioHdr *hdr, Vector pos[], QuaternionAligned q[], float currentTime, int boneMask )
 {
 	BaseClass::StandardBlendingRules( hdr, pos, q, currentTime, boneMask );
 

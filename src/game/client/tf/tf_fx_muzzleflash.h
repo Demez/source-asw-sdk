@@ -44,7 +44,7 @@ public:
 
 	// Recording
 	virtual void GetToolRecordingState( KeyValues *msg );
-	virtual bool SetupBones( matrix3x4_t *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime );
+	virtual bool SetupBones( matrix3x4a_t *pBoneToWorldOut, int nMaxBones, int boneMask, float currentTime );
 
 	void	SetIs3rdPersonFlash( bool bEnable );
 
