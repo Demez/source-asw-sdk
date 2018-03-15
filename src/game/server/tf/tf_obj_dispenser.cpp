@@ -40,7 +40,7 @@ void SendProxy_HealingList( const SendProp *pProp, const void *pStruct, const vo
 	CObjectDispenser *pDispenser = (CObjectDispenser*)pStruct;
 
 	// If this assertion fails, then SendProxyArrayLength_HealingArray must have failed.
-	Assert( iElement < pDispenser->m_hHealingTargets.Size() );
+	Assert( iElement < pDispenser->m_hHealingTargets.Count() );
 
 	CBaseEntity *pEnt = pDispenser->m_hHealingTargets[iElement].Get();
 	EHANDLE hOther = pEnt;

@@ -223,7 +223,7 @@ bool CTFGrenadePipebombProjectile::Simulate( void )
 	BaseClass::Simulate();
 
 	if ( m_iType != TF_GL_MODE_REMOTE_DETONATE )
-		return;
+		return true;
 
 	if ( m_bPulsed == false )
 	{

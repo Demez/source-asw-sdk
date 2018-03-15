@@ -5886,13 +5886,14 @@ int CTFPlayer::DrawDebugTextOverlays(void)
 //-----------------------------------------------------------------------------
 bool CTFPlayer::GetResponseSceneFromConcept( int iConcept, char *chSceneBuffer, int numSceneBufferBytes )
 {
-	AI_Response * const result = SpeakConcept( iConcept );
-	if ( result )
+	
+	AI_Response result;
+	SpeakConcept(result, iConcept);
+	if ( !result.IsEmpty() )
 	{
-		result->GetResponse( chSceneBuffer, numSceneBufferBytes );
-		delete result;
+		result.GetResponse( chSceneBuffer, numSceneBufferBytes );
 	}
-	return result != NULL;
+	return !result.IsEmpty();
 }
 
 //-----------------------------------------------------------------------------

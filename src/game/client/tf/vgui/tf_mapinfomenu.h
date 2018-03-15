@@ -41,7 +41,7 @@ public:
 	virtual void SetParent( vgui::VPANEL parent ){ BaseClass::SetParent( parent ); }
 
 	static const char *GetMapType( const char *mapName );
-
+	virtual bool WantsBackgroundBlurred() { return true; };
 protected:
 	virtual void OnKeyCodePressed(vgui::KeyCode code);
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );

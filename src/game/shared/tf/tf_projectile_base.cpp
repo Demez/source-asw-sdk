@@ -173,7 +173,7 @@ CTFBaseProjectile *CTFBaseProjectile::Create( const char *pszClassname, const Ve
 		// of the trace's endpoint. 
 		trace_t tr;
 		UTIL_TraceLine( vecOrigin, vecOrigin + vecForward * MAX_COORD_RANGE, (CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_WINDOW|CONTENTS_GRATE), pOwner, COLLISION_GROUP_NONE, &tr );
-		bool bBroadcast = ( UTIL_PointContents( vecOrigin ) != UTIL_PointContents( tr.endpos ) );
+		bool bBroadcast = ( UTIL_PointContents( vecOrigin, MASK_ALL ) != UTIL_PointContents( tr.endpos, MASK_ALL ) );
 		IRecipientFilter *pFilter;
 		if ( bBroadcast )
 		{

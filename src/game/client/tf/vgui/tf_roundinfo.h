@@ -39,6 +39,7 @@ public:
 
 	virtual void FireGameEvent( IGameEvent *event );
 
+	virtual bool WantsBackgroundBlurred() { return true; };
 protected:
 	virtual void OnKeyCodePressed( vgui::KeyCode code );
 	virtual void PerformLayout();
