@@ -81,7 +81,8 @@ IMPLEMENT_NETWORKCLASS_ALIASED( SDKGameRulesProxy, DT_SDKGameRulesProxy )
 	class CVoiceGameMgrHelper : public IVoiceGameMgrHelper
 	{
 	public:
-		virtual bool		CanPlayerHearPlayer( CBasePlayer *pListener, CBasePlayer *pTalker )
+
+		virtual bool CanPlayerHearPlayer(CBasePlayer *pListener, CBasePlayer *pTalker, bool &bProximity)
 		{
 			// Dead players can only be heard by other dead team mates
 			if ( pTalker->IsAlive() == false )
@@ -186,7 +187,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED( SDKGameRulesProxy, DT_SDKGameRulesProxy )
 		else
 			falloff = 1.0;
 
-		int bInWater = (UTIL_PointContents ( vecSrc ) & MASK_WATER) ? true : false;
+		int bInWater = UTIL_PointContents( vecSrc, MASK_WATER) ? true : false;
 		
 		vecSrc.z += 1;// in case grenade is lying on the ground
 

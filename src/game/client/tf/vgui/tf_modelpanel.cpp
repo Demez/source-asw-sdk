@@ -526,17 +526,20 @@ void CModelPanel::Paint()
 	Frustum dummyFrustum;
 	render->Push3DView( view, 0, NULL, dummyFrustum );
 
+	
 	modelrender->SuppressEngineLighting( true );
 	float color[3] = { 1.0f, 1.0f, 1.0f };
 	render->SetColorModulation( color );
 	render->SetBlend( 1.0f );
-	m_hModel->DrawModel( STUDIO_RENDER );
+	RenderableInstance_t instance;
+	instance.m_nAlpha = 255;
+	m_hModel->DrawModel( STUDIO_RENDER, instance );
 
 	for ( i = 0 ; i < m_AttachedModels.Count() ; i++ )
 	{
 		if ( m_AttachedModels[i].Get() )
 		{
-			m_AttachedModels[i]->DrawModel( STUDIO_RENDER );
+			m_AttachedModels[i]->DrawModel( STUDIO_RENDER, instance );
 		}
 	}
 

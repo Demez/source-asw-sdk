@@ -190,7 +190,7 @@ void FX_FireBullets(
 
 #if !defined (CLIENT_DLL)
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
+	//lagcompensation->StartLagCompensation( pPlayer, pPlayer->GetCurrentCommand() );
 #endif
 
 	for ( int iBullet=0; iBullet < pWeaponInfo->m_iBullets; iBullet++ )
@@ -216,7 +216,7 @@ void FX_FireBullets(
 	}
 
 #if !defined (CLIENT_DLL)
-	lagcompensation->FinishLagCompensation( pPlayer );
+	//lagcompensation->FinishLagCompensation( pPlayer );
 #endif
 
 	EndGroupingSounds();

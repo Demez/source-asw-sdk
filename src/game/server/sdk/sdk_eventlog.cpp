@@ -48,7 +48,7 @@ CSDKEventLog g_SDKEventLog;
 //-----------------------------------------------------------------------------
 // Singleton access
 //-----------------------------------------------------------------------------
-IGameSystem* GameLogSystem()
+CEventLog* GameLogSystem()
 {
 	return &g_SDKEventLog;
 }
