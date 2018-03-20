@@ -73,6 +73,10 @@
 #include "clientmode_asw.h"
 #endif
 
+#ifdef TF_CLIENT_DLL
+#include "clientmode_tf.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 

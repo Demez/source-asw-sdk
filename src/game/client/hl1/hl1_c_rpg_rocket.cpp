@@ -24,7 +24,7 @@ public:
 	C_RpgRocket( const C_RpgRocket & );
 
 public:
-	void	CreateLightEffects( void );
+	bool	CreateLightEffects(void);
 };
 
 
@@ -32,7 +32,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_RpgRocket, DT_RpgRocket, CRpgRocket )
 END_RECV_TABLE()
 
 
-void C_RpgRocket::CreateLightEffects( void )
+bool C_RpgRocket::CreateLightEffects( void )
 {
 	dlight_t *dl;
 	if ( IsEffectActive(EF_DIMLIGHT) )
@@ -45,4 +45,5 @@ void C_RpgRocket::CreateLightEffects( void )
 
 		tempents->RocketFlare( GetAbsOrigin() );
 	}
+	return true;
 }

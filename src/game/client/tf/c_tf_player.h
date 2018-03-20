@@ -107,7 +107,7 @@ public:
 
 	void GetTeamColor( Color &color );
 
-	virtual void ComputeFxBlend( void );
+	//virtual void ComputeFxBlend( void );
 
 	// Taunts/VCDs
 	virtual bool	StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene, CChoreoEvent *event, CChoreoActor *actor, C_BaseEntity *pTarget );

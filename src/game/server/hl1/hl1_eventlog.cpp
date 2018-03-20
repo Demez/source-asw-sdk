@@ -48,7 +48,7 @@ CHL1EventLog g_HL1EventLog;
 //-----------------------------------------------------------------------------
 // Singleton access
 //-----------------------------------------------------------------------------
-IGameSystem* GameLogSystem()
+CEventLog* GameLogSystem()
 {
 	return &g_HL1EventLog;
 }

@@ -427,7 +427,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 			Interp_Copy( pPlayer );
 
 			SetAbsAngles( pPlayer->GetRenderAngles() );
-			GetRotationInterpolator().Reset();
+			GetRotationInterpolator().Reset( gpGlobals->curtime );
 
 			m_flAnimTime = pPlayer->m_flAnimTime;
 			SetSequence( pPlayer->GetSequence() );
@@ -472,11 +472,11 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 	SetModelIndex( m_nModelIndex );
 
 	// Make us a ragdoll..
-	m_nRenderFX = kRenderFxRagdoll;
+	SetRenderFX( kRenderFxRagdoll );
 
-	matrix3x4_t boneDelta0[MAXSTUDIOBONES];
-	matrix3x4_t boneDelta1[MAXSTUDIOBONES];
-	matrix3x4_t currentBones[MAXSTUDIOBONES];
+	matrix3x4a_t boneDelta0[MAXSTUDIOBONES];
+	matrix3x4a_t boneDelta1[MAXSTUDIOBONES];
+	matrix3x4a_t currentBones[MAXSTUDIOBONES];
 	const float boneDt = 0.05f;
 
 	if ( pPlayer && !pPlayer->IsDormant() )
@@ -543,7 +543,7 @@ void C_HL1MPRagdoll::SetupWeights( const matrix3x4_t *pBoneToWorld, int nFlexWei
 			Vector local, tmp;
 			local.Init( 1000.0f, 0.0f, 0.0f );
 			VectorTransform( local, attToWorld, tmp );
-			modelrender->SetViewTarget( tmp );
+			modelrender->SetViewTarget(GetModelPtr(), GetBody(), tmp);
 		}
 	}
 }

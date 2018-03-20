@@ -50,7 +50,7 @@ void CHL1BaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 	}
 
 	Vector vecAbsOrigin = GetAbsOrigin();
-	int contents = UTIL_PointContents ( vecAbsOrigin );
+	int contents = UTIL_PointContents ( vecAbsOrigin, MASK_WATER );
 
 	if ( pTrace->fraction != 1.0 )
 	{
@@ -59,7 +59,7 @@ void CHL1BaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 		CPASFilter filter( vecAbsOrigin );
 		te->Explosion( filter, 0.0, 
 			&vecAbsOrigin,
-			!( contents & MASK_WATER ) ? g_sModelIndexFireball : g_sModelIndexWExplosion,
+			!contents ? g_sModelIndexFireball : g_sModelIndexWExplosion,
 			m_DmgRadius * .03, 
 			25,
 			TE_EXPLFLAG_NONE,
@@ -73,7 +73,7 @@ void CHL1BaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 		CPASFilter filter( vecAbsOrigin );
 		te->Explosion( filter, 0.0,
 			&vecAbsOrigin, 
-			!( contents & MASK_WATER ) ? g_sModelIndexFireball : g_sModelIndexWExplosion,
+			!contents ? g_sModelIndexFireball : g_sModelIndexWExplosion,
 			m_DmgRadius * .03, 
 			25,
 			TE_EXPLFLAG_NONE,

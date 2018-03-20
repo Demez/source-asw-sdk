@@ -12,15 +12,7 @@
 #pragma once
 #endif
 
-
-struct MM_QOS_t
-{
-	int nPingMsMin;		// Minimum round-trip time in ms
-	int nPingMsMed;		// Median round-trip time in ms
-	float flBwUpKbs;	// Bandwidth upstream in kilobytes/s
-	float flBwDnKbs;	// Bandwidth downstream in kilobytes/s
-	float flLoss;		// Average packet loss in percents
-};
+#include "matchmakingstructs.h"
 
 struct MM_GameDetails_QOS_t
 {

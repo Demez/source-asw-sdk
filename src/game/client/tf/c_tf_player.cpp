@@ -460,7 +460,7 @@ void C_TFRagdoll::CreateTFRagdoll()
 	}
 	else
 	{
-		ClientLeafSystem()->SetRenderGroup( GetRenderHandle(), RENDER_GROUP_TRANSLUCENT );
+		//ClientLeafSystem()->SetRenderGroup( GetRenderHandle(), RENDER_GROUP_TRANSLUCENT );
 	}		
 
 	if ( m_bBurning )
@@ -3458,7 +3458,7 @@ void SetupHeadLabelMaterials( void )
 		}
 	}
 }
-
+/*
 void C_TFPlayer::ComputeFxBlend( void )
 {
 	BaseClass::ComputeFxBlend();
@@ -3477,7 +3477,7 @@ void C_TFPlayer::ComputeFxBlend( void )
 		}
 	}
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
@@ -3486,14 +3486,14 @@ void C_TFPlayer::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, f
 	HandleTaunting();
 	BaseClass::CalcView( eyeOrigin, eyeAngles, zNear, zFar, fov );
 }
-
+/*
 static void cc_tf_crashclient()
 {
 	C_TFPlayer *pPlayer = NULL;
 	pPlayer->ComputeFxBlend();
 }
 static ConCommand tf_crashclient( "tf_crashclient", cc_tf_crashclient, "Crashes this client for testing.", FCVAR_DEVELOPMENTONLY );
-
+*/
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------

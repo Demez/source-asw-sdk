@@ -84,7 +84,8 @@ void CHL1TempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int ty
 
 	pTemp->SetRenderMode( kRenderTransAdd );
 	pTemp->m_nRenderFX = 0;
-	pTemp->SetRenderColor( 255, 255, 255, 255 );
+	pTemp->SetRenderColor( 255, 255, 255 );
+	pTemp->SetRenderAlpha( 255 );
 	pTemp->m_flSpriteScale = scale;
 	pTemp->SetAbsOrigin( pos1 );
 	pTemp->die = gpGlobals->curtime + 0.01;
