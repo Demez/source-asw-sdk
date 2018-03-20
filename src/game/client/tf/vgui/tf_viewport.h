@@ -46,5 +46,13 @@ private:
 
 };
 
+class FullscreenTFViewport : public TFViewport
+{
+private:
+	DECLARE_CLASS_SIMPLE(FullscreenTFViewport, TFViewport);
+
+private:
+	virtual void InitViewportSingletons(void);
+};
 
 #endif // TF_Viewport_H

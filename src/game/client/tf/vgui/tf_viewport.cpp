@@ -323,3 +323,8 @@ void TFViewport::OnScreenSizeChanged( int iOldWide, int iOldTall )
 		}
 	}
 }
+
+void FullscreenTFViewport::InitViewportSingletons(void)
+{
+	SetAsFullscreenViewportInterface();
+}

@@ -59,6 +59,14 @@ ConVar cl_hud_minmode( "cl_hud_minmode", "0", FCVAR_ARCHIVE, "Set to 1 to turn o
 
 IClientMode *g_pClientMode = NULL;
 
+IClientMode *GetClientMode()
+{
+	Assert(engine->IsLocalPlayerResolvable());
+	return &g_pClientMode[engine->GetActiveSplitScreenPlayerSlot()];
+}
+
+
+
 // --------------------------------------------------------------------------------- //
 // CTFModeManager.
 // --------------------------------------------------------------------------------- //
@@ -339,4 +347,25 @@ int ClientModeTFNormal::HandleSpectatorKeyInput( int down, ButtonCode_t keynum, 
 void ClientModeTFNormal::DoPostScreenSpaceEffects(const CViewSetup * pSetup)
 {
 	BaseClass::DoPostScreenSpaceEffects(pSetup);
+}
+
+
+
+
+class ClientModeASWFullscreen : public	ClientModeTFNormal
+{
+	DECLARE_CLASS_SIMPLE(ClientModeASWFullscreen, ClientModeTFNormal);
+public:
+	virtual void InitViewport()
+	{
+		m_pViewport = new FullscreenTFViewport();
+		m_pViewport->Start(gameuifuncs, gameeventmanager);
+	}
+};
+
+//--------------------------------------------------------------------------------------------------------
+static ClientModeASWFullscreen g_FullscreenClientMode;
+IClientMode *GetFullscreenClientMode(void)
+{
+	return &g_FullscreenClientMode;
 }
