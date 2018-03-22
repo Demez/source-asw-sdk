@@ -30,7 +30,7 @@ DECLARE_HUDELEMENT_DEPTH( CTFFreezePanel, 1 );
 #define CALLOUT_WIDE		(XRES(100))
 #define CALLOUT_TALL		(XRES(50))
 
-extern float g_flFreezeFlash;
+extern float g_flFreezeFlash[];
 
 #define FREEZECAM_SCREENSHOT_STRING "is looking good!"
 
@@ -664,7 +664,7 @@ int	CTFFreezePanel::HudElementKeyInput( int down, ButtonCode_t keynum, const cha
 			if ( pPlayer )
 			{
 				//Do effects
-				g_flFreezeFlash = gpGlobals->curtime + 0.75f;
+				g_flFreezeFlash[GET_ACTIVE_SPLITSCREEN_SLOT()] = gpGlobals->curtime + 0.75f;
 				pPlayer->EmitSound( "Camera.SnapShot" );
 
 				//Extend Freezecam by a couple more seconds.

@@ -32,7 +32,8 @@ void PrecacheSyringe(void *pUser)
 	g_sModelIndexSyringe = modelinfo->GetModelIndex( SYRINGE_MODEL );
 }
 
-PRECACHE_REGISTER_FN(PrecacheSyringe);
+PRECACHE_REGISTER_BEGIN(GLOBAL, PrecacheSyringe)
+PRECACHE_REGISTER_END()
 
 CTFProjectile_Syringe::CTFProjectile_Syringe()
 {
