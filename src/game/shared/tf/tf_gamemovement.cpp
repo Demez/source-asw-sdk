@@ -881,9 +881,9 @@ void CTFGameMovement::AirMove( void )
 	VectorSubtract( mv->m_vecVelocity, player->GetBaseVelocity(), mv->m_vecVelocity );
 }
 
-extern void TracePlayerBBoxForGround( const Vector& start, const Vector& end, const Vector& minsSrc,
-							  const Vector& maxsSrc, IHandleEntity *player, unsigned int fMask,
-							  int collisionGroup, trace_t& pm );
+extern void TracePlayerBBoxForGround( ITraceListData *pTraceListData, const Vector& start, const Vector& end, const Vector& minsSrc,
+							  const Vector& maxsSrc, unsigned int fMask,
+							  ITraceFilter *filter, trace_t& pm, float minGroundNormalZ, bool overwriteEndpos, int *pCounter );
 
 
 //-----------------------------------------------------------------------------
@@ -1012,13 +1012,16 @@ void CTFGameMovement::CategorizePosition( void )
 
 	trace_t trace;
 	TracePlayerBBox( vecStartPos, vecEndPos, PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, trace );
-
+	
+	float flStandableZ = 0.7;
+	
 	// Steep plane, not on ground.
-	if ( trace.plane.normal.z < 0.7f )
+	if ( trace.plane.normal.z < flStandableZ)
 	{
 		// Test four sub-boxes, to see if any of them would have found shallower slope we could actually stand on.
-		TracePlayerBBoxForGround( vecStartPos, vecEndPos, GetPlayerMins(), GetPlayerMaxs(), mv->m_nPlayerHandle.Get(), PlayerSolidMask(), COLLISION_GROUP_PLAYER_MOVEMENT, trace );
-		if ( trace.plane.normal[2] < 0.7f )
+		ITraceFilter *pFilter = LockTraceFilter(COLLISION_GROUP_PLAYER_MOVEMENT);
+		TracePlayerBBoxForGround( m_pTraceListData, vecStartPos, vecEndPos, GetPlayerMins(), GetPlayerMaxs(), PlayerSolidMask(), pFilter, trace, flStandableZ, true, &m_nTraceCount);
+		if ( trace.plane.normal[2] < flStandableZ)
 		{
 			// Too steep.
 			SetGroundEntity( NULL );

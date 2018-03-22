@@ -30,7 +30,7 @@ class C_TFRootPanel : public vgui::Panel
 {
 	typedef vgui::Panel BaseClass;
 public:
-						C_TFRootPanel( vgui::VPANEL parent );
+						C_TFRootPanel(vgui::VPANEL parent, int slot);
 	virtual				~C_TFRootPanel( void );
 
 	// Draw Panel effects here
@@ -50,6 +50,7 @@ private:
 
 	// List of current panel effects
 	CUtlVector< CPanelEffect *> m_Effects;
+	int			m_nSplitSlot;
 };
 
 

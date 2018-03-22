@@ -20,9 +20,6 @@
 #include "materialsystem/IMaterialVar.h"
 #include "toolframework_client.h"
 #include "input.h"
-
-// forward declarations
-void ToolFramework_RecordMaterialParams( IMaterial *pMaterial );
 #endif
 
 #define TF_WEAPON_SNIPERRIFLE_CHARGE_PER_SEC	50.0
@@ -704,10 +701,6 @@ void CProxySniperRifleCharge::OnBind( void *pC_BaseEntity )
 		}
 	}
 
-	if ( ToolsEnabled() )
-	{
-		ToolFramework_RecordMaterialParams( GetMaterial() );
-	}
 }
 
 EXPOSE_INTERFACE( CProxySniperRifleCharge, IMaterialProxy, "SniperRifleCharge" IMATERIAL_PROXY_INTERFACE_VERSION );

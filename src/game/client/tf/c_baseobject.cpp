@@ -29,9 +29,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-// forward declarations
-void ToolFramework_RecordMaterialParams( IMaterial *pMaterial );
-
 #define MAX_VISIBLE_BUILDPOINT_DISTANCE		(400 * 400)
 
 // Remove aliasing of name due to shared code
@@ -911,10 +908,6 @@ void CObjectPowerProxy::OnBind( void *pRenderable )
 
 	SetFloatResult(  m_Factor.GetFloat() );
 
-	if ( ToolsEnabled() )
-	{
-		ToolFramework_RecordMaterialParams( GetMaterial() );
-	}
 }
 
 EXPOSE_INTERFACE( CObjectPowerProxy, IMaterialProxy, "ObjectPower" IMATERIAL_PROXY_INTERFACE_VERSION );
