@@ -47,6 +47,7 @@ $Project "Client (TF)"
 		$File	"basepresence.h"
 		$File	"clienteffectprecachesystem.h"
 		$File	"clienteffectprecachesystem.cpp"
+		$File	"$SRCDIR\public\vgui_controls\KeyRepeat.cpp"
 		
 		$Folder	"TF"
 		{
