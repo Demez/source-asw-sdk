@@ -352,9 +352,9 @@ void ClientModeTFNormal::DoPostScreenSpaceEffects(const CViewSetup * pSetup)
 
 
 
-class ClientModeASWFullscreen : public	ClientModeTFNormal
+class ClientModeTFFullscreen : public	ClientModeTFNormal
 {
-	DECLARE_CLASS_SIMPLE(ClientModeASWFullscreen, ClientModeTFNormal);
+	DECLARE_CLASS_SIMPLE(ClientModeTFFullscreen, ClientModeTFNormal);
 public:
 	virtual void InitViewport()
 	{
@@ -364,7 +364,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------------------------
-static ClientModeASWFullscreen g_FullscreenClientMode;
+static ClientModeTFFullscreen g_FullscreenClientMode;
 IClientMode *GetFullscreenClientMode(void)
 {
 	return &g_FullscreenClientMode;
