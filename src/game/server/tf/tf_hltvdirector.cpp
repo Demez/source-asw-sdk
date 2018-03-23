@@ -190,7 +190,7 @@ const char** CTFHLTVDirector::GetModEvents()
 		"round_end",
 		"server_cvar",
 		"server_spawn",
-				
+
 		// additional TF events:
 		"controlpoint_starttouch",
 		"controlpoint_endtouch",
@@ -208,7 +208,7 @@ const char** CTFHLTVDirector::GetModEvents()
 		"teamplay_win_panel",
 		"tf_game_over",
 		"object_destroyed",
-			
+
 		NULL
 	};
 

@@ -51,6 +51,7 @@ $Project "Server (TF)"
 		$File	"team_control_point_round.h"
 		$File	"team_objectiveresource.cpp"
 		$File	"team_objectiveresource.h"
+		$File	"team_train_watcher.cpp"
 		$File	"$SRCDIR\game\shared\teamplay_round_timer.cpp"
 		$File	"$SRCDIR\game\shared\teamplay_round_timer.h"
 		$File	"$SRCDIR\game\shared\teamplayroundbased_gamerules.cpp"
@@ -58,7 +59,9 @@ $Project "Server (TF)"
 		$File	"$SRCDIR\game\shared\touchlink.h"
 		$File	"trigger_area_capture.cpp"
 		$File	"trigger_area_capture.h"
+		$File	"base_gameinterface.cpp"
 
+		
 		$Folder	"TF"
 		{
 			$File	"$SRCDIR\game\shared\tf\achievements_tf.cpp"

@@ -197,7 +197,7 @@ END_SEND_TABLE()
 //			*pOut - 
 //			objectID - 
 //-----------------------------------------------------------------------------
-
+/*
 void* SendProxy_SendNonLocalDataTable( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID )
 {
 	pRecipients->SetAllRecipients();
@@ -205,7 +205,7 @@ void* SendProxy_SendNonLocalDataTable( const SendProp *pProp, const void *pStruc
 	return ( void * )pVarData;
 }
 REGISTER_SEND_PROXY_NON_MODIFIED_POINTER( SendProxy_SendNonLocalDataTable );
-
+*/
 //-----------------------------------------------------------------------------
 // Purpose: SendProxy that converts the UtlVector list of objects to entindexes, where it's reassembled on the client
 //-----------------------------------------------------------------------------
@@ -5916,10 +5916,10 @@ int	CTFPlayer::CalculateTeamBalanceScore( void )
 // Purpose: 
 //-----------------------------------------------------------------------------
 // Debugging Stuff
-extern CBaseEntity *FindPickerEntity( CBasePlayer *pPlayer );
+
 void DebugParticles( const CCommand &args )
 {
-	CBaseEntity *pEntity = FindPickerEntity( UTIL_GetCommandClient() );
+	CBaseEntity *pEntity = UTIL_GetCommandClient()->FindPickerEntity( );
 
 	if ( pEntity && pEntity->IsPlayer() )
 	{
@@ -5948,7 +5948,7 @@ static ConCommand cc_IgnitePlayer( "tf_ignite_player", IgnitePlayer, "Sets you o
 //-----------------------------------------------------------------------------
 void TestVCD( const CCommand &args )
 {
-	CBaseEntity *pEntity = FindPickerEntity( UTIL_GetCommandClient() );
+	CBaseEntity *pEntity = UTIL_GetCommandClient()->FindPickerEntity();
 	if ( pEntity && pEntity->IsPlayer() )
 	{
 		CTFPlayer *pPlayer = ToTFPlayer( pEntity );
@@ -5989,7 +5989,7 @@ void TestRR( const CCommand &args )
 
 	if ( !pEntity || !pEntity->IsPlayer() )
 	{
-		pEntity = FindPickerEntity( UTIL_GetCommandClient() );
+		pEntity = UTIL_GetCommandClient()->FindPickerEntity();
 		if ( !pEntity || !pEntity->IsPlayer() )
 		{
 			pEntity = ToTFPlayer( UTIL_GetCommandClient() ); 

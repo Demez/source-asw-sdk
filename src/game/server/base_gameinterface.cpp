@@ -13,7 +13,7 @@
 #include "tier0/memdbgon.h"
 
 extern ConVar sv_force_transmit_ents;
-
+#ifndef TF_DLL
 void CServerGameClients::GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers ) const
 {
 	minplayers = defaultMaxPlayers = 1; 
@@ -28,6 +28,7 @@ void CServerGameClients::GetPlayerLimits( int& minplayers, int& maxplayers, int 
 void CServerGameDLL::LevelInit_ParseAllEntities( const char *pMapEntities )
 {
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Called to apply lobby settings to a dedicated server

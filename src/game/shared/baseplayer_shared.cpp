@@ -77,7 +77,7 @@
 ConVar mp_usehwmmodels( "mp_usehwmmodels", "0", NULL, "Enable the use of the hw morph models. (-1 = never, 1 = always, 0 = based upon GPU)" ); // -1 = never, 0 = if hasfastvertextextures, 1 = always
 #endif
 
-#ifndef TF_CLIENT_DLL
+#if !defined(TF_DLL) && !defined(TF_CLIENT_DLL)
 bool UseHWMorphModels()
 {
 #ifdef CLIENT_DLL 

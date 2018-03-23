@@ -116,6 +116,10 @@ const char *GetGameDescription()
 		return "Team Fortress";
 }
 
+void ClientFullyConnect(edict_t *pEntity)
+{
+
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Precache game-specific models & sounds
