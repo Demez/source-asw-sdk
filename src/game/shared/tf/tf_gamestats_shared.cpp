@@ -5,6 +5,7 @@
 //=============================================================================//
 
 #ifdef GAME_DLL
+#include "KeyValues.h"
 #include "GameStats.h"
 #endif
 #include "tf_gamestats_shared.h"
